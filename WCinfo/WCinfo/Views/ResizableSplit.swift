@@ -52,13 +52,24 @@ struct ResizableSplit<Primary: View, Secondary: View>: View {
         return Rectangle()
             .fill(Color(.systemGray5))
             .overlay {
-                VStack(spacing: 3) {
-                    Capsule()
-                        .fill(Color(.systemGray3))
-                        .frame(width: 28, height: 4)
-                    Capsule()
-                        .fill(Color(.systemGray3))
-                        .frame(width: 28, height: 4)
+                if axis == .horizontal {
+                    HStack(spacing: 3) {
+                        Capsule()
+                            .fill(Color(.systemGray3))
+                            .frame(width: 4, height: 28)
+                        Capsule()
+                            .fill(Color(.systemGray3))
+                            .frame(width: 4, height: 28)
+                    }
+                } else {
+                    VStack(spacing: 3) {
+                        Capsule()
+                            .fill(Color(.systemGray3))
+                            .frame(width: 28, height: 4)
+                        Capsule()
+                            .fill(Color(.systemGray3))
+                            .frame(width: 28, height: 4)
+                    }
                 }
             }
             .contentShape(Rectangle())

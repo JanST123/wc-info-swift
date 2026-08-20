@@ -10,28 +10,36 @@ struct HomeView: View {
     @State private var predictions: [GMSAutocompletePrediction] = []
     @State private var errorMessage: String?
     @State private var selectedLocation: SearchedLocation?
+    @State private var keyboardHeight: CGFloat = 0
 
     var body: some View {
         NavigationStack {
             ZStack {
                 backgroundImage
 
-                VStack(spacing: 0) {
-                    Spacer(minLength: 80)
+                ScrollView {
+                    VStack(spacing: 0) {
+                        Spacer(minLength: 80)
 
-                    logo
-                        .padding(.bottom, 36)
+                        logo
+                            .padding(.bottom, 36)
 
-                    searchCard
-                        .padding(.bottom, 20)
+                        searchCard
+                            .padding(.bottom, 20)
 
-                    actionButtons
-                        .frame(height: 52)
+                        actionButtons
+                            .frame(height: 52)
 
-                    Spacer(minLength: 80)
+                        Spacer(minLength: 120)
+                    }
+                    .padding(.horizontal, 24)
+                    .padding(.bottom, keyboardHeight)
+                    .frame(maxWidth: min(UIScreen.main.bounds.width - 48, 420))
+                    .frame(minHeight: UIScreen.main.bounds.height)
                 }
-                .padding(.horizontal, 24)
-                .frame(maxWidth: min(UIScreen.main.bounds.width - 48, 420))
+                .scrollBounceBehavior(.basedOnSize, axes: .vertical)
+                .defaultScrollAnchor(.top)
+                .scrollDismissesKeyboard(.immediately)
             }
             .navigationTitle("")
             .preferredColorScheme(.light)
@@ -43,6 +51,26 @@ struct HomeView: View {
             } message: {
                 Text(errorMessage ?? "")
             }
+            .onAppear(perform: observeKeyboard)
+        }
+    }
+
+    private func observeKeyboard() {
+        NotificationCenter.default.addObserver(
+            forName: UIResponder.keyboardWillShowNotification,
+            object: nil,
+            queue: .main
+        ) { notification in
+            guard let frame = notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? CGRect else { return }
+            keyboardHeight = frame.height
+        }
+
+        NotificationCenter.default.addObserver(
+            forName: UIResponder.keyboardWillHideNotification,
+            object: nil,
+            queue: .main
+        ) { _ in
+            keyboardHeight = 0
         }
     }
 

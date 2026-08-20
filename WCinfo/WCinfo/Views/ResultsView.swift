@@ -59,14 +59,8 @@ struct ResultsView: View {
     }
 
     private var mapContent: some View {
-        Group {
-            if isDraggingSplit {
-                Color.clear
-            } else {
-                MapView(center: location.coordinate, toilets: toilets, selectedToiletID: selectedToiletID)
-            }
-        }
-        .ignoresSafeArea(edges: [.bottom, .leading, .trailing])
+        MapView(center: location.coordinate, toilets: toilets, selectedToiletID: selectedToiletID)
+            .ignoresSafeArea(edges: [.bottom, .leading, .trailing])
     }
 
     private func loadToilets() async {

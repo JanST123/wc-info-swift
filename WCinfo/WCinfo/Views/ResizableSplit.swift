@@ -7,16 +7,20 @@ struct ResizableSplit<Primary: View, Secondary: View>: View {
     @ViewBuilder let primary: () -> Primary
     @ViewBuilder let secondary: () -> Secondary
 
-    @State private var dragStartRatio: CGFloat?
+    @State private var previewRatio: CGFloat?
 
     private let minRatio: CGFloat = 0.2
     private let maxRatio: CGFloat = 0.8
     private let handleThickness: CGFloat = 28
 
+    private var activeRatio: CGFloat {
+        previewRatio ?? ratio
+    }
+
     var body: some View {
         GeometryReader { geometry in
             let totalSize = axis == .horizontal ? geometry.size.width : geometry.size.height
-            let primarySize = totalSize * ratio
+            let primarySize = totalSize * activeRatio
             let secondarySize = totalSize - primarySize - handleThickness
 
             Group {
@@ -61,16 +65,21 @@ struct ResizableSplit<Primary: View, Secondary: View>: View {
             .highPriorityGesture(
                 DragGesture(minimumDistance: 0)
                     .onChanged { value in
-                        if dragStartRatio == nil {
-                            dragStartRatio = ratio
+                        if previewRatio == nil {
+                            previewRatio = ratio
                             isDragging = true
                         }
                         let delta = axis == .horizontal ? value.translation.width : value.translation.height
-                        let newRatio = (dragStartRatio ?? ratio) + (delta / totalSize)
-                        ratio = min(maxRatio, max(minRatio, newRatio))
+                        let newRatio = (previewRatio ?? ratio) + (delta / totalSize)
+                        previewRatio = min(maxRatio, max(minRatio, newRatio))
                     }
                     .onEnded { _ in
-                        dragStartRatio = nil
+                        if let final = previewRatio {
+                            withAnimation(.easeOut(duration: 0.15)) {
+                                ratio = final
+                            }
+                        }
+                        previewRatio = nil
                         isDragging = false
                     }
             )

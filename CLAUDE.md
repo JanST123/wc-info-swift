@@ -32,7 +32,13 @@ Both are declared in `WCinfo/project.yml`.
 
 ## Secrets & Configuration
 - Google API key is stored in `WCinfo/WCinfo/Resources/Config.plist` under `GoogleAPIKey`.
-- This file is listed in `.gitignore` and must never be committed.
+- `Config.plist` is listed in `.gitignore` and must never be committed.
+- A template `WCinfo/WCinfo/Resources/Config.plist.template` is committed instead.
+- To build locally, copy the template and insert a valid key:
+  ```bash
+  cp WCinfo/Resources/Config.plist.template WCinfo/Resources/Config.plist
+  # Then replace YOUR_GOOGLE_API_KEY_HERE in WCinfo/Resources/Config.plist
+  ```
 - The key is loaded at app launch in `WCinfo/WCinfo/WCinfoApp.swift` via `Config.googleAPIKey`.
 
 ## Architecture

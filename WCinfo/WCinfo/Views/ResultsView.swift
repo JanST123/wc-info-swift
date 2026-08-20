@@ -10,11 +10,16 @@ struct ResultsView: View {
     @State private var selectedToiletID: String?
     @State private var portraitRatio: CGFloat = 0.66
     @State private var landscapeRatio: CGFloat = 0.5
+    @State private var isDraggingSplit = false
 
     var body: some View {
         GeometryReader { geometry in
             let isLandscape = geometry.size.width > geometry.size.height
-            ResizableSplit(axis: isLandscape ? .horizontal : .vertical, ratio: isLandscape ? $landscapeRatio : $portraitRatio) {
+            ResizableSplit(
+                axis: isLandscape ? .horizontal : .vertical,
+                ratio: isLandscape ? $landscapeRatio : $portraitRatio,
+                isDragging: $isDraggingSplit
+            ) {
                 listContent
             } secondary: {
                 mapContent
@@ -55,6 +60,7 @@ struct ResultsView: View {
 
     private var mapContent: some View {
         MapView(center: location.coordinate, toilets: toilets, selectedToiletID: selectedToiletID)
+            .opacity(isDraggingSplit ? 0 : 1)
             .ignoresSafeArea(edges: [.bottom, .leading, .trailing])
     }
 

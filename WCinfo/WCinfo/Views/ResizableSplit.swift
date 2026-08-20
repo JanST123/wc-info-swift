@@ -3,6 +3,7 @@ import SwiftUI
 struct ResizableSplit<Primary: View, Secondary: View>: View {
     let axis: Axis
     @Binding var ratio: CGFloat
+    @Binding var isDragging: Bool
     @ViewBuilder let primary: () -> Primary
     @ViewBuilder let secondary: () -> Secondary
 
@@ -47,9 +48,14 @@ struct ResizableSplit<Primary: View, Secondary: View>: View {
         return Rectangle()
             .fill(Color(.systemGray5))
             .overlay {
-                Capsule()
-                    .fill(Color(.systemGray3))
-                    .frame(width: axis == .horizontal ? 36 : 4, height: axis == .horizontal ? 4 : 36)
+                VStack(spacing: 3) {
+                    Capsule()
+                        .fill(Color(.systemGray3))
+                        .frame(width: 28, height: 4)
+                    Capsule()
+                        .fill(Color(.systemGray3))
+                        .frame(width: 28, height: 4)
+                }
             }
             .contentShape(Rectangle())
             .gesture(
@@ -57,6 +63,7 @@ struct ResizableSplit<Primary: View, Secondary: View>: View {
                     .onChanged { value in
                         if dragStartRatio == nil {
                             dragStartRatio = ratio
+                            isDragging = true
                         }
                         let delta = axis == .horizontal ? value.translation.width : value.translation.height
                         let newRatio = (dragStartRatio ?? ratio) + (delta / totalSize)
@@ -64,6 +71,7 @@ struct ResizableSplit<Primary: View, Secondary: View>: View {
                     }
                     .onEnded { _ in
                         dragStartRatio = nil
+                        isDragging = false
                     }
             )
     }

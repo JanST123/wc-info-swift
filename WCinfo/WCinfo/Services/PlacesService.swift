@@ -10,7 +10,7 @@ final class PlacesService: ObservableObject {
         let token = GMSAutocompleteSessionToken()
         return try await withCheckedThrowingContinuation { continuation in
             let filter = GMSAutocompleteFilter()
-            filter.types = ["address"]
+            filter.types = ["geocode", "establishment"]
             client.findAutocompletePredictions(fromQuery: query, filter: filter, sessionToken: token) { results, error in
                 if let error = error {
                     continuation.resume(throwing: error)

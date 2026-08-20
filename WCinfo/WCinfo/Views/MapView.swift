@@ -27,11 +27,13 @@ struct MapView: UIViewRepresentable {
         }
 
         mapView.clear()
+        let icon = UIImage(named: "toiletMarker")
         for toilet in toilets {
             guard let coordinate = toilet.coordinate else { continue }
             let marker = GMSMarker(position: coordinate)
             marker.title = toilet.displayName
             marker.snippet = toilet.address
+            marker.icon = icon
             marker.map = mapView
             if toilet.id == selectedToiletID {
                 mapView.selectedMarker = marker

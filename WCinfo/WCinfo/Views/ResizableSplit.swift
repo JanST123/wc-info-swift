@@ -58,8 +58,8 @@ struct ResizableSplit<Primary: View, Secondary: View>: View {
                 }
             }
             .contentShape(Rectangle())
-            .gesture(
-                DragGesture()
+            .highPriorityGesture(
+                DragGesture(minimumDistance: 0)
                     .onChanged { value in
                         if dragStartRatio == nil {
                             dragStartRatio = ratio

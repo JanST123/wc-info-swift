@@ -1,0 +1,34 @@
+name: WCinfo
+targets:
+  WCinfo:
+    type: application
+    platform: iOS
+    deploymentTarget: "17.0"
+    sources:
+      - WCinfo
+    resources:
+      - WCinfo/Resources
+      - WCinfo/Assets.xcassets
+    settings:
+      base:
+        INFOPLIST_FILE: WCinfo/Info.plist
+        PRODUCT_BUNDLE_IDENTIFIER: de.wcinfo.app
+        MARKETING_VERSION: "1.0"
+        CURRENT_PROJECT_VERSION: "1"
+        SWIFT_VERSION: "5.9"
+        TARGETED_DEVICE_FAMILY: "1,2"
+        ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
+        ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOLS: YES
+        ENABLE_USER_SCRIPT_SANDBOXING: NO
+    dependencies:
+      - package: GoogleMaps
+        product: GoogleMaps
+      - package: GooglePlaces
+        product: GooglePlaces
+packages:
+  GoogleMaps:
+    url: https://github.com/googlemaps/ios-maps-sdk
+    from: 9.0.0
+  GooglePlaces:
+    url: https://github.com/googlemaps/ios-places-sdk
+    from: 9.0.0

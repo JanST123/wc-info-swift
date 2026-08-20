@@ -1,0 +1,15 @@
+# Xcode
+*.xcworkspace
+*.xcuserdata
+DerivedData/
+build/
+*.ipa
+*.dSYM.zip
+*.dSYM
+
+# Config with secrets
+WCinfo/Resources/Config.plist
+
+# Swift Package Manager
+Package.resolved
+*.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/

@@ -1,7 +1,7 @@
 import Foundation
 import CoreLocation
 
-struct Toilet: Identifiable, Codable {
+struct Toilet: Identifiable, Codable, Hashable {
     let id: Int
     let name: String
     let owner: String
@@ -22,6 +22,7 @@ struct Toilet: Identifiable, Codable {
     let photos: [ToiletPhoto]
     let openTimestamp: Date?
     let closeTimestamp: Date?
+    let placeOpeningHours: String?
     let updated: String
 
     var coordinate: CLLocationCoordinate2D {
@@ -42,6 +43,7 @@ struct Toilet: Identifiable, Codable {
         case distance, photos
         case openTimestamp = "open_timestamp"
         case closeTimestamp = "close_timestamp"
+        case placeOpeningHours = "place_opening_hours"
         case updated
     }
 
@@ -67,11 +69,22 @@ struct Toilet: Identifiable, Codable {
         photos = (try? container.decode([ToiletPhoto].self, forKey: .photos)) ?? []
         openTimestamp = try container.decodeISO8601IfPresent(forKey: .openTimestamp)
         closeTimestamp = try container.decodeISO8601IfPresent(forKey: .closeTimestamp)
+        placeOpeningHours = try container.decodeFlexibleStringIfPresent(forKey: .placeOpeningHours)
         updated = try container.decode(String.self, forKey: .updated)
     }
 }
 
 private extension KeyedDecodingContainer {
+    func decodeFlexibleStringIfPresent(forKey key: K) throws -> String? {
+        if let string = try decodeIfPresent(String.self, forKey: key), !string.isEmpty {
+            return string
+        }
+        if let array = try decodeIfPresent([String].self, forKey: key), !array.isEmpty {
+            return array.joined(separator: "\n")
+        }
+        return nil
+    }
+
     func decodeISO8601IfPresent(forKey key: K) throws -> Date? {
         guard let string = try decodeIfPresent(String.self, forKey: key), !string.isEmpty else {
             return nil
@@ -86,7 +99,7 @@ private extension KeyedDecodingContainer {
     }
 }
 
-struct ToiletPhoto: Codable {
+struct ToiletPhoto: Codable, Hashable {
     let url: String
     let urlThumb: String
 

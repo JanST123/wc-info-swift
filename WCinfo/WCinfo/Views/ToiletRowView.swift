@@ -13,7 +13,7 @@ struct ToiletRowView: View {
                         .font(.headline.bold())
 
                     Text(toilet.name)
-                        .font(.subheadline.weight(.semibold))
+                        .font(.subheadline.weight(.regular))
                         .foregroundStyle(.primary)
                 }
 
@@ -25,6 +25,8 @@ struct ToiletRowView: View {
                     closeTimestamp: toilet.closeTimestamp
                 )
             }
+            
+            Spacer(minLength: 8)
 
             ToiletSymbolComponent(
                 isGenderSeparated: toilet.isGenderSeparated,
@@ -33,10 +35,10 @@ struct ToiletRowView: View {
                 isUnisex: toilet.isUnisex
             )
 
-            HStack(alignment: .top, spacing: 12) {
+            HStack(alignment: .bottom, spacing: 12) {
                 if let address = toilet.address, !address.isEmpty {
                     Text(address)
-                        .font(.body)
+                        .font(.footnote)
                         .foregroundStyle(.primary)
                         .multilineTextAlignment(.leading)
                         .lineLimit(3)

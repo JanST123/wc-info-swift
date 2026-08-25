@@ -2,86 +2,47 @@ import Foundation
 import CoreLocation
 
 struct Toilet: Identifiable, Codable {
-    let id: String
+    let id: Int
     let name: String
     let owner: String
-    let lat: String
-    let lon: String
+    let lat: Double
+    let lon: Double
     let placeId: String?
-    let nr: String
-    let type: String
+    let status: String
     let isQualified: Bool
+    let isUnisex: Bool
+    let isGenderSeparated: Bool
+    let hasWheelchairAccess: Bool
+    let hasChangingTable: Bool
     let source: String?
     let address: String?
-    let euroKey: String?
-    let openingTimesJSON: String?
-    let placeTypes: [String]?
+    let website: String?
+    let isOpen: Bool?
+    let distance: Double?
     let photos: [ToiletPhoto]
     let openTimestamp: String?
     let closeTimestamp: String?
     let updated: String
 
-    var coordinate: CLLocationCoordinate2D? {
-        guard let latitude = Double(lat), let longitude = Double(lon) else { return nil }
-        return CLLocationCoordinate2D(latitude: latitude, longitude: longitude)
+    var coordinate: CLLocationCoordinate2D {
+        CLLocationCoordinate2D(latitude: lat, longitude: lon)
     }
 
     enum CodingKeys: String, CodingKey {
         case id, name, owner, lat, lon
         case placeId = "place_id"
-        case nr, type
+        case status
         case isQualified = "is_qualified"
-        case source, address
-        case euroKey = "euro_key"
-        case openingTimesJSON = "opening_times_json"
-        case placeTypes = "place_types"
-        case photos
+        case isUnisex = "is_unisex"
+        case isGenderSeparated = "is_gender_separated"
+        case hasWheelchairAccess = "has_wheelchair_access"
+        case hasChangingTable = "has_changing_table"
+        case source, address, website
+        case isOpen = "is_open"
+        case distance, photos
         case openTimestamp = "open_timestamp"
         case closeTimestamp = "close_timestamp"
         case updated
-    }
-
-    init(from decoder: Decoder) throws {
-        let container = try decoder.container(keyedBy: CodingKeys.self)
-        id = try container.decodeStringOrInt(forKey: .id)
-        name = try container.decode(String.self, forKey: .name)
-        owner = try container.decode(String.self, forKey: .owner)
-        lat = try container.decodeStringOrDouble(forKey: .lat)
-        lon = try container.decodeStringOrDouble(forKey: .lon)
-        placeId = try container.decodeIfPresent(String.self, forKey: .placeId)
-        nr = try container.decodeStringOrInt(forKey: .nr)
-        type = try container.decode(String.self, forKey: .type)
-        isQualified = try container.decode(Bool.self, forKey: .isQualified)
-        source = try container.decodeIfPresent(String.self, forKey: .source)
-        address = try container.decodeIfPresent(String.self, forKey: .address)
-        euroKey = try container.decodeIfPresent(String.self, forKey: .euroKey)
-        openingTimesJSON = try container.decodeIfPresent(String.self, forKey: .openingTimesJSON)
-        placeTypes = try container.decodeStringArrayIfPresent(forKey: .placeTypes)
-        photos = try container.decode([ToiletPhoto].self, forKey: .photos)
-        openTimestamp = try container.decodeIfPresent(String.self, forKey: .openTimestamp)
-        closeTimestamp = try container.decodeIfPresent(String.self, forKey: .closeTimestamp)
-        updated = try container.decode(String.self, forKey: .updated)
-    }
-}
-
-private extension KeyedDecodingContainer {
-    func decodeStringOrInt(forKey key: K) throws -> String {
-        if let string = try? decode(String.self, forKey: key) { return string }
-        if let int = try? decode(Int.self, forKey: key) { return String(int) }
-        throw DecodingError.typeMismatch(String.self, DecodingError.Context(codingPath: codingPath, debugDescription: "Expected String or Int for \(key)"))
-    }
-
-    func decodeStringOrDouble(forKey key: K) throws -> String {
-        if let string = try? decode(String.self, forKey: key) { return string }
-        if let double = try? decode(Double.self, forKey: key) { return String(double) }
-        throw DecodingError.typeMismatch(String.self, DecodingError.Context(codingPath: codingPath, debugDescription: "Expected String or Double for \(key)"))
-    }
-
-    func decodeStringArrayIfPresent(forKey key: K) throws -> [String]? {
-        guard contains(key) else { return nil }
-        if let array = try? decode([String].self, forKey: key) { return array }
-        if let dict = try? decode([String: String].self, forKey: key) { return Array(dict.keys) }
-        return nil
     }
 }
 
@@ -96,36 +57,30 @@ struct ToiletPhoto: Codable {
 }
 
 struct ToiletListItem: Identifiable, Codable {
-    let id: String
+    let id: Int
     let name: String?
     let owner: String?
-    let lat: String
-    let lon: String
+    let lat: Double
+    let lon: Double
     let placeId: String?
-    let nr: String
-    let type: String
+    let status: String
+    let isUnisex: Bool
+    let isGenderSeparated: Bool
+    let hasWheelchairAccess: Bool
+    let hasChangingTable: Bool
 
-    var coordinate: CLLocationCoordinate2D? {
-        guard let latitude = Double(lat), let longitude = Double(lon) else { return nil }
-        return CLLocationCoordinate2D(latitude: latitude, longitude: longitude)
+    var coordinate: CLLocationCoordinate2D {
+        CLLocationCoordinate2D(latitude: lat, longitude: lon)
     }
 
     enum CodingKeys: String, CodingKey {
         case id, name, owner, lat, lon
         case placeId = "place_id"
-        case nr, type
-    }
-
-    init(from decoder: Decoder) throws {
-        let container = try decoder.container(keyedBy: CodingKeys.self)
-        id = try container.decodeStringOrInt(forKey: .id)
-        name = try container.decodeIfPresent(String.self, forKey: .name)
-        owner = try container.decodeIfPresent(String.self, forKey: .owner)
-        lat = try container.decodeStringOrDouble(forKey: .lat)
-        lon = try container.decodeStringOrDouble(forKey: .lon)
-        placeId = try container.decodeIfPresent(String.self, forKey: .placeId)
-        nr = try container.decodeStringOrInt(forKey: .nr)
-        type = try container.decode(String.self, forKey: .type)
+        case status
+        case isUnisex = "is_unisex"
+        case isGenderSeparated = "is_gender_separated"
+        case hasWheelchairAccess = "has_wheelchair_access"
+        case hasChangingTable = "has_changing_table"
     }
 }
 

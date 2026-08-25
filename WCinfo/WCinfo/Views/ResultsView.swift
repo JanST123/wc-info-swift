@@ -7,7 +7,7 @@ struct ResultsView: View {
     @State private var toilets: [Toilet] = []
     @State private var isLoading = true
     @State private var errorMessage: String?
-    @State private var selectedToiletID: String?
+    @State private var selectedToiletID: Int?
     @State private var portraitRatio: CGFloat = 0.66
     @State private var landscapeRatio: CGFloat = 0.5
     @State private var isDraggingSplit = false

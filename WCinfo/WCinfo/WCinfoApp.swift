@@ -19,13 +19,23 @@ struct WCinfoApp: App {
 }
 
 enum Config {
-    static var googleAPIKey: String {
+    private static var plist: [String: Any]? {
         guard let url = Bundle.main.url(forResource: "Config", withExtension: "plist"),
               let data = try? Data(contentsOf: url),
-              let plist = try? PropertyListSerialization.propertyList(from: data, format: nil) as? [String: Any],
-              let key = plist["GoogleAPIKey"] as? String else {
+              let plist = try? PropertyListSerialization.propertyList(from: data, format: nil) as? [String: Any] else {
+            return nil
+        }
+        return plist
+    }
+
+    static var googleAPIKey: String {
+        guard let key = plist?["GoogleAPIKey"] as? String else {
             fatalError("Config.plist mit GoogleAPIKey fehlt")
         }
         return key
+    }
+
+    static var apiBaseURL: String? {
+        plist?["APIBaseURL"] as? String
     }
 }

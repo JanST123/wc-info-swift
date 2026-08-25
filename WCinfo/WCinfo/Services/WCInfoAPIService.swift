@@ -9,11 +9,21 @@ enum APIError: Error {
 
 actor WCInfoAPIService {
     static let shared = WCInfoAPIService()
-    private let baseURL = "https://api2.wc-info.de"
     private let decoder: JSONDecoder
 
     private init() {
         decoder = JSONDecoder()
+    }
+
+    private var baseURL: String {
+        #if targetEnvironment(simulator)
+        return "http://localhost:8000"
+        #else
+        if let url = Config.apiBaseURL, !url.isEmpty {
+            return url
+        }
+        return "https://api2.wc-info.de"
+        #endif
     }
 
     func fetchToiletsNearby(latitude: Double, longitude: Double, distance: Int = 25) async throws -> [Toilet] {

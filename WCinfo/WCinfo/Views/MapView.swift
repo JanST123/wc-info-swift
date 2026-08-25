@@ -5,7 +5,7 @@ import CoreLocation
 struct MapView: UIViewRepresentable {
     let center: CLLocationCoordinate2D
     let toilets: [Toilet]
-    let selectedToiletID: String?
+    let selectedToiletID: Int?
 
     func makeUIView(context: Context) -> GMSMapView {
         let camera = GMSCameraPosition.camera(withLatitude: center.latitude, longitude: center.longitude, zoom: 14)
@@ -28,8 +28,7 @@ struct MapView: UIViewRepresentable {
 
         mapView.clear()
         for toilet in toilets {
-            guard let coordinate = toilet.coordinate else { continue }
-            let marker = GMSMarker(position: coordinate)
+            let marker = GMSMarker(position: toilet.coordinate)
             marker.title = toilet.displayName
             marker.snippet = toilet.address
             marker.icon = UIImage(named: toilet.markerIconName)
@@ -61,13 +60,13 @@ struct MapView: UIViewRepresentable {
 
 extension Toilet {
     var displayName: String {
-        name.isEmpty ? "WC #\(nr)" : name
+        name.isEmpty ? "WC #\(id)" : name
     }
 
     var markerIconName: String {
-        if type.contains("d") {
+        if hasWheelchairAccess {
             return "toiletAccessible"
-        } else if type.contains("mw") {
+        } else if isGenderSeparated {
             return "toiletGenderSeparated"
         } else {
             return "toiletUnisex"

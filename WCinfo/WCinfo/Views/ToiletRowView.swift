@@ -18,7 +18,7 @@ struct ToiletRowView: View {
                 }
             }
 
-            Text("WC #\(toilet.nr)")
+            Text("WC #\(toilet.id)")
                 .font(.subheadline)
                 .foregroundStyle(.secondary)
 
@@ -33,8 +33,15 @@ struct ToiletRowView: View {
     }
 
     private var formattedDistance: String? {
-        guard let coordinate = toilet.coordinate, let userLocation else { return nil }
-        let location = CLLocation(latitude: coordinate.latitude, longitude: coordinate.longitude)
+        if let distance = toilet.distance {
+            if distance < 1 {
+                return String(format: "%.0f m", distance * 1000)
+            } else {
+                return String(format: "%.1f km", distance)
+            }
+        }
+        guard let userLocation else { return nil }
+        let location = CLLocation(latitude: toilet.coordinate.latitude, longitude: toilet.coordinate.longitude)
         let userLoc = CLLocation(latitude: userLocation.latitude, longitude: userLocation.longitude)
         let meters = location.distance(from: userLoc)
         if meters < 1000 {

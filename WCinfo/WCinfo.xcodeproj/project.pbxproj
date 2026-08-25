@@ -24,8 +24,10 @@
 		6A3DDC40BC2F73809752BFAF /* lavendel.png in Resources */ = {isa = PBXBuildFile; fileRef = 00548EAAF84084AA3316829D /* lavendel.png */; };
 		6C8F81E3BF61940B08F85A55 /* Config.plist.template in Resources */ = {isa = PBXBuildFile; fileRef = A787E4597E149070DF6A1DA9 /* Config.plist.template */; };
 		7DDBBDAA606D5208430B9BA8 /* ResizableSplit.swift in Sources */ = {isa = PBXBuildFile; fileRef = 291356F8CD1C1B4094AFA3BA /* ResizableSplit.swift */; };
+		9EA8648C54A6A1027D044452 /* OpeningTimeComponent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 440843A00BC7F792DD4ED1DA /* OpeningTimeComponent.swift */; };
 		9FCB72E93F36D796E108D924 /* logo.svg in Resources */ = {isa = PBXBuildFile; fileRef = 98206EC1B58637F02429F106 /* logo.svg */; };
 		A678300D3E8290C73D892652 /* ErrorManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 14F0BF0CDA797FBE168D113D /* ErrorManager.swift */; };
+		B3A2A3B1040446D1A12AD8A0 /* ToiletSymbolComponent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 76E12E960C37DF0A25ED81CE /* ToiletSymbolComponent.swift */; };
 		D9A9E19F2524F9D4D733FE0A /* logo.png in Resources */ = {isa = PBXBuildFile; fileRef = 5C8E292F362F3D863914E9A1 /* logo.png */; };
 		E48051D751C1814E2FD08D4F /* Toilet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 864669E1DB2A8D0EB3226197 /* Toilet.swift */; };
 		E61A3B8C6537331E0FCA1865 /* PlacesService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 24FE9E0F164661C96A583E1F /* PlacesService.swift */; };
@@ -40,12 +42,14 @@
 		24FE9E0F164661C96A583E1F /* PlacesService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlacesService.swift; sourceTree = "<group>"; };
 		291356F8CD1C1B4094AFA3BA /* ResizableSplit.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResizableSplit.swift; sourceTree = "<group>"; };
 		3551150A061077271C2DBBF1 /* Config.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Config.plist; sourceTree = "<group>"; };
+		440843A00BC7F792DD4ED1DA /* OpeningTimeComponent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OpeningTimeComponent.swift; sourceTree = "<group>"; };
 		45ABED18316429508872959F /* lavendel.webp */ = {isa = PBXFileReference; path = lavendel.webp; sourceTree = "<group>"; };
 		49C7B4EAF1737DA3F6D21CC6 /* HomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeView.swift; sourceTree = "<group>"; };
 		54EAD5A8713A39D5023CEFF9 /* ResultsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResultsView.swift; sourceTree = "<group>"; };
 		5C8E292F362F3D863914E9A1 /* logo.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = logo.png; sourceTree = "<group>"; };
 		6F47A8878AEBF2AEC5C14C84 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		741A6F3C66231D4657FACB0D /* LocationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationManager.swift; sourceTree = "<group>"; };
+		76E12E960C37DF0A25ED81CE /* ToiletSymbolComponent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ToiletSymbolComponent.swift; sourceTree = "<group>"; };
 		785017DA774C5F6FACF2DEA8 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		864669E1DB2A8D0EB3226197 /* Toilet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Toilet.swift; sourceTree = "<group>"; };
 		8813967B53E2B15594374841 /* Analytics.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Analytics.swift; sourceTree = "<group>"; };
@@ -76,9 +80,11 @@
 			children = (
 				49C7B4EAF1737DA3F6D21CC6 /* HomeView.swift */,
 				AD15A702EDED596300914B49 /* MapView.swift */,
+				440843A00BC7F792DD4ED1DA /* OpeningTimeComponent.swift */,
 				291356F8CD1C1B4094AFA3BA /* ResizableSplit.swift */,
 				54EAD5A8713A39D5023CEFF9 /* ResultsView.swift */,
 				1F26E9CA4889FD50D1DFD152 /* ToiletRowView.swift */,
+				76E12E960C37DF0A25ED81CE /* ToiletSymbolComponent.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -235,11 +241,13 @@
 				3530D800C9089F27660DA170 /* HomeView.swift in Sources */,
 				0CDD01A1104F0B0AD58FC906 /* LocationManager.swift in Sources */,
 				02AC307F0CA95959ED5C080F /* MapView.swift in Sources */,
+				9EA8648C54A6A1027D044452 /* OpeningTimeComponent.swift in Sources */,
 				E61A3B8C6537331E0FCA1865 /* PlacesService.swift in Sources */,
 				7DDBBDAA606D5208430B9BA8 /* ResizableSplit.swift in Sources */,
 				1B6C3C2CD9302A3D8587AEB5 /* ResultsView.swift in Sources */,
 				E48051D751C1814E2FD08D4F /* Toilet.swift in Sources */,
 				122B967E687BE9E819A028A7 /* ToiletRowView.swift in Sources */,
+				B3A2A3B1040446D1A12AD8A0 /* ToiletSymbolComponent.swift in Sources */,
 				0780964FC556E1DECF7B5E12 /* WCInfoAPIService.swift in Sources */,
 				18F4A9DE47C1F1897B9C9D69 /* WCinfoApp.swift in Sources */,
 			);

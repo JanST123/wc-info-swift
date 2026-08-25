@@ -20,8 +20,8 @@ struct Toilet: Identifiable, Codable {
     let isOpen: Bool?
     let distance: Double?
     let photos: [ToiletPhoto]
-    let openTimestamp: String?
-    let closeTimestamp: String?
+    let openTimestamp: Date?
+    let closeTimestamp: Date?
     let updated: String
 
     var coordinate: CLLocationCoordinate2D {
@@ -43,6 +43,46 @@ struct Toilet: Identifiable, Codable {
         case openTimestamp = "open_timestamp"
         case closeTimestamp = "close_timestamp"
         case updated
+    }
+
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        id = try container.decode(Int.self, forKey: .id)
+        name = try container.decode(String.self, forKey: .name)
+        owner = try container.decode(String.self, forKey: .owner)
+        lat = try container.decode(Double.self, forKey: .lat)
+        lon = try container.decode(Double.self, forKey: .lon)
+        placeId = try container.decodeIfPresent(String.self, forKey: .placeId)
+        status = try container.decode(String.self, forKey: .status)
+        isQualified = try container.decode(Bool.self, forKey: .isQualified)
+        isUnisex = try container.decode(Bool.self, forKey: .isUnisex)
+        isGenderSeparated = try container.decode(Bool.self, forKey: .isGenderSeparated)
+        hasWheelchairAccess = try container.decode(Bool.self, forKey: .hasWheelchairAccess)
+        hasChangingTable = try container.decode(Bool.self, forKey: .hasChangingTable)
+        source = try container.decodeIfPresent(String.self, forKey: .source)
+        address = try container.decodeIfPresent(String.self, forKey: .address)
+        website = try container.decodeIfPresent(String.self, forKey: .website)
+        isOpen = try container.decodeIfPresent(Bool.self, forKey: .isOpen)
+        distance = try container.decodeIfPresent(Double.self, forKey: .distance)
+        photos = (try? container.decode([ToiletPhoto].self, forKey: .photos)) ?? []
+        openTimestamp = try container.decodeISO8601IfPresent(forKey: .openTimestamp)
+        closeTimestamp = try container.decodeISO8601IfPresent(forKey: .closeTimestamp)
+        updated = try container.decode(String.self, forKey: .updated)
+    }
+}
+
+private extension KeyedDecodingContainer {
+    func decodeISO8601IfPresent(forKey key: K) throws -> Date? {
+        guard let string = try decodeIfPresent(String.self, forKey: key), !string.isEmpty else {
+            return nil
+        }
+        let formatter = ISO8601DateFormatter()
+        formatter.formatOptions = [.withInternetDateTime, .withFractionalSeconds]
+        if let date = formatter.date(from: string) {
+            return date
+        }
+        formatter.formatOptions = [.withInternetDateTime]
+        return formatter.date(from: string)
     }
 }
 

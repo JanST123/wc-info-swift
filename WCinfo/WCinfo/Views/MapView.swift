@@ -20,24 +20,43 @@ struct MapView: UIViewRepresentable {
 
     func updateUIView(_ mapView: GMSMapView, context: Context) {
         let currentCenter = mapView.camera.target
-        let shouldMove = abs(currentCenter.latitude - center.latitude) > 0.0001
+        let centerChanged = abs(currentCenter.latitude - center.latitude) > 0.0001
             || abs(currentCenter.longitude - center.longitude) > 0.0001
 
-        if shouldMove {
+        if centerChanged {
             let camera = GMSCameraPosition.camera(withLatitude: center.latitude, longitude: center.longitude, zoom: 14)
             mapView.animate(to: camera)
         }
 
         mapView.clear()
+        var selectedMarker: GMSMarker?
         for toilet in toilets {
             let marker = GMSMarker(position: toilet.coordinate)
             marker.title = toilet.displayName
             marker.snippet = toilet.accessibilitySnippet
             marker.icon = UIImage(named: toilet.markerIconName)
+            marker.userData = toilet.id
             marker.map = mapView
             if toilet.id == selectedToiletID {
-                mapView.selectedMarker = marker
+                selectedMarker = marker
             }
+        }
+
+        if let selectedMarker {
+            mapView.selectedMarker = selectedMarker
+
+            let selectionChanged = context.coordinator.lastSelectedID != selectedToiletID
+            if selectionChanged {
+                let camera = GMSCameraPosition.camera(
+                    withTarget: selectedMarker.position,
+                    zoom: max(mapView.camera.zoom, 16)
+                )
+                mapView.animate(to: camera)
+                context.coordinator.lastSelectedID = selectedToiletID
+            }
+        } else {
+            mapView.selectedMarker = nil
+            context.coordinator.lastSelectedID = selectedToiletID
         }
 
         mapView.accessibilityLabel = "Karte mit \(toilets.count) Toiletten in der Nähe"
@@ -48,6 +67,8 @@ struct MapView: UIViewRepresentable {
     }
 
     final class Coordinator: NSObject, GMSMapViewDelegate {
+        var lastSelectedID: Int?
+
         @MainActor
         func mapView(_ mapView: GMSMapView, didFailToLocateUserWithError error: Error) {
             print("[MapView] didFailToLocateUserWithError: \(error.localizedDescription)")

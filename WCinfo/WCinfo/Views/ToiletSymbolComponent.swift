@@ -9,16 +9,16 @@ struct ToiletSymbolComponent: View {
     var body: some View {
         HStack(spacing: 8) {
             if isGenderSeparated {
-                icon("toiletGenderSeparated", label: "Getrennte Toiletten")
+                icon("toiletIconGenderSeparated", label: "Getrennte Toiletten")
             }
             if hasWheelchairAccess {
-                icon("toiletAccessible", label: "Rollstuhlgerecht")
+                icon("toiletIconWheelchair", label: "Rollstuhlgerecht")
             }
             if hasChangingTable {
-                icon("toiletChangingTable", label: "Wickeltisch")
+                icon("toiletIconChangingTable", label: "Wickeltisch")
             }
             if isUnisex {
-                icon("toiletUnisex", label: "Unisex")
+                icon("toiletIconUnisex", label: "Unisex")
             }
         }
         .frame(height: 16)

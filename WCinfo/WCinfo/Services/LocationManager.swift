@@ -5,7 +5,6 @@ import CoreLocation
 final class LocationManager: NSObject, ObservableObject {
     @Published var authorizationStatus: CLAuthorizationStatus = .notDetermined
     @Published var location: CLLocation?
-    @Published var error: Error?
 
     private let manager = CLLocationManager()
 
@@ -21,6 +20,7 @@ final class LocationManager: NSObject, ObservableObject {
     }
 
     func requestAuthorization() {
+        Analytics.shared.trackEvent(category: "location", action: "request_authorization")
         manager.requestWhenInUseAuthorization()
     }
 
@@ -29,7 +29,6 @@ final class LocationManager: NSObject, ObservableObject {
             requestAuthorization()
             return
         }
-        error = nil
         manager.requestLocation()
     }
 }
@@ -38,8 +37,20 @@ extension LocationManager: CLLocationManagerDelegate {
     nonisolated func locationManagerDidChangeAuthorization(_ manager: CLLocationManager) {
         Task { @MainActor in
             authorizationStatus = manager.authorizationStatus
-            if isAuthorized {
+            switch authorizationStatus {
+            case .authorizedWhenInUse, .authorizedAlways:
+                Analytics.shared.trackEvent(category: "location", action: "authorized")
                 manager.requestLocation()
+            case .denied, .restricted:
+                Analytics.shared.trackEvent(category: "location", action: "denied")
+                ErrorManager.shared.reportMessage(
+                    "Standortzugriff wurde verweigert. Bitte aktiviere den Standortzugriff in den Einstellungen, um Toiletten in der Nähe zu finden.",
+                    context: ["status": String(describing: authorizationStatus)]
+                )
+            case .notDetermined:
+                break
+            @unknown default:
+                break
             }
         }
     }
@@ -47,12 +58,16 @@ extension LocationManager: CLLocationManagerDelegate {
     nonisolated func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
         Task { @MainActor in
             location = locations.last
+            Analytics.shared.trackEvent(category: "location", action: "updated")
         }
     }
 
     nonisolated func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
         Task { @MainActor in
-            self.error = error
+            let nsError = error as NSError
+            // Ignore location simulation cancellation.
+            guard nsError.code != CLError.Code.locationUnknown.rawValue else { return }
+            ErrorManager.shared.report(error, context: ["source": "LocationManager"])
         }
     }
 }

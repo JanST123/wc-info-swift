@@ -12,11 +12,20 @@
 ## Purpose
 Minimal native iOS app to search nearby public toilets via the existing WC-Info REST API (`https://api2.wc-info.de`).
 
+## General Instructions (valid for every change)
+1. **Accessibility first** — the primary audience is people with disabilities. A11Y has higher priority than design polish. Use labels, hints, adjustable actions, dynamic type, and reduce-motion awareness everywhere.
+2. **Error handling** — all errors, especially backend errors, must be displayed to the user. If the error body contains a `message` field, show it. Only one (the most recent) error message is shown at a time; never flood the screen. On PATCH/POST errors, do not close the form so the user can retry.
+3. **Invalid input** — mark invalid fields clearly and provide a hint explaining what needs to change.
+4. **Sentry logging** — every error is logged to Sentry using the DSN stored in `Config.plist` under `SentryDSN`.
+5. **Matomo tracking** — user interactions are tracked on Matomo using the host and site ID stored in `Config.plist` under `MatomoHost` and `MatomoSiteID`.
+
 ## Key Dependencies
 - `GoogleMaps` (ios-maps-sdk) — embedded Google Map on the results screen
 - `GooglePlaces` (ios-places-sdk) — autocomplete and place coordinate lookup on the home screen
+- `Sentry` (sentry-cocoa) — crash and error reporting
+- `MatomoTracker` (matomo-ios-tracker) — privacy-friendly analytics
 
-Both are declared in `WCinfo/project.yml`.
+All are declared in `WCinfo/project.yml`.
 
 ## Build & Run
 1. Generate the Xcode project:
@@ -37,9 +46,10 @@ Both are declared in `WCinfo/project.yml`.
 - To build locally, copy the template and insert a valid key:
   ```bash
   cp WCinfo/Resources/Config.plist.template WCinfo/Resources/Config.plist
-  # Then replace YOUR_GOOGLE_API_KEY_HERE in WCinfo/Resources/Config.plist
+  # Then replace YOUR_GOOGLE_API_KEY_HERE and YOUR_SENTRY_DSN_HERE in WCinfo/Resources/Config.plist
   ```
-- The key is loaded at app launch in `WCinfo/WCinfo/WCinfoApp.swift` via `Config.googleAPIKey`.
+- The Google key is loaded at app launch in `WCinfo/WCinfo/WCinfoApp.swift` via `Config.googleAPIKey`.
+- Sentry DSN, Matomo host, and Matomo site ID are also loaded from `Config.plist`.
 
 ## Architecture
 - `WCinfoApp.swift` — app entry point, provides Google API keys.
@@ -48,12 +58,15 @@ Both are declared in `WCinfo/project.yml`.
   - `WCInfoAPIService.swift` — URLSession wrapper for WC-Info endpoints.
   - `PlacesService.swift` — Google Places autocomplete + coordinate lookup.
   - `LocationManager.swift` — CLLocation permission and one-shot location requests.
+  - `Analytics.swift` — Matomo event/screen tracking helper.
+  - `ErrorManager.swift` — global single-error banner + Sentry reporting.
 - `Views/`
   - `HomeView.swift` — search input with autocomplete, search & "near me" buttons.
   - `ResultsView.swift` — split list/map screen.
   - `ResizableSplit.swift` — custom draggable split layout.
   - `MapView.swift` — `GMSMapView` wrapper showing markers.
   - `ToiletRowView.swift` — row view for the results list.
+  - `ErrorBannerView.swift` — displayed via overlay in `WCinfoApp`.
 
 ## API Endpoints Used
 - `GET /toilets/nearby/{lat}/{lon}?distance={km}` — returns `[Toilet]`.

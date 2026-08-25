@@ -6,7 +6,6 @@ struct ResultsView: View {
 
     @State private var toilets: [Toilet] = []
     @State private var isLoading = true
-    @State private var errorMessage: String?
     @State private var selectedToiletID: Int?
     @State private var portraitRatio: CGFloat = 0.66
     @State private var landscapeRatio: CGFloat = 0.5
@@ -21,8 +20,12 @@ struct ResultsView: View {
                 isDragging: $isDraggingSplit
             ) {
                 listContent
+                    .accessibilityElement(children: .contain)
+                    .accessibilityLabel("Listenansicht der Toiletten")
             } secondary: {
                 mapContent
+                    .accessibilityElement(children: .contain)
+                    .accessibilityLabel("Kartenansicht der Toiletten")
             }
         }
         .navigationTitle(location.name)
@@ -30,10 +33,8 @@ struct ResultsView: View {
         .task {
             await loadToilets()
         }
-        .alert("Fehler", isPresented: .constant(errorMessage != nil)) {
-            Button("OK") { errorMessage = nil }
-        } message: {
-            Text(errorMessage ?? "")
+        .onAppear {
+            Analytics.shared.trackScreen("Results")
         }
     }
 
@@ -42,8 +43,10 @@ struct ResultsView: View {
             if isLoading {
                 ProgressView("Suche Toiletten...")
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
+                    .accessibilityLabel("Toiletten werden gesucht")
             } else if toilets.isEmpty {
                 ContentUnavailableView("Keine Toiletten gefunden", systemImage: "toilet")
+                    .accessibilityLabel("Keine Toiletten in der Nähe gefunden")
             } else {
                 List(toilets) { toilet in
                     ToiletRowView(toilet: toilet, userLocation: location.coordinate)
@@ -51,9 +54,13 @@ struct ResultsView: View {
                         .contentShape(Rectangle())
                         .onTapGesture {
                             selectedToiletID = toilet.id
+                            Analytics.shared.trackEvent(category: "results", action: "select_toilet", name: String(toilet.id))
                         }
+                        .accessibilityHint("Toilette auf der Karte anzeigen")
+                        .accessibilityAddTraits(.isButton)
                 }
                 .listStyle(.plain)
+                .accessibilityLabel("Toilettenliste")
             }
         }
     }
@@ -65,15 +72,21 @@ struct ResultsView: View {
 
     private func loadToilets() async {
         isLoading = true
+        defer { isLoading = false }
         do {
             toilets = try await WCInfoAPIService.shared.fetchToiletsNearby(
                 latitude: location.coordinate.latitude,
                 longitude: location.coordinate.longitude,
                 distance: 25
             )
+            Analytics.shared.trackEvent(category: "results", action: "loaded", name: location.name, value: Float(toilets.count))
         } catch {
-            errorMessage = "Toiletten konnten nicht geladen werden."
+            ErrorManager.shared.report(error, context: [
+                "action": "fetchToiletsNearby",
+                "latitude": location.coordinate.latitude,
+                "longitude": location.coordinate.longitude
+            ])
+            Analytics.shared.trackEvent(category: "results", action: "error", name: location.name)
         }
-        isLoading = false
     }
 }

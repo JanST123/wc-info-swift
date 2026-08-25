@@ -9,18 +9,23 @@
 /* Begin PBXBuildFile section */
 		02AC307F0CA95959ED5C080F /* MapView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD15A702EDED596300914B49 /* MapView.swift */; };
 		02DD414F1B3D5B32AE2ABC3E /* GoogleMaps in Frameworks */ = {isa = PBXBuildFile; productRef = F71DC5661CBF4C512ACEDF91 /* GoogleMaps */; };
+		06401ADE15F57DD7C96E6A87 /* Sentry in Frameworks */ = {isa = PBXBuildFile; productRef = 010FE5864D8099A9F975D792 /* Sentry */; };
 		0780964FC556E1DECF7B5E12 /* WCInfoAPIService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B9E1A59C7B37C57F6BAEEBE /* WCInfoAPIService.swift */; };
 		0CDD01A1104F0B0AD58FC906 /* LocationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 741A6F3C66231D4657FACB0D /* LocationManager.swift */; };
 		122B967E687BE9E819A028A7 /* ToiletRowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F26E9CA4889FD50D1DFD152 /* ToiletRowView.swift */; };
 		18F4A9DE47C1F1897B9C9D69 /* WCinfoApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 925DEEFD3CE16497190BF220 /* WCinfoApp.swift */; };
 		1B6C3C2CD9302A3D8587AEB5 /* ResultsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 54EAD5A8713A39D5023CEFF9 /* ResultsView.swift */; };
+		28C8EBEB2096038538C1D671 /* Analytics.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8813967B53E2B15594374841 /* Analytics.swift */; };
 		3530D800C9089F27660DA170 /* HomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49C7B4EAF1737DA3F6D21CC6 /* HomeView.swift */; };
 		41971C017127FD081AC3DCA0 /* lavendel.webp in Resources */ = {isa = PBXBuildFile; fileRef = 45ABED18316429508872959F /* lavendel.webp */; };
 		44FCF2006384CA06AF06B219 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 785017DA774C5F6FACF2DEA8 /* Assets.xcassets */; };
 		53B5ADA9717EB304257E985D /* GooglePlaces in Frameworks */ = {isa = PBXBuildFile; productRef = 6DADB02E48D49CCBDF450B83 /* GooglePlaces */; };
+		631B895249125F1A43CB0456 /* MatomoTracker in Frameworks */ = {isa = PBXBuildFile; productRef = 3B0BD2B42D6FABBFB9FE4C35 /* MatomoTracker */; };
 		6A3DDC40BC2F73809752BFAF /* lavendel.png in Resources */ = {isa = PBXBuildFile; fileRef = 00548EAAF84084AA3316829D /* lavendel.png */; };
+		6C8F81E3BF61940B08F85A55 /* Config.plist.template in Resources */ = {isa = PBXBuildFile; fileRef = A787E4597E149070DF6A1DA9 /* Config.plist.template */; };
 		7DDBBDAA606D5208430B9BA8 /* ResizableSplit.swift in Sources */ = {isa = PBXBuildFile; fileRef = 291356F8CD1C1B4094AFA3BA /* ResizableSplit.swift */; };
 		9FCB72E93F36D796E108D924 /* logo.svg in Resources */ = {isa = PBXBuildFile; fileRef = 98206EC1B58637F02429F106 /* logo.svg */; };
+		A678300D3E8290C73D892652 /* ErrorManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 14F0BF0CDA797FBE168D113D /* ErrorManager.swift */; };
 		D9A9E19F2524F9D4D733FE0A /* logo.png in Resources */ = {isa = PBXBuildFile; fileRef = 5C8E292F362F3D863914E9A1 /* logo.png */; };
 		E48051D751C1814E2FD08D4F /* Toilet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 864669E1DB2A8D0EB3226197 /* Toilet.swift */; };
 		E61A3B8C6537331E0FCA1865 /* PlacesService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 24FE9E0F164661C96A583E1F /* PlacesService.swift */; };
@@ -30,11 +35,12 @@
 /* Begin PBXFileReference section */
 		00548EAAF84084AA3316829D /* lavendel.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = lavendel.png; sourceTree = "<group>"; };
 		0B9E1A59C7B37C57F6BAEEBE /* WCInfoAPIService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WCInfoAPIService.swift; sourceTree = "<group>"; };
+		14F0BF0CDA797FBE168D113D /* ErrorManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ErrorManager.swift; sourceTree = "<group>"; };
 		1F26E9CA4889FD50D1DFD152 /* ToiletRowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ToiletRowView.swift; sourceTree = "<group>"; };
 		24FE9E0F164661C96A583E1F /* PlacesService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlacesService.swift; sourceTree = "<group>"; };
 		291356F8CD1C1B4094AFA3BA /* ResizableSplit.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResizableSplit.swift; sourceTree = "<group>"; };
 		3551150A061077271C2DBBF1 /* Config.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Config.plist; sourceTree = "<group>"; };
-		45ABED18316429508872959F /* lavendel.webp */ = {isa = PBXFileReference; lastKnownFileType = file; path = lavendel.webp; sourceTree = "<group>"; };
+		45ABED18316429508872959F /* lavendel.webp */ = {isa = PBXFileReference; path = lavendel.webp; sourceTree = "<group>"; };
 		49C7B4EAF1737DA3F6D21CC6 /* HomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeView.swift; sourceTree = "<group>"; };
 		54EAD5A8713A39D5023CEFF9 /* ResultsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResultsView.swift; sourceTree = "<group>"; };
 		5C8E292F362F3D863914E9A1 /* logo.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = logo.png; sourceTree = "<group>"; };
@@ -42,10 +48,12 @@
 		741A6F3C66231D4657FACB0D /* LocationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationManager.swift; sourceTree = "<group>"; };
 		785017DA774C5F6FACF2DEA8 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		864669E1DB2A8D0EB3226197 /* Toilet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Toilet.swift; sourceTree = "<group>"; };
+		8813967B53E2B15594374841 /* Analytics.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Analytics.swift; sourceTree = "<group>"; };
 		925DEEFD3CE16497190BF220 /* WCinfoApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WCinfoApp.swift; sourceTree = "<group>"; };
-		98206EC1B58637F02429F106 /* logo.svg */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = logo.svg; sourceTree = "<group>"; };
+		98206EC1B58637F02429F106 /* logo.svg */ = {isa = PBXFileReference; path = logo.svg; sourceTree = "<group>"; };
+		A787E4597E149070DF6A1DA9 /* Config.plist.template */ = {isa = PBXFileReference; path = Config.plist.template; sourceTree = "<group>"; };
 		AD15A702EDED596300914B49 /* MapView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapView.swift; sourceTree = "<group>"; };
-		E44E24B4A1CB41771AAD8444 /* WCinfo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = WCinfo.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		E44E24B4A1CB41771AAD8444 /* WCinfo.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = WCinfo.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -55,6 +63,8 @@
 			files = (
 				02DD414F1B3D5B32AE2ABC3E /* GoogleMaps in Frameworks */,
 				53B5ADA9717EB304257E985D /* GooglePlaces in Frameworks */,
+				06401ADE15F57DD7C96E6A87 /* Sentry in Frameworks */,
+				631B895249125F1A43CB0456 /* MatomoTracker in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -77,6 +87,7 @@
 			isa = PBXGroup;
 			children = (
 				3551150A061077271C2DBBF1 /* Config.plist */,
+				A787E4597E149070DF6A1DA9 /* Config.plist.template */,
 				00548EAAF84084AA3316829D /* lavendel.png */,
 				45ABED18316429508872959F /* lavendel.webp */,
 				5C8E292F362F3D863914E9A1 /* logo.png */,
@@ -118,6 +129,8 @@
 		B1B40274A79E7026B8040A8A /* Services */ = {
 			isa = PBXGroup;
 			children = (
+				8813967B53E2B15594374841 /* Analytics.swift */,
+				14F0BF0CDA797FBE168D113D /* ErrorManager.swift */,
 				741A6F3C66231D4657FACB0D /* LocationManager.swift */,
 				24FE9E0F164661C96A583E1F /* PlacesService.swift */,
 				0B9E1A59C7B37C57F6BAEEBE /* WCInfoAPIService.swift */,
@@ -152,6 +165,8 @@
 			packageProductDependencies = (
 				F71DC5661CBF4C512ACEDF91 /* GoogleMaps */,
 				6DADB02E48D49CCBDF450B83 /* GooglePlaces */,
+				010FE5864D8099A9F975D792 /* Sentry */,
+				3B0BD2B42D6FABBFB9FE4C35 /* MatomoTracker */,
 			);
 			productName = WCinfo;
 			productReference = E44E24B4A1CB41771AAD8444 /* WCinfo.app */;
@@ -165,6 +180,8 @@
 			attributes = {
 				BuildIndependentTargetsInParallel = YES;
 				LastUpgradeCheck = 1430;
+				TargetAttributes = {
+				};
 			};
 			buildConfigurationList = CA1DF3C2A23A7E17B1907AD1 /* Build configuration list for PBXProject "WCinfo" */;
 			developmentRegion = en;
@@ -178,6 +195,8 @@
 			packageReferences = (
 				81E62FC85683ACFFA1C2431D /* XCRemoteSwiftPackageReference "ios-maps-sdk" */,
 				B5DFB8D04942C973B39DC680 /* XCRemoteSwiftPackageReference "ios-places-sdk" */,
+				DABB3F2DC95CFF01A46EB69B /* XCRemoteSwiftPackageReference "matomo-sdk-ios" */,
+				BBDCAA7971BD3DC5E06E792D /* XCRemoteSwiftPackageReference "sentry-cocoa" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = BA5B22E785E0C155465CA791 /* Products */;
@@ -196,6 +215,7 @@
 			files = (
 				44FCF2006384CA06AF06B219 /* Assets.xcassets in Resources */,
 				FDE47DC0A6566323F91AE29B /* Config.plist in Resources */,
+				6C8F81E3BF61940B08F85A55 /* Config.plist.template in Resources */,
 				6A3DDC40BC2F73809752BFAF /* lavendel.png in Resources */,
 				41971C017127FD081AC3DCA0 /* lavendel.webp in Resources */,
 				D9A9E19F2524F9D4D733FE0A /* logo.png in Resources */,
@@ -210,6 +230,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				28C8EBEB2096038538C1D671 /* Analytics.swift in Sources */,
+				A678300D3E8290C73D892652 /* ErrorManager.swift in Sources */,
 				3530D800C9089F27660DA170 /* HomeView.swift in Sources */,
 				0CDD01A1104F0B0AD58FC906 /* LocationManager.swift in Sources */,
 				02AC307F0CA95959ED5C080F /* MapView.swift in Sources */,
@@ -288,11 +310,8 @@
 				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOLS = YES;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = 932937B3UQ;
 				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				INFOPLIST_FILE = WCinfo/Info.plist;
-				INFOPLIST_KEY_CFBundleDisplayName = WCinfo;
-				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.travel";
 				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -375,11 +394,8 @@
 				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOLS = YES;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = 932937B3UQ;
 				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				INFOPLIST_FILE = WCinfo/Info.plist;
-				INFOPLIST_KEY_CFBundleDisplayName = WCinfo;
-				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.travel";
 				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -433,9 +449,35 @@
 				minimumVersion = 9.0.0;
 			};
 		};
+		BBDCAA7971BD3DC5E06E792D /* XCRemoteSwiftPackageReference "sentry-cocoa" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/getsentry/sentry-cocoa";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 8.36.0;
+			};
+		};
+		DABB3F2DC95CFF01A46EB69B /* XCRemoteSwiftPackageReference "matomo-sdk-ios" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/matomo-org/matomo-sdk-ios";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 7.8.0;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		010FE5864D8099A9F975D792 /* Sentry */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = BBDCAA7971BD3DC5E06E792D /* XCRemoteSwiftPackageReference "sentry-cocoa" */;
+			productName = Sentry;
+		};
+		3B0BD2B42D6FABBFB9FE4C35 /* MatomoTracker */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = DABB3F2DC95CFF01A46EB69B /* XCRemoteSwiftPackageReference "matomo-sdk-ios" */;
+			productName = MatomoTracker;
+		};
 		6DADB02E48D49CCBDF450B83 /* GooglePlaces */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = B5DFB8D04942C973B39DC680 /* XCRemoteSwiftPackageReference "ios-places-sdk" */;

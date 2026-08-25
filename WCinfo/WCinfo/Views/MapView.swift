@@ -12,6 +12,8 @@ struct MapView: UIViewRepresentable {
         let mapView = GMSMapView(frame: .zero, camera: camera)
         mapView.settings.myLocationButton = true
         mapView.delegate = context.coordinator
+        mapView.accessibilityLabel = "Karte mit \(toilets.count) Toiletten in der Nähe"
+        mapView.isAccessibilityElement = true
         print("[MapView] Created map at \(center.latitude), \(center.longitude)")
         return mapView
     }
@@ -30,13 +32,15 @@ struct MapView: UIViewRepresentable {
         for toilet in toilets {
             let marker = GMSMarker(position: toilet.coordinate)
             marker.title = toilet.displayName
-            marker.snippet = toilet.address
+            marker.snippet = toilet.accessibilitySnippet
             marker.icon = UIImage(named: toilet.markerIconName)
             marker.map = mapView
             if toilet.id == selectedToiletID {
                 mapView.selectedMarker = marker
             }
         }
+
+        mapView.accessibilityLabel = "Karte mit \(toilets.count) Toiletten in der Nähe"
     }
 
     func makeCoordinator() -> Coordinator {
@@ -44,8 +48,10 @@ struct MapView: UIViewRepresentable {
     }
 
     final class Coordinator: NSObject, GMSMapViewDelegate {
+        @MainActor
         func mapView(_ mapView: GMSMapView, didFailToLocateUserWithError error: Error) {
             print("[MapView] didFailToLocateUserWithError: \(error.localizedDescription)")
+            ErrorManager.shared.report(error, context: ["source": "MapView.userLocation"])
         }
 
         func mapViewDidStartTileRendering(_ mapView: GMSMapView) {
@@ -61,6 +67,15 @@ struct MapView: UIViewRepresentable {
 extension Toilet {
     var displayName: String {
         name.isEmpty ? "WC #\(id)" : name
+    }
+
+    var accessibilitySnippet: String {
+        var parts = [String]()
+        if hasWheelchairAccess { parts.append("Rollstuhlgerecht") }
+        if isGenderSeparated { parts.append("Getrennte Toiletten") } else { parts.append("Unisex") }
+        if hasChangingTable { parts.append("Wickeltisch") }
+        if let address, !address.isEmpty { parts.append(address) }
+        return parts.joined(separator: ", ")
     }
 
     var markerIconName: String {

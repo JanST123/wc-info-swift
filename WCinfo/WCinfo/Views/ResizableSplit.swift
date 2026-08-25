@@ -8,10 +8,12 @@ struct ResizableSplit<Primary: View, Secondary: View>: View {
     @ViewBuilder let secondary: () -> Secondary
 
     @State private var previewRatio: CGFloat?
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
     private let minRatio: CGFloat = 0.2
     private let maxRatio: CGFloat = 0.8
     private let handleThickness: CGFloat = 28
+    private let step: CGFloat = 0.05
 
     private var activeRatio: CGFloat {
         previewRatio ?? ratio
@@ -73,6 +75,20 @@ struct ResizableSplit<Primary: View, Secondary: View>: View {
                 }
             }
             .contentShape(Rectangle())
+            .accessibilityElement(children: .ignore)
+            .accessibilityLabel(axis == .horizontal ? "Teiler horizontal" : "Teiler vertikal")
+            .accessibilityValue(String(format: "Listengröße %.0f Prozent", activeRatio * 100))
+            .accessibilityHint("Passe die Größe der Liste und der Karte an.")
+            .accessibilityAdjustableAction { direction in
+                switch direction {
+                case .increment:
+                    updateRatio(ratio + step)
+                case .decrement:
+                    updateRatio(ratio - step)
+                @unknown default:
+                    break
+                }
+            }
             .highPriorityGesture(
                 DragGesture(minimumDistance: 0)
                     .onChanged { value in
@@ -86,13 +102,22 @@ struct ResizableSplit<Primary: View, Secondary: View>: View {
                     }
                     .onEnded { _ in
                         if let final = previewRatio {
-                            withAnimation(.easeOut(duration: 0.15)) {
-                                ratio = final
-                            }
+                            updateRatio(final)
                         }
                         previewRatio = nil
                         isDragging = false
                     }
             )
+    }
+
+    private func updateRatio(_ newRatio: CGFloat) {
+        let clamped = min(maxRatio, max(minRatio, newRatio))
+        if reduceMotion {
+            ratio = clamped
+        } else {
+            withAnimation(.easeOut(duration: 0.15)) {
+                ratio = clamped
+            }
+        }
     }
 }

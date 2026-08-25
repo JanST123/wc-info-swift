@@ -6,5 +6,11 @@
 	<string>YOUR_GOOGLE_API_KEY_HERE</string>
 	<key>APIBaseURL</key>
 	<string>https://api2.wc-info.de</string>
+	<key>SentryDSN</key>
+	<string>YOUR_SENTRY_DSN_HERE</string>
+	<key>MatomoHost</key>
+	<string>https://piwik.jan8.de</string>
+	<key>MatomoSiteID</key>
+	<string>17</string>
 </dict>
 </plist>

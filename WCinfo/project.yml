@@ -25,6 +25,10 @@ targets:
         product: GoogleMaps
       - package: GooglePlaces
         product: GooglePlaces
+      - package: Sentry
+        product: Sentry
+      - package: MatomoTracker
+        product: MatomoTracker
 packages:
   GoogleMaps:
     url: https://github.com/googlemaps/ios-maps-sdk
@@ -32,3 +36,9 @@ packages:
   GooglePlaces:
     url: https://github.com/googlemaps/ios-places-sdk
     from: 9.0.0
+  Sentry:
+    url: https://github.com/getsentry/sentry-cocoa
+    from: 8.36.0
+  MatomoTracker:
+    url: https://github.com/matomo-org/matomo-sdk-ios
+    from: 7.8.0

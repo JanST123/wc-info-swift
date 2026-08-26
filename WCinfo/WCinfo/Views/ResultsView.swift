@@ -104,3 +104,8 @@ struct ResultsView: View {
         }
     }
 }
+
+// A SwiftUI preview.
+#Preview {
+    ResultsView(location: .init(name: "Much-Niederheimbach", coordinate: .init(latitude: 50.895725646813936, longitude: 7.355648585165031)))
+}

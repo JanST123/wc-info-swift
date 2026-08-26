@@ -20,11 +20,9 @@ struct ResultsView: View {
                 isDragging: $isDraggingSplit
             ) {
                 listContent
-                    .accessibilityElement(children: .contain)
                     .accessibilityLabel("Listenansicht der Toiletten")
             } secondary: {
                 mapContent
-                    .accessibilityElement(children: .contain)
                     .accessibilityLabel("Kartenansicht der Toiletten")
             }
         }

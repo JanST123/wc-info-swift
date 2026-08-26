@@ -9,27 +9,32 @@ struct ToiletSymbolComponent: View {
     var body: some View {
         HStack(spacing: 8) {
             if isGenderSeparated {
-                systemIcon("person.2", label: "Getrennte Toiletten")
+                toiletIcon("restroom-solid-full", label: "Getrennte Toiletten")
             }
             if hasWheelchairAccess {
-                systemIcon("accessibility", label: "Rollstuhlgerecht")
+                toiletIcon("wheelchair-solid-full", label: "Rollstuhlgerecht")
             }
             if hasChangingTable {
-                systemIcon("baby.fill", label: "Wickeltisch")
+                toiletIcon("baby-solid-full", label: "Wickeltisch")
             }
             if isUnisex {
-                systemIcon("person", label: "Unisex")
+                toiletIcon("toilet-paper-solid-full", label: "Unisex")
             }
         }
         .frame(height: 20)
     }
 
-    private func systemIcon(_ name: String, label: String) -> some View {
-        Image(systemName: name)
+    private func toiletIcon(_ name: String, label: String) -> some View {
+        Image(name)
             .resizable()
             .aspectRatio(contentMode: .fit)
             .frame(width: 20, height: 20)
             .foregroundColor(.purple)
             .accessibilityLabel(label)
     }
+}
+
+// A SwiftUI preview.
+#Preview {
+    ResultsView(location: .init(name: "Much-Niederheimbach", coordinate: .init(latitude: 50.895725646813936, longitude: 7.355648585165031)))
 }

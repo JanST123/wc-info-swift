@@ -17,6 +17,7 @@ struct ToiletRowView: View {
                 .accessibilityAddTraits(.isButton)
 
             if isActive {
+                Spacer(minLength: 8)
                 HStack(spacing: 16) {
                     Button(action: onNavigate) {
                         Label("Navigieren", systemImage: "arrow.triangle.turn.up.right.diamond.fill")
@@ -26,6 +27,8 @@ struct ToiletRowView: View {
                     .tint(.purple)
                     .accessibilityHint("Startet die Routenführung zu dieser Toilette.")
 
+                    Spacer()
+                    
                     Button(action: onShowDetails) {
                         Text("Details ansehen ›")
                             .font(.footnote.bold())

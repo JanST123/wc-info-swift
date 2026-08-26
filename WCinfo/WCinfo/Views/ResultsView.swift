@@ -43,9 +43,13 @@ struct ResultsView: View {
                 .presentationDragIndicator(.visible)
         }
         .sheet(isPresented: $isShowingCreateSheet) {
-            CreateScreen(location: location)
-                .presentationDetents([.medium, .large])
-                .presentationDragIndicator(.visible)
+            CreateScreen(location: location) {
+                Task {
+                    await loadToilets()
+                }
+            }
+            .presentationDetents([.medium, .large])
+            .presentationDragIndicator(.visible)
         }
     }
 

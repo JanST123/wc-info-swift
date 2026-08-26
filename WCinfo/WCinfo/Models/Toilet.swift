@@ -174,3 +174,59 @@ struct SearchedLocation: Identifiable, Hashable {
         lhs.id == rhs.id
     }
 }
+
+struct AddToiletPayload: Codable {
+    var name: String?
+    var owner: String?
+    var lat: Double?
+    var lon: Double?
+    var placeId: String?
+    var isUnisex: Bool?
+    var isGenderSeparated: Bool?
+    var hasWheelchairAccess: Bool?
+    var hasChangingTable: Bool?
+    var address: String?
+    var website: String?
+    var comment: String?
+    var euroKey: String?
+    var status: String?
+
+    enum CodingKeys: String, CodingKey {
+        case name, owner, lat, lon
+        case placeId = "place_id"
+        case isUnisex = "is_unisex"
+        case isGenderSeparated = "is_gender_separated"
+        case hasWheelchairAccess = "has_wheelchair_access"
+        case hasChangingTable = "has_changing_table"
+        case address, website, comment
+        case euroKey = "euro_key"
+        case status
+    }
+}
+
+struct AddToiletResponse: Codable {
+    let success: Bool
+    let id: Int
+}
+
+struct NearbyPlaceOption: Identifiable, Hashable {
+    let id: String // placeID
+    let name: String
+    let secondaryText: String?
+}
+
+struct PlaceDetails: Hashable {
+    let placeID: String
+    let name: String?
+    let formattedAddress: String?
+    let website: String?
+    let coordinate: CLLocationCoordinate2D?
+
+    func hash(into hasher: inout Hasher) {
+        hasher.combine(placeID)
+    }
+
+    static func == (lhs: PlaceDetails, rhs: PlaceDetails) -> Bool {
+        lhs.placeID == rhs.placeID
+    }
+}

@@ -88,13 +88,46 @@ actor WCInfoAPIService {
         }
     }
 
-    private func performRequest(url: URL) async throws -> Data {
-        addBreadcrumb(category: "api", message: "GET \(url.absoluteString)")
+    func addToilet(_ payload: AddToiletPayload) async throws -> AddToiletResponse {
+        guard let url = URL(string: "\(baseURL)/toilet/add") else {
+            throw WCInfoAPIError.invalidURL
+        }
+        let encoder = JSONEncoder()
+        let bodyData = try encoder.encode(payload)
+        let data = try await performRequest(url: url, method: "POST", body: bodyData)
+        do {
+            return try decoder.decode(AddToiletResponse.self, from: data)
+        } catch {
+            let rawBody = String(data: data, encoding: .utf8)
+            throw WCInfoAPIError.decodingError(underlying: error, responseBody: rawBody)
+        }
+    }
+
+    private func performRequest(url: URL, method: String = "GET", body: Data? = nil, isRetryAfterCSRF: Bool = false) async throws -> Data {
+        addBreadcrumb(category: "api", message: "\(method) \(url.absoluteString)")
+
+        var request = URLRequest(url: url)
+        request.httpMethod = method
+        request.setValue("application/json", forHTTPHeaderField: "Accept")
+
+        if let body {
+            request.httpBody = body
+            request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        }
+
+        // Attach XSRF-TOKEN if available in cookie storage
+        if let cookies = HTTPCookieStorage.shared.cookies(for: url) {
+            for cookie in cookies where cookie.name == "XSRF-TOKEN" {
+                if let decoded = cookie.value.removingPercentEncoding {
+                    request.setValue(decoded, forHTTPHeaderField: "X-XSRF-TOKEN")
+                }
+            }
+        }
 
         let data: Data
         let response: URLResponse
         do {
-            (data, response) = try await URLSession.shared.data(from: url)
+            (data, response) = try await URLSession.shared.data(for: request)
         } catch {
             addBreadcrumb(category: "api", message: "Network error: \(error.localizedDescription)", level: .error)
             throw WCInfoAPIError.networkError(underlying: error)
@@ -112,6 +145,12 @@ actor WCInfoAPIService {
             data: ["statusCode": httpResponse.statusCode, "bodyPreview": String(rawBody.prefix(2000))]
         )
 
+        // Handle Laravel 419 CSRF mismatch by refreshing session once
+        if httpResponse.statusCode == 419 && !isRetryAfterCSRF, let healthURL = URL(string: "\(baseURL)/health") {
+            _ = try? await URLSession.shared.data(from: healthURL)
+            return try await performRequest(url: url, method: method, body: body, isRetryAfterCSRF: true)
+        }
+
         guard (200..<300).contains(httpResponse.statusCode) else {
             let message = parseErrorMessage(from: data)
             throw WCInfoAPIError.invalidResponse(statusCode: httpResponse.statusCode, message: message, responseBody: rawBody)
@@ -122,8 +161,20 @@ actor WCInfoAPIService {
 
     private func parseErrorMessage(from data: Data) -> String? {
         if let json = try? JSONSerialization.jsonObject(with: data) as? [String: Any] {
+            if let errors = json["errors"] as? [String: Any] {
+                for (_, value) in errors {
+                    if let messages = value as? [String], let first = messages.first, !first.isEmpty {
+                        return first
+                    } else if let message = value as? String, !message.isEmpty {
+                        return message
+                    }
+                }
+            }
             if let message = json["message"] as? String, !message.isEmpty {
                 return message
+            }
+            if let error = json["error"] as? String, !error.isEmpty {
+                return error
             }
             if let messages = json["message"] as? [String], let first = messages.first, !first.isEmpty {
                 return first

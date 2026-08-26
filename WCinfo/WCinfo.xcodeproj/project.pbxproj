@@ -13,6 +13,7 @@
 		0780964FC556E1DECF7B5E12 /* WCInfoAPIService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B9E1A59C7B37C57F6BAEEBE /* WCInfoAPIService.swift */; };
 		0CDD01A1104F0B0AD58FC906 /* LocationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 741A6F3C66231D4657FACB0D /* LocationManager.swift */; };
 		122B967E687BE9E819A028A7 /* ToiletRowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F26E9CA4889FD50D1DFD152 /* ToiletRowView.swift */; };
+		145E34CD420C9A2DC6BDAC0C /* CreateScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8444E0C552CCF3D62F63ED84 /* CreateScreen.swift */; };
 		18F4A9DE47C1F1897B9C9D69 /* WCinfoApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 925DEEFD3CE16497190BF220 /* WCinfoApp.swift */; };
 		1B6C3C2CD9302A3D8587AEB5 /* ResultsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 54EAD5A8713A39D5023CEFF9 /* ResultsView.swift */; };
 		2519E29D392BDCA6B930C850 /* DetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40B98EAAE3DDD2D2813555C1 /* DetailView.swift */; };
@@ -53,6 +54,7 @@
 		741A6F3C66231D4657FACB0D /* LocationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationManager.swift; sourceTree = "<group>"; };
 		76E12E960C37DF0A25ED81CE /* ToiletSymbolComponent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ToiletSymbolComponent.swift; sourceTree = "<group>"; };
 		785017DA774C5F6FACF2DEA8 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		8444E0C552CCF3D62F63ED84 /* CreateScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateScreen.swift; sourceTree = "<group>"; };
 		864669E1DB2A8D0EB3226197 /* Toilet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Toilet.swift; sourceTree = "<group>"; };
 		8813967B53E2B15594374841 /* Analytics.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Analytics.swift; sourceTree = "<group>"; };
 		925DEEFD3CE16497190BF220 /* WCinfoApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WCinfoApp.swift; sourceTree = "<group>"; };
@@ -80,6 +82,7 @@
 		1A2B877F696AF55302EC65D1 /* Views */ = {
 			isa = PBXGroup;
 			children = (
+				8444E0C552CCF3D62F63ED84 /* CreateScreen.swift */,
 				40B98EAAE3DDD2D2813555C1 /* DetailView.swift */,
 				49C7B4EAF1737DA3F6D21CC6 /* HomeView.swift */,
 				AD15A702EDED596300914B49 /* MapView.swift */,
@@ -240,6 +243,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				28C8EBEB2096038538C1D671 /* Analytics.swift in Sources */,
+				145E34CD420C9A2DC6BDAC0C /* CreateScreen.swift in Sources */,
 				2519E29D392BDCA6B930C850 /* DetailView.swift in Sources */,
 				A678300D3E8290C73D892652 /* ErrorManager.swift in Sources */,
 				3530D800C9089F27660DA170 /* HomeView.swift in Sources */,

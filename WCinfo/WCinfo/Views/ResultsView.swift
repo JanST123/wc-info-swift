@@ -12,6 +12,7 @@ struct ResultsView: View {
     @State private var isDraggingSplit = false
     @State private var selectedToilet: Toilet?
     @State private var detailToilet: Toilet?
+    @State private var isShowingCreateSheet = false
 
     var body: some View {
         GeometryReader { geometry in
@@ -41,10 +42,17 @@ struct ResultsView: View {
                 .presentationDetents([.medium, .large])
                 .presentationDragIndicator(.visible)
         }
+        .sheet(isPresented: $isShowingCreateSheet) {
+            CreateScreen(location: location)
+                .presentationDetents([.medium, .large])
+                .presentationDragIndicator(.visible)
+        }
     }
 
     private var listContent: some View {
-        Group {
+        VStack(spacing: 0) {
+            addToiletBanner
+
             if isLoading {
                 ProgressView("Suche Toiletten...")
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
@@ -72,6 +80,33 @@ struct ResultsView: View {
                 .accessibilityLabel("Toilettenliste")
             }
         }
+    }
+
+    private var addToiletBanner: some View {
+        Button {
+            isShowingCreateSheet = true
+            Analytics.shared.trackEvent(category: "results", action: "click_add_toilet_banner")
+        } label: {
+            VStack(spacing: 4) {
+                Text("Fehlt eine Toilette?")
+                    .font(.subheadline.bold())
+                    .foregroundStyle(.white)
+
+                Text("Klicke hier um eine Toilette hinzuzufügen - wir freuen uns!")
+                    .font(.caption)
+                    .foregroundStyle(.white.opacity(0.9))
+            }
+            .multilineTextAlignment(.center)
+            .frame(maxWidth: .infinity)
+            .padding(.vertical, 12)
+            .padding(.horizontal, 16)
+            .background(Color.purple)
+        }
+        .buttonStyle(.plain)
+        .accessibilityElement(children: .combine)
+        .accessibilityLabel("Fehlt eine Toilette? Klicke hier um eine Toilette hinzuzufügen - wir freuen uns!")
+        .accessibilityHint("Öffnet das Formular zum Hinzufügen einer neuen Toilette.")
+        .accessibilityAddTraits(.isButton)
     }
 
     private var mapContent: some View {

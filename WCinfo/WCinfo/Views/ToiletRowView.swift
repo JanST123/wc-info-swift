@@ -4,7 +4,9 @@ import CoreLocation
 struct ToiletRowView: View {
     let toilet: Toilet
     let userLocation: CLLocationCoordinate2D?
+    var isActive: Bool = false
     var onShowDetails: () -> Void = {}
+    var onNavigate: () -> Void = {}
 
     var body: some View {
         VStack(alignment: .leading, spacing: 6) {
@@ -14,13 +16,25 @@ struct ToiletRowView: View {
                 .accessibilityHint("Tippe doppelt, um diese Toilette auf der Karte anzuzeigen.")
                 .accessibilityAddTraits(.isButton)
 
-            Button(action: onShowDetails) {
-                Text("Details ansehen ›")
-                    .font(.footnote.bold())
-                    .foregroundStyle(.purple)
+            if isActive {
+                HStack(spacing: 16) {
+                    Button(action: onShowDetails) {
+                        Text("Details ansehen ›")
+                            .font(.footnote.bold())
+                            .foregroundStyle(.purple)
+                    }
+                    .buttonStyle(.borderless)
+                    .accessibilityHint("Öffnet die Detailansicht.")
+
+                    Button(action: onNavigate) {
+                        Text("Navigieren ›")
+                            .font(.footnote.bold())
+                            .foregroundStyle(.purple)
+                    }
+                    .buttonStyle(.borderless)
+                    .accessibilityHint("Startet die Routenführung zu dieser Toilette.")
+                }
             }
-            .buttonStyle(.borderless)
-            .accessibilityHint("Öffnet die Detailansicht.")
         }
         .padding(.vertical, 4)
     }

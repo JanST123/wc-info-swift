@@ -1,5 +1,6 @@
 import SwiftUI
 import CoreLocation
+import MapKit
 
 struct ResultsView: View {
     let location: SearchedLocation
@@ -56,7 +57,9 @@ struct ResultsView: View {
                     ToiletRowView(
                         toilet: toilet,
                         userLocation: location.coordinate,
-                        onShowDetails: { openDetails(for: toilet, source: "list") }
+                        isActive: toilet.id == selectedToilet?.id,
+                        onShowDetails: { openDetails(for: toilet, source: "list") },
+                        onNavigate: { openNavigation(to: toilet) }
                     )
                     .listRowBackground(toilet.id == selectedToilet?.id ? Color.purple.opacity(0.1) : Color.clear)
                     .contentShape(Rectangle())
@@ -86,6 +89,13 @@ struct ResultsView: View {
     private func openDetails(for toilet: Toilet, source: String) {
         detailToilet = toilet
         Analytics.shared.trackEvent(category: "results", action: "open_details_\(source)", name: String(toilet.id))
+    }
+
+    private func openNavigation(to toilet: Toilet) {
+        Analytics.shared.trackEvent(category: "results", action: "navigate", name: String(toilet.id))
+        let item = MKMapItem(placemark: MKPlacemark(coordinate: toilet.coordinate))
+        item.name = toilet.displayName
+        item.openInMaps(launchOptions: [MKLaunchOptionsDirectionsModeKey: MKLaunchOptionsDirectionsModeWalking])
     }
 
     private func loadToilets() async {

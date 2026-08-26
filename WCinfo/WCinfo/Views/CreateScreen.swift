@@ -18,6 +18,8 @@ struct CreateScreen: View {
     @State private var isGenderSeparated = false
     @State private var hasChangingTable = false
     @State private var hasWheelchairAccess = false
+    @State private var hasEuroKey = false
+    @State private var showingEuroKeyInfo = false
 
     @State private var website = ""
     @State private var address = ""
@@ -82,6 +84,14 @@ struct CreateScreen: View {
                         dismiss()
                     }
                     .accessibilityLabel("Abbrechen")
+                }
+            }
+            .sheet(isPresented: $showingEuroKeyInfo) {
+                EuroKeyInfoView()
+            }
+            .onChange(of: hasWheelchairAccess) { _, newValue in
+                if !newValue {
+                    hasEuroKey = false
                 }
             }
             .task {
@@ -216,7 +226,7 @@ struct CreateScreen: View {
                 )
             }
 
-            euroKeyDisabledCard
+            euroKeyCard
         }
     }
 
@@ -262,36 +272,71 @@ struct CreateScreen: View {
         .accessibilityAddTraits(.isButton)
     }
 
-    private var euroKeyDisabledCard: some View {
+    private var euroKeyCard: some View {
         HStack(spacing: 12) {
-            Image(systemName: "key.fill")
-                .font(.body)
-                .foregroundColor(Color(.systemGray3))
+            Button {
+                if hasWheelchairAccess {
+                    hasEuroKey.toggle()
+                }
+            } label: {
+                HStack(spacing: 12) {
+                    Image(systemName: "key.fill")
+                        .font(.body)
+                        .foregroundColor(hasWheelchairAccess ? Color(red: 0.35, green: 0.35, blue: 0.45) : Color(.systemGray3))
 
-            HStack(spacing: 4) {
-                Text("Kann mit Euroschlüssel geöffnet werden")
-                    .font(.system(size: 13))
-                    .foregroundColor(Color(.systemGray2))
-                Image(systemName: "info.circle")
-                    .font(.caption)
-                    .foregroundColor(Color(.systemGray3))
+                    Text("Kann mit Euroschlüssel geöffnet werden")
+                        .font(.system(size: 13))
+                        .foregroundColor(hasWheelchairAccess ? .primary : Color(.systemGray2))
+                        .multilineTextAlignment(.leading)
+                }
             }
+            .buttonStyle(.plain)
+            .disabled(!hasWheelchairAccess)
+
+            Button {
+                showingEuroKeyInfo = true
+            } label: {
+                Image(systemName: "info.circle")
+                    .font(.subheadline)
+                    .foregroundColor(hasWheelchairAccess ? .purple : Color(.systemGray3))
+            }
+            .buttonStyle(.plain)
+            .accessibilityLabel("Informationen zum Euroschlüssel anzeigen")
 
             Spacer()
 
-            RoundedRectangle(cornerRadius: 4)
-                .stroke(Color(.systemGray4), lineWidth: 1)
-                .frame(width: 18, height: 18)
-                .foregroundColor(Color(.systemGray5))
+            Button {
+                if hasWheelchairAccess {
+                    hasEuroKey.toggle()
+                }
+            } label: {
+                if hasWheelchairAccess {
+                    checkboxView(isChecked: hasEuroKey, size: 18)
+                } else {
+                    RoundedRectangle(cornerRadius: 4)
+                        .stroke(Color(.systemGray4), lineWidth: 1)
+                        .frame(width: 18, height: 18)
+                        .foregroundColor(Color(.systemGray5))
+                }
+            }
+            .buttonStyle(.plain)
+            .disabled(!hasWheelchairAccess)
         }
         .padding(.horizontal, 12)
         .padding(.vertical, 12)
         .background(Color(uiColor: .systemBackground))
         .overlay(
             RoundedRectangle(cornerRadius: 8)
-                .stroke(Color(.systemGray5), lineWidth: 1)
+                .stroke(
+                    hasWheelchairAccess && hasEuroKey
+                        ? Color.purple
+                        : (hasWheelchairAccess ? Color(.systemGray4) : Color(.systemGray5)),
+                    lineWidth: hasWheelchairAccess && hasEuroKey ? 1.5 : 1
+                )
         )
-        .accessibilityHidden(true)
+        .clipShape(RoundedRectangle(cornerRadius: 8))
+        .accessibilityElement(children: .contain)
+        .accessibilityLabel("Euroschlüssel: \(hasWheelchairAccess ? (hasEuroKey ? "Ausgewählt" : "Nicht ausgewählt") : "Deaktiviert, erfordert barrierefreie Toilette")")
     }
 
     // MARK: - Section 4: Webseite
@@ -473,7 +518,7 @@ struct CreateScreen: View {
             address: trimmedAddress.isEmpty ? nil : trimmedAddress,
             website: trimmedWebsite.isEmpty ? nil : trimmedWebsite,
             comment: nil,
-            euroKey: nil,
+            euroKey: (hasWheelchairAccess && hasEuroKey) ? "yes" : nil,
             status: "active"
         )
 
@@ -504,6 +549,76 @@ struct CreateScreen: View {
                 }
                 ErrorManager.shared.report(error, context: context)
                 Analytics.shared.trackEvent(category: "toilet", action: "create_error")
+            }
+        }
+    }
+}
+
+struct EuroKeyInfoView: View {
+    @Environment(\.dismiss) private var dismiss
+    @Environment(\.openURL) private var openURL
+
+    var body: some View {
+        NavigationStack {
+            ScrollView {
+                VStack(alignment: .leading, spacing: 16) {
+                    Text("Der Euroschlüssel ist ein 1986 vom CBF Darmstadt – Club Behinderter und ihrer Freunde in Darmstadt und Umgebung e. V. – eingeführtes, inzwischen über die Landesgrenzen hinaus genutztes Schließsystem, das es körperlich beeinträchtigten Menschen ermöglicht, mit einem Einheitsschlüssel selbständig Zugang zu behindertengerechten sanitären Anlagen und Einrichtungen zu erhalten, z. B. an teilnehmenden Autobahn- und Bahnhofstoiletten, aber auch für öffentliche Toiletten in Fußgängerzonen, Museen oder Behörden.")
+                        .font(.body)
+                        .foregroundStyle(.primary)
+
+                    Text("Der Schlüssel wird ausschließlich an Menschen ausgehändigt, die auf behindertengerechte Toiletten angewiesen sind.")
+                        .font(.body)
+                        .foregroundStyle(.primary)
+
+                    VStack(alignment: .leading, spacing: 6) {
+                        Text("Der deutsche Schwerbehindertenausweis gilt als Berechtigung, wenn")
+                            .font(.body)
+                            .foregroundStyle(.primary)
+
+                        Text("• das Merkzeichen: aG, B, H, oder BL")
+                            .font(.body)
+                            .foregroundStyle(.secondary)
+                            .padding(.leading, 8)
+
+                        Text("• oder das Merkzeichen G und der GdB ab 70 und aufwärts enthalten ist.")
+                            .font(.body)
+                            .foregroundStyle(.secondary)
+                            .padding(.leading, 8)
+                    }
+
+                    Text("Quelle: https://www.cbf-da.de/euroschluessel.html")
+                        .font(.footnote)
+                        .foregroundStyle(.secondary)
+                        .padding(.top, 4)
+
+                    if let url = URL(string: "https://www.cbf-da.de/euroschluessel.html") {
+                        Button {
+                            openURL(url)
+                        } label: {
+                            HStack(spacing: 8) {
+                                Image(systemName: "arrow.up.right.square")
+                                Text("Webseite öffnen (cbf-da.de)")
+                                    .fontWeight(.semibold)
+                            }
+                            .frame(maxWidth: .infinity)
+                            .frame(height: 48)
+                            .background(Color.purple)
+                            .foregroundColor(.white)
+                            .clipShape(RoundedRectangle(cornerRadius: 10))
+                        }
+                        .padding(.top, 12)
+                    }
+                }
+                .padding(20)
+            }
+            .navigationTitle("Information zum Euroschlüssel")
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .confirmationAction) {
+                    Button("Schließen") {
+                        dismiss()
+                    }
+                }
             }
         }
     }

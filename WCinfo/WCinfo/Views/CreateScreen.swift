@@ -586,12 +586,12 @@ struct EuroKeyInfoView: View {
                             .padding(.leading, 8)
                     }
 
-                    Text("Quelle: https://www.cbf-da.de/euroschluessel.html")
+                    Text("Quelle: https://www.cbf-da.de/leistungen/euroschluessel")
                         .font(.footnote)
                         .foregroundStyle(.secondary)
                         .padding(.top, 4)
 
-                    if let url = URL(string: "https://www.cbf-da.de/euroschluessel.html") {
+                    if let url = URL(string: "https://www.cbf-da.de/leistungen/euroschluessel") {
                         Button {
                             openURL(url)
                         } label: {

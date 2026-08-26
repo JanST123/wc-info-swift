@@ -6,7 +6,7 @@ struct MapView: UIViewRepresentable {
     let center: CLLocationCoordinate2D
     let toilets: [Toilet]
     let selectedToiletID: Int?
-    var onSelectToilet: (Toilet) -> Void = { _ in }
+        var onShowDetails: (Toilet) -> Void = { _ in }
 
     func makeUIView(context: Context) -> GMSMapView {
         let camera = GMSCameraPosition.camera(withLatitude: center.latitude, longitude: center.longitude, zoom: 14)
@@ -21,7 +21,7 @@ struct MapView: UIViewRepresentable {
 
     func updateUIView(_ mapView: GMSMapView, context: Context) {
         context.coordinator.toilets = toilets
-        context.coordinator.onSelectToilet = onSelectToilet
+        context.coordinator.onShowDetails = onShowDetails
 
         let currentCenter = mapView.camera.target
         let centerChanged = abs(currentCenter.latitude - center.latitude) > 0.0001
@@ -73,7 +73,7 @@ struct MapView: UIViewRepresentable {
     final class Coordinator: NSObject, GMSMapViewDelegate {
         var lastSelectedID: Int?
         var toilets: [Toilet] = []
-        var onSelectToilet: (Toilet) -> Void = { _ in }
+    var onShowDetails: (Toilet) -> Void = { _ in }
 
         @MainActor
         func mapView(_ mapView: GMSMapView, didFailToLocateUserWithError error: Error) {
@@ -102,7 +102,7 @@ struct MapView: UIViewRepresentable {
                   let toilet = toilets.first(where: { $0.id == toiletID }) else {
                 return
             }
-            onSelectToilet(toilet)
+            onShowDetails(toilet)
         }
     }
 }

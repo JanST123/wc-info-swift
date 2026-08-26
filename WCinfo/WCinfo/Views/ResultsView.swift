@@ -10,6 +10,7 @@ struct ResultsView: View {
     @State private var landscapeRatio: CGFloat = 0.5
     @State private var isDraggingSplit = false
     @State private var selectedToilet: Toilet?
+    @State private var detailToilet: Toilet?
 
     var body: some View {
         GeometryReader { geometry in
@@ -34,7 +35,7 @@ struct ResultsView: View {
         .onAppear {
             Analytics.shared.trackScreen("Results")
         }
-        .sheet(item: $selectedToilet) { toilet in
+        .sheet(item: $detailToilet) { toilet in
             DetailView(toilet: toilet)
                 .presentationDetents([.medium, .large])
                 .presentationDragIndicator(.visible)
@@ -52,15 +53,17 @@ struct ResultsView: View {
                     .accessibilityLabel("Keine Toiletten in der Nähe gefunden")
             } else {
                 List(toilets) { toilet in
-                    ToiletRowView(toilet: toilet, userLocation: location.coordinate)
-                        .listRowBackground(toilet.id == selectedToilet?.id ? Color.purple.opacity(0.1) : Color.clear)
-                        .contentShape(Rectangle())
-                        .onTapGesture {
-                            selectedToilet = toilet
-                            Analytics.shared.trackEvent(category: "results", action: "select_toilet", name: String(toilet.id))
-                        }
-                        .accessibilityHint("Toilette auf der Karte anzeigen und Details öffnen")
-                        .accessibilityAddTraits(.isButton)
+                    ToiletRowView(
+                        toilet: toilet,
+                        userLocation: location.coordinate,
+                        onShowDetails: { openDetails(for: toilet, source: "list") }
+                    )
+                    .listRowBackground(toilet.id == selectedToilet?.id ? Color.purple.opacity(0.1) : Color.clear)
+                    .contentShape(Rectangle())
+                    .onTapGesture {
+                        selectedToilet = toilet
+                        Analytics.shared.trackEvent(category: "results", action: "select_toilet", name: String(toilet.id))
+                    }
                 }
                 .listStyle(.plain)
                 .accessibilityLabel("Toilettenliste")
@@ -73,12 +76,16 @@ struct ResultsView: View {
             center: location.coordinate,
             toilets: toilets,
             selectedToiletID: selectedToilet?.id,
-            onSelectToilet: { toilet in
-                selectedToilet = toilet
-                Analytics.shared.trackEvent(category: "results", action: "select_toilet_marker", name: String(toilet.id))
+            onShowDetails: { toilet in
+                openDetails(for: toilet, source: "marker")
             }
         )
         .ignoresSafeArea(edges: [.bottom, .leading, .trailing])
+    }
+
+    private func openDetails(for toilet: Toilet, source: String) {
+        detailToilet = toilet
+        Analytics.shared.trackEvent(category: "results", action: "open_details_\(source)", name: String(toilet.id))
     }
 
     private func loadToilets() async {

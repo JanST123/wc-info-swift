@@ -4,8 +4,28 @@ import CoreLocation
 struct ToiletRowView: View {
     let toilet: Toilet
     let userLocation: CLLocationCoordinate2D?
+    var onShowDetails: () -> Void = {}
 
     var body: some View {
+        VStack(alignment: .leading, spacing: 6) {
+            rowContent
+                .accessibilityElement(children: .combine)
+                .accessibilityLabel(accessibilityLabel)
+                .accessibilityHint("Tippe doppelt, um diese Toilette auf der Karte anzuzeigen.")
+                .accessibilityAddTraits(.isButton)
+
+            Button(action: onShowDetails) {
+                Text("Details ansehen ›")
+                    .font(.footnote.bold())
+                    .foregroundStyle(.purple)
+            }
+            .buttonStyle(.borderless)
+            .accessibilityHint("Öffnet die Detailansicht.")
+        }
+        .padding(.vertical, 4)
+    }
+
+    private var rowContent: some View {
         VStack(alignment: .leading, spacing: 6) {
             HStack(alignment: .top, spacing: 12) {
                 VStack(alignment: .leading, spacing: 2) {
@@ -53,10 +73,6 @@ struct ToiletRowView: View {
                 }
             }
         }
-        .padding(.vertical, 4)
-        .accessibilityElement(children: .combine)
-        .accessibilityLabel(accessibilityLabel)
-        .accessibilityHint("Tippe doppelt, um diese Toilette auf der Karte anzuzeigen.")
     }
 
     private var accessibilityLabel: String {

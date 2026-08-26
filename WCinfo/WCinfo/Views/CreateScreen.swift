@@ -400,7 +400,8 @@ struct CreateScreen: View {
         do {
             let places = try await placesService.fetchNearbyPlaces(
                 coordinate: location.coordinate,
-                radius: 200.0
+                radius: 100.0,
+            
             )
             nearbyPlaces = places
             if let first = places.first {

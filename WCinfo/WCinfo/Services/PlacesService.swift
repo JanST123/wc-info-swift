@@ -35,41 +35,59 @@ final class PlacesService: ObservableObject {
         }
     }
 
-    func fetchNearbyPlaces(coordinate: CLLocationCoordinate2D, hintName: String = "") async throws -> [NearbyPlaceOption] {
-        let token = GMSAutocompleteSessionToken()
-        let filter = GMSAutocompleteFilter()
-        filter.types = ["establishment"]
+    private var placeDetailsCache: [String: PlaceDetails] = [:]
 
-        let delta = 0.05
-        let northEast = CLLocationCoordinate2D(latitude: coordinate.latitude + delta, longitude: coordinate.longitude + delta)
-        let southWest = CLLocationCoordinate2D(latitude: coordinate.latitude - delta, longitude: coordinate.longitude - delta)
-        filter.locationBias = GMSPlaceRectangularLocationOption(northEast, southWest)
-
-        let query = hintName.components(separatedBy: ",").first?.trimmingCharacters(in: .whitespacesAndNewlines) ?? hintName
-        let searchQuery = query.isEmpty ? "Restaurant" : query
+    func fetchNearbyPlaces(coordinate: CLLocationCoordinate2D, radius: Double = 200.0) async throws -> [NearbyPlaceOption] {
+        let restriction = GMSPlaceCircularLocationOption(coordinate, radius)
+        let properties: [GMSPlaceProperty] = [
+            .name,
+            .placeID,
+            .formattedAddress,
+            .website,
+            .coordinate
+        ]
+        let request = GMSPlaceSearchNearbyRequest(locationRestriction: restriction, placeProperties: properties.map(\.rawValue))
+        request.maxResultCount = 20
+        request.rankPreference = GMSPlaceSearchNearbyRankPreference.distance
 
         return try await withCheckedThrowingContinuation { continuation in
-            client.findAutocompletePredictions(fromQuery: searchQuery, filter: filter, sessionToken: token) { results, error in
+            client.searchNearby(with: request) { [weak self] places, error in
                 if let error = error {
+                    print("[PlacesService] searchNearby error: \(error.localizedDescription)")
                     continuation.resume(throwing: error)
                 } else {
-                    let places = (results ?? []).map { prediction in
-                        NearbyPlaceOption(
-                            id: prediction.placeID,
-                            name: prediction.attributedPrimaryText.string,
-                            secondaryText: prediction.attributedSecondaryText?.string
+                    var options: [NearbyPlaceOption] = []
+                    for place in places ?? [] {
+                        guard let placeID = place.placeID, let name = place.name else { continue }
+                        self?.placeDetailsCache[placeID] = PlaceDetails(
+                            placeID: placeID,
+                            name: name,
+                            formattedAddress: place.formattedAddress,
+                            website: place.website?.absoluteString,
+                            coordinate: place.coordinate
                         )
+                        options.append(NearbyPlaceOption(
+                            id: placeID,
+                            name: name,
+                            secondaryText: place.formattedAddress
+                        ))
                     }
-                    continuation.resume(returning: places)
+                    continuation.resume(returning: options)
                 }
             }
         }
     }
 
     func fetchPlaceDetails(for placeID: String) async throws -> PlaceDetails {
-        return try await withCheckedThrowingContinuation { continuation in
-            let fields: GMSPlaceField = [.name, .formattedAddress, .website, .coordinate]
-            client.fetchPlace(fromPlaceID: placeID, placeFields: fields, sessionToken: nil) { place, error in
+        if let cached = placeDetailsCache[placeID] {
+            return cached
+        }
+
+        let properties: [GMSPlaceProperty] = [.name, .formattedAddress, .website, .coordinate]
+        let request = GMSFetchPlaceRequest(placeID: placeID, placeProperties: properties.map(\.rawValue), sessionToken: nil)
+
+        return try await withCheckedThrowingContinuation { [weak self] continuation in
+            self?.client.fetchPlace(with: request) { place, error in
                 if let error = error {
                     continuation.resume(throwing: error)
                 } else if let place = place {
@@ -80,6 +98,7 @@ final class PlacesService: ObservableObject {
                         website: place.website?.absoluteString,
                         coordinate: place.coordinate
                     )
+                    self?.placeDetailsCache[placeID] = details
                     continuation.resume(returning: details)
                 } else {
                     continuation.resume(throwing: PlacesError.noCoordinate)

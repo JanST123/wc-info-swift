@@ -49,6 +49,7 @@ final class PlacesService: ObservableObject {
         let request = GMSPlaceSearchNearbyRequest(locationRestriction: restriction, placeProperties: properties.map(\.rawValue))
         request.maxResultCount = 20
         request.rankPreference = GMSPlaceSearchNearbyRankPreference.distance
+        request.includedTypes = ["point_of_interest"]
 
         return try await withCheckedThrowingContinuation { continuation in
             client.searchNearby(with: request) { [weak self] places, error in

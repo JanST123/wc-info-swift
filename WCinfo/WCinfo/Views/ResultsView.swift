@@ -51,6 +51,7 @@ struct ResultsView: View {
 
     private var listContent: some View {
         VStack(spacing: 0) {
+            Spacer(minLength: 8)
             addToiletBanner
 
             if isLoading {

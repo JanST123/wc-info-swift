@@ -22,6 +22,7 @@ struct ToiletRowView: View {
                     Button(action: onNavigate) {
                         Label("Navigieren", systemImage: "arrow.triangle.turn.up.right.diamond.fill")
                             .font(.footnote.bold())
+                            .foregroundStyle(.white)
                     }
                     .buttonStyle(.borderedProminent)
                     .tint(.purple)

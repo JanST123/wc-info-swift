@@ -3,16 +3,18 @@ import GoogleMaps
 import CoreLocation
 
 struct MapView: UIViewRepresentable {
+    @Environment(\.colorScheme) private var colorScheme
     let center: CLLocationCoordinate2D
     let toilets: [Toilet]
     let selectedToiletID: Int?
-        var onShowDetails: (Toilet) -> Void = { _ in }
+    var onShowDetails: (Toilet) -> Void = { _ in }
 
     func makeUIView(context: Context) -> GMSMapView {
         let camera = GMSCameraPosition.camera(withLatitude: center.latitude, longitude: center.longitude, zoom: 14)
         let mapView = GMSMapView(frame: .zero, camera: camera)
         mapView.settings.myLocationButton = true
         mapView.delegate = context.coordinator
+        mapView.overrideUserInterfaceStyle = colorScheme == .dark ? .dark : .light
         mapView.accessibilityLabel = "Karte mit \(toilets.count) Toiletten in der Nähe"
         mapView.isAccessibilityElement = true
         print("[MapView] Created map at \(center.latitude), \(center.longitude)")
@@ -22,6 +24,11 @@ struct MapView: UIViewRepresentable {
     func updateUIView(_ mapView: GMSMapView, context: Context) {
         context.coordinator.toilets = toilets
         context.coordinator.onShowDetails = onShowDetails
+
+        let targetStyle: UIUserInterfaceStyle = colorScheme == .dark ? .dark : .light
+        if mapView.overrideUserInterfaceStyle != targetStyle {
+            mapView.overrideUserInterfaceStyle = targetStyle
+        }
 
         let currentCenter = mapView.camera.target
         let centerChanged = abs(currentCenter.latitude - center.latitude) > 0.0001
@@ -73,7 +80,7 @@ struct MapView: UIViewRepresentable {
     final class Coordinator: NSObject, GMSMapViewDelegate {
         var lastSelectedID: Int?
         var toilets: [Toilet] = []
-    var onShowDetails: (Toilet) -> Void = { _ in }
+        var onShowDetails: (Toilet) -> Void = { _ in }
 
         @MainActor
         func mapView(_ mapView: GMSMapView, didFailToLocateUserWithError error: Error) {
@@ -94,7 +101,7 @@ struct MapView: UIViewRepresentable {
                   let toilet = toilets.first(where: { $0.id == toiletID }) else {
                 return nil
             }
-            return ToiletInfoWindowView(toilet: toilet)
+            return ToiletInfoWindowView(toilet: toilet, userInterfaceStyle: mapView.overrideUserInterfaceStyle)
         }
 
         func mapView(_ mapView: GMSMapView, didTapInfoWindowOf marker: GMSMarker) {
@@ -117,8 +124,9 @@ private final class ToiletInfoWindowView: UIView {
     private static let horizontalPadding: CGFloat = 12
     private static let verticalPadding: CGFloat = 8
 
-    init(toilet: Toilet) {
+    init(toilet: Toilet, userInterfaceStyle: UIUserInterfaceStyle = .unspecified) {
         super.init(frame: .zero)
+        overrideUserInterfaceStyle = userInterfaceStyle
         backgroundColor = .systemBackground
 
         let titleLabel = UILabel()

@@ -45,7 +45,7 @@
 		3551150A061077271C2DBBF1 /* Config.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Config.plist; sourceTree = "<group>"; };
 		40B98EAAE3DDD2D2813555C1 /* DetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetailView.swift; sourceTree = "<group>"; };
 		440843A00BC7F792DD4ED1DA /* OpeningTimeComponent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OpeningTimeComponent.swift; sourceTree = "<group>"; };
-		45ABED18316429508872959F /* lavendel.webp */ = {isa = PBXFileReference; lastKnownFileType = file; path = lavendel.webp; sourceTree = "<group>"; };
+		45ABED18316429508872959F /* lavendel.webp */ = {isa = PBXFileReference; path = lavendel.webp; sourceTree = "<group>"; };
 		49C7B4EAF1737DA3F6D21CC6 /* HomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeView.swift; sourceTree = "<group>"; };
 		54EAD5A8713A39D5023CEFF9 /* ResultsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResultsView.swift; sourceTree = "<group>"; };
 		5C8E292F362F3D863914E9A1 /* logo.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = logo.png; sourceTree = "<group>"; };
@@ -56,8 +56,8 @@
 		864669E1DB2A8D0EB3226197 /* Toilet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Toilet.swift; sourceTree = "<group>"; };
 		8813967B53E2B15594374841 /* Analytics.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Analytics.swift; sourceTree = "<group>"; };
 		925DEEFD3CE16497190BF220 /* WCinfoApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WCinfoApp.swift; sourceTree = "<group>"; };
-		98206EC1B58637F02429F106 /* logo.svg */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = logo.svg; sourceTree = "<group>"; };
-		A787E4597E149070DF6A1DA9 /* Config.plist.template */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = Config.plist.template; sourceTree = "<group>"; };
+		98206EC1B58637F02429F106 /* logo.svg */ = {isa = PBXFileReference; path = logo.svg; sourceTree = "<group>"; };
+		A787E4597E149070DF6A1DA9 /* Config.plist.template */ = {isa = PBXFileReference; path = Config.plist.template; sourceTree = "<group>"; };
 		AD15A702EDED596300914B49 /* MapView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapView.swift; sourceTree = "<group>"; };
 		E44E24B4A1CB41771AAD8444 /* WCinfo.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = WCinfo.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
@@ -189,6 +189,8 @@
 			attributes = {
 				BuildIndependentTargetsInParallel = YES;
 				LastUpgradeCheck = 1430;
+				TargetAttributes = {
+				};
 			};
 			buildConfigurationList = CA1DF3C2A23A7E17B1907AD1 /* Build configuration list for PBXProject "WCinfo" */;
 			developmentRegion = en;

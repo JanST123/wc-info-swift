@@ -6,11 +6,10 @@ struct ResultsView: View {
 
     @State private var toilets: [Toilet] = []
     @State private var isLoading = true
-    @State private var selectedToiletID: Int?
     @State private var portraitRatio: CGFloat = 0.66
     @State private var landscapeRatio: CGFloat = 0.5
     @State private var isDraggingSplit = false
-    @State private var navigationPath = NavigationPath()
+    @State private var selectedToilet: Toilet?
 
     var body: some View {
         GeometryReader { geometry in
@@ -37,43 +36,42 @@ struct ResultsView: View {
         .onAppear {
             Analytics.shared.trackScreen("Results")
         }
+        .sheet(item: $selectedToilet) { toilet in
+            DetailView(toilet: toilet)
+                .presentationDetents([.medium, .large])
+                .presentationDragIndicator(.visible)
+        }
     }
 
     private var listContent: some View {
-        NavigationStack(path: $navigationPath) {
-            Group {
-                if isLoading {
-                    ProgressView("Suche Toiletten...")
-                        .frame(maxWidth: .infinity, maxHeight: .infinity)
-                        .accessibilityLabel("Toiletten werden gesucht")
-                } else if toilets.isEmpty {
-                    ContentUnavailableView("Keine Toiletten gefunden", systemImage: "toilet")
-                        .accessibilityLabel("Keine Toiletten in der Nähe gefunden")
-                } else {
-                    List(toilets) { toilet in
-                        ToiletRowView(toilet: toilet, userLocation: location.coordinate)
-                            .listRowBackground(toilet.id == selectedToiletID ? Color.purple.opacity(0.1) : Color.clear)
-                            .contentShape(Rectangle())
-                            .onTapGesture {
-                                selectedToiletID = toilet.id
-                                navigationPath.append(toilet)
-                                Analytics.shared.trackEvent(category: "results", action: "select_toilet", name: String(toilet.id))
-                            }
-                            .accessibilityHint("Toilette auf der Karte anzeigen und Details öffnen")
-                            .accessibilityAddTraits(.isButton)
-                    }
-                    .listStyle(.plain)
-                    .accessibilityLabel("Toilettenliste")
+        Group {
+            if isLoading {
+                ProgressView("Suche Toiletten...")
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                    .accessibilityLabel("Toiletten werden gesucht")
+            } else if toilets.isEmpty {
+                ContentUnavailableView("Keine Toiletten gefunden", systemImage: "toilet")
+                    .accessibilityLabel("Keine Toiletten in der Nähe gefunden")
+            } else {
+                List(toilets) { toilet in
+                    ToiletRowView(toilet: toilet, userLocation: location.coordinate)
+                        .listRowBackground(toilet.id == selectedToilet?.id ? Color.purple.opacity(0.1) : Color.clear)
+                        .contentShape(Rectangle())
+                        .onTapGesture {
+                            selectedToilet = toilet
+                            Analytics.shared.trackEvent(category: "results", action: "select_toilet", name: String(toilet.id))
+                        }
+                        .accessibilityHint("Toilette auf der Karte anzeigen und Details öffnen")
+                        .accessibilityAddTraits(.isButton)
                 }
-            }
-            .navigationDestination(for: Toilet.self) { toilet in
-                DetailView(toilet: toilet)
+                .listStyle(.plain)
+                .accessibilityLabel("Toilettenliste")
             }
         }
     }
 
     private var mapContent: some View {
-        MapView(center: location.coordinate, toilets: toilets, selectedToiletID: selectedToiletID)
+        MapView(center: location.coordinate, toilets: toilets, selectedToiletID: selectedToilet?.id)
             .ignoresSafeArea(edges: [.bottom, .leading, .trailing])
     }
 

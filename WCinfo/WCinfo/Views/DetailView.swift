@@ -2,68 +2,79 @@ import SwiftUI
 import MapKit
 
 struct DetailView: View {
+    @Environment(\.dismiss) private var dismiss
     let toilet: Toilet
 
     var body: some View {
-        ScrollView {
-            VStack(alignment: .leading, spacing: 16) {
-                Text(toilet.name)
-                    .font(.title.bold())
-                    .accessibilityLabel("Name: \(toilet.name)")
+        NavigationStack {
+            ScrollView {
+                VStack(alignment: .leading, spacing: 16) {
+                    Text(toilet.name)
+                        .font(.title.bold())
+                        .accessibilityLabel("Name: \(toilet.name)")
 
-                Label("Betreiber: \(toilet.owner)", systemImage: "building.2")
-                    .font(.body)
-                    .foregroundStyle(.primary)
-                    .accessibilityLabel("Betreiber: \(toilet.owner)")
+                    Label("Betreiber: \(toilet.owner)", systemImage: "building.2")
+                        .font(.body)
+                        .foregroundStyle(.primary)
+                        .accessibilityLabel("Betreiber: \(toilet.owner)")
 
-                Button(action: navigateToToilet) {
-                    HStack {
-                        Image(systemName: "arrow.turn.up.right")
-                        Text("Navigieren")
+                    Button(action: navigateToToilet) {
+                        HStack {
+                            Image(systemName: "arrow.turn.up.right")
+                            Text("Navigieren")
+                        }
+                        .font(.headline)
+                        .foregroundColor(.white)
+                        .frame(maxWidth: .infinity)
+                        .padding()
+                        .background(Color.purple)
+                        .clipShape(RoundedRectangle(cornerRadius: 12))
                     }
-                    .font(.headline)
-                    .foregroundColor(.white)
-                    .frame(maxWidth: .infinity)
-                    .padding()
-                    .background(Color.purple)
-                    .clipShape(RoundedRectangle(cornerRadius: 12))
-                }
-                .accessibilityLabel("Navigieren zu \(toilet.name)")
-                .accessibilityHint("Öffnet die Karten-App mit der Route zur Toilette.")
+                    .accessibilityLabel("Navigieren zu \(toilet.name)")
+                    .accessibilityHint("Öffnet die Karten-App mit der Route zur Toilette.")
 
-                if let address = toilet.address, !address.isEmpty {
-                    VStack(alignment: .leading, spacing: 4) {
-                        Text("Adresse")
-                            .font(.subheadline.bold())
-                        Text(address)
-                            .font(.body)
-                            .foregroundStyle(.secondary)
-                    }
-                    .accessibilityElement(children: .combine)
-                    .accessibilityLabel("Adresse: \(address)")
-                }
-
-                if let periods = toilet.placeOpeningHours, !periods.isEmpty {
-                    VStack(alignment: .leading, spacing: 4) {
-                        Text("Öffnungszeiten")
-                            .font(.subheadline.bold())
-                        ForEach(periods.indices, id: \.self) { index in
-                            Text(periods[index].formatted)
+                    if let address = toilet.address, !address.isEmpty {
+                        VStack(alignment: .leading, spacing: 4) {
+                            Text("Adresse")
+                                .font(.subheadline.bold())
+                            Text(address)
                                 .font(.body)
                                 .foregroundStyle(.secondary)
                         }
+                        .accessibilityElement(children: .combine)
+                        .accessibilityLabel("Adresse: \(address)")
                     }
-                    .accessibilityElement(children: .combine)
-                    .accessibilityLabel("Öffnungszeiten: \(periods.map(\.formatted).joined(separator: ", "))")
-                }
 
-                Spacer(minLength: 40)
+                    if let periods = toilet.placeOpeningHours, !periods.isEmpty {
+                        VStack(alignment: .leading, spacing: 4) {
+                            Text("Öffnungszeiten")
+                                .font(.subheadline.bold())
+                            ForEach(periods.indices, id: \.self) { index in
+                                Text(periods[index].formatted)
+                                    .font(.body)
+                                    .foregroundStyle(.secondary)
+                            }
+                        }
+                        .accessibilityElement(children: .combine)
+                        .accessibilityLabel("Öffnungszeiten: \(periods.map(\.formatted).joined(separator: ", "))")
+                    }
+
+                    Spacer(minLength: 40)
+                }
+                .padding()
+                .frame(maxWidth: .infinity, alignment: .leading)
             }
-            .padding()
-            .frame(maxWidth: .infinity, alignment: .leading)
+            .navigationTitle("Details")
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .cancellationAction) {
+                    Button("Schließen") {
+                        dismiss()
+                    }
+                    .accessibilityLabel("Details schließen")
+                }
+            }
         }
-        .navigationTitle("Details")
-        .navigationBarTitleDisplayMode(.inline)
         .onAppear {
             Analytics.shared.trackScreen("Detail")
             Analytics.shared.trackEvent(category: "detail", action: "view", name: toilet.name)

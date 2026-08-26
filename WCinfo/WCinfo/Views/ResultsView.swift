@@ -69,8 +69,16 @@ struct ResultsView: View {
     }
 
     private var mapContent: some View {
-        MapView(center: location.coordinate, toilets: toilets, selectedToiletID: selectedToilet?.id)
-            .ignoresSafeArea(edges: [.bottom, .leading, .trailing])
+        MapView(
+            center: location.coordinate,
+            toilets: toilets,
+            selectedToiletID: selectedToilet?.id,
+            onSelectToilet: { toilet in
+                selectedToilet = toilet
+                Analytics.shared.trackEvent(category: "results", action: "select_toilet_marker", name: String(toilet.id))
+            }
+        )
+        .ignoresSafeArea(edges: [.bottom, .leading, .trailing])
     }
 
     private func loadToilets() async {

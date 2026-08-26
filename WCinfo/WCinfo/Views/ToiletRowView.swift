@@ -18,6 +18,14 @@ struct ToiletRowView: View {
 
             if isActive {
                 HStack(spacing: 16) {
+                    Button(action: onNavigate) {
+                        Label("Navigieren", systemImage: "arrow.triangle.turn.up.right.diamond.fill")
+                            .font(.footnote.bold())
+                    }
+                    .buttonStyle(.borderedProminent)
+                    .tint(.purple)
+                    .accessibilityHint("Startet die Routenführung zu dieser Toilette.")
+
                     Button(action: onShowDetails) {
                         Text("Details ansehen ›")
                             .font(.footnote.bold())
@@ -25,14 +33,6 @@ struct ToiletRowView: View {
                     }
                     .buttonStyle(.borderless)
                     .accessibilityHint("Öffnet die Detailansicht.")
-
-                    Button(action: onNavigate) {
-                        Text("Navigieren ›")
-                            .font(.footnote.bold())
-                            .foregroundStyle(.purple)
-                    }
-                    .buttonStyle(.borderless)
-                    .accessibilityHint("Startet die Routenführung zu dieser Toilette.")
                 }
             }
         }

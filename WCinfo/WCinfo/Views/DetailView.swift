@@ -43,17 +43,18 @@ struct DetailView: View {
                     .accessibilityLabel("Adresse: \(address)")
                 }
 
-                if let hours = toilet.placeOpeningHours, !hours.isEmpty {
+                if let periods = toilet.placeOpeningHours, !periods.isEmpty {
                     VStack(alignment: .leading, spacing: 4) {
                         Text("Öffnungszeiten")
                             .font(.subheadline.bold())
-                        Text(hours)
-                            .font(.body)
-                            .foregroundStyle(.secondary)
-                            .lineSpacing(4)
+                        ForEach(periods.indices, id: \.self) { index in
+                            Text(periods[index].formatted)
+                                .font(.body)
+                                .foregroundStyle(.secondary)
+                        }
                     }
                     .accessibilityElement(children: .combine)
-                    .accessibilityLabel("Öffnungszeiten: \(hours)")
+                    .accessibilityLabel("Öffnungszeiten: \(periods.map(\.formatted).joined(separator: ", "))")
                 }
 
                 Spacer(minLength: 40)

@@ -2,7 +2,8 @@
   "images" : [
     {
       "filename" : "toiletIconChangingTable.svg",
-      "idiom" : "universal"
+      "idiom" : "universal",
+      "template-rendering-intent" : "template"
     }
   ],
   "info" : {

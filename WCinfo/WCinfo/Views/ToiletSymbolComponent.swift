@@ -9,27 +9,26 @@ struct ToiletSymbolComponent: View {
     var body: some View {
         HStack(spacing: 8) {
             if isGenderSeparated {
-                icon("toiletIconGenderSeparated", label: "Getrennte Toiletten")
+                systemIcon("person.2", label: "Getrennte Toiletten")
             }
             if hasWheelchairAccess {
-                icon("toiletIconWheelchair", label: "Rollstuhlgerecht")
+                systemIcon("accessibility", label: "Rollstuhlgerecht")
             }
             if hasChangingTable {
-                icon("toiletIconChangingTable", label: "Wickeltisch")
+                systemIcon("baby.fill", label: "Wickeltisch")
             }
             if isUnisex {
-                icon("toiletIconUnisex", label: "Unisex")
+                systemIcon("person", label: "Unisex")
             }
         }
-        .frame(height: 16)
+        .frame(height: 20)
     }
 
-    private func icon(_ name: String, label: String) -> some View {
-        Image(name)
+    private func systemIcon(_ name: String, label: String) -> some View {
+        Image(systemName: name)
             .resizable()
-            .renderingMode(.template)
             .aspectRatio(contentMode: .fit)
-            .frame(height: 16)
+            .frame(width: 20, height: 20)
             .foregroundColor(.purple)
             .accessibilityLabel(label)
     }

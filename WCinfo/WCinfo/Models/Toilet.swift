@@ -22,7 +22,7 @@ struct Toilet: Identifiable, Codable, Hashable {
     let photos: [ToiletPhoto]
     let openTimestamp: Date?
     let closeTimestamp: Date?
-    let placeOpeningHours: String?
+    let placeOpeningHours: [OpeningHoursPeriod]?
     let updated: String
 
     var coordinate: CLLocationCoordinate2D {
@@ -69,22 +69,46 @@ struct Toilet: Identifiable, Codable, Hashable {
         photos = (try? container.decode([ToiletPhoto].self, forKey: .photos)) ?? []
         openTimestamp = try container.decodeISO8601IfPresent(forKey: .openTimestamp)
         closeTimestamp = try container.decodeISO8601IfPresent(forKey: .closeTimestamp)
-        placeOpeningHours = try container.decodeFlexibleStringIfPresent(forKey: .placeOpeningHours)
+        placeOpeningHours = try container.decodeIfPresent([OpeningHoursPeriod].self, forKey: .placeOpeningHours)
         updated = try container.decode(String.self, forKey: .updated)
     }
 }
 
-private extension KeyedDecodingContainer {
-    func decodeFlexibleStringIfPresent(forKey key: K) throws -> String? {
-        if let string = try decodeIfPresent(String.self, forKey: key), !string.isEmpty {
-            return string
+struct OpeningHoursPeriod: Codable, Hashable {
+    let close: OpeningHoursTime?
+    let open: OpeningHoursTime
+
+    var formatted: String {
+        if let close {
+            return "\(open.formattedDay) \(open.formattedTime) – \(close.formattedTime)"
+        } else {
+            return "\(open.formattedDay) ab \(open.formattedTime)"
         }
-        if let array = try decodeIfPresent([String].self, forKey: key), !array.isEmpty {
-            return array.joined(separator: "\n")
-        }
-        return nil
+    }
+}
+
+struct OpeningHoursTime: Codable, Hashable {
+    let day: Int
+    let time: String
+
+    private static let dayNames = [
+        "So", "Mo", "Di", "Mi", "Do", "Fr", "Sa"
+    ]
+
+    var formattedDay: String {
+        guard (0...6).contains(day) else { return "?" }
+        return Self.dayNames[day]
     }
 
+    var formattedTime: String {
+        guard time.count == 4 else { return time }
+        let hour = time.prefix(2)
+        let minute = time.suffix(2)
+        return "\(hour):\(minute)"
+    }
+}
+
+private extension KeyedDecodingContainer {
     func decodeISO8601IfPresent(forKey key: K) throws -> Date? {
         guard let string = try decodeIfPresent(String.self, forKey: key), !string.isEmpty else {
             return nil

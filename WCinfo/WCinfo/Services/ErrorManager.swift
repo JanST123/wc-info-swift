@@ -14,14 +14,17 @@ final class ErrorManager: ObservableObject {
     func report(
         _ error: Error,
         context: [String: Any] = [:],
-        showToUser: Bool = true
+        showToUser: Bool = true,
+        logToSentry: Bool = true
     ) {
         let userError = UserError(error: error)
 
-        let sentryEvent = Sentry.Event(level: .error)
-        sentryEvent.message = SentryMessage(formatted: userError.message)
-        sentryEvent.extra = context
-        SentrySDK.capture(event: sentryEvent)
+        if logToSentry {
+            let sentryEvent = Sentry.Event(level: .error)
+            sentryEvent.message = SentryMessage(formatted: userError.message)
+            sentryEvent.extra = context
+            SentrySDK.capture(event: sentryEvent)
+        }
 
         guard showToUser else { return }
 
@@ -38,14 +41,17 @@ final class ErrorManager: ObservableObject {
     func reportMessage(
         _ message: String,
         context: [String: Any] = [:],
-        showToUser: Bool = true
+        showToUser: Bool = true,
+        logToSentry: Bool = true
     ) {
         let userError = UserError(message: message)
 
-        let sentryEvent = Sentry.Event(level: .error)
-        sentryEvent.message = SentryMessage(formatted: message)
-        sentryEvent.extra = context
-        SentrySDK.capture(event: sentryEvent)
+        if logToSentry {
+            let sentryEvent = Sentry.Event(level: .error)
+            sentryEvent.message = SentryMessage(formatted: message)
+            sentryEvent.extra = context
+            SentrySDK.capture(event: sentryEvent)
+        }
 
         guard showToUser else { return }
 
@@ -76,8 +82,8 @@ struct UserError: Identifiable, Equatable {
 
     init(error: Error) {
         if let apiError = error as? WCInfoAPIError,
-           let message = apiError.message {
-            self.message = message
+           let apiMessage = apiError.message {
+            self.message = apiMessage
         } else {
             self.message = error.localizedDescription
         }

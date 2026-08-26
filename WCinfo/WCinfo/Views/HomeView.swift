@@ -185,7 +185,6 @@ struct HomeView: View {
                     .foregroundColor(.white)
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
             }
-            .disabled(searchText.isEmpty)
             .background(searchText.isEmpty ? Color.gray : Color(red: 0.4, green: 0.4, blue: 0.4))
             .clipShape(RoundedRectangle(cornerRadius: 12))
             .accessibilityLabel("Suchen")

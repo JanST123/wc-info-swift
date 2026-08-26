@@ -2,7 +2,8 @@
   "images" : [
     {
       "filename" : "toiletIconUnisex.svg",
-      "idiom" : "universal"
+      "idiom" : "universal",
+      "template-rendering-intent" : "template"
     }
   ],
   "info" : {

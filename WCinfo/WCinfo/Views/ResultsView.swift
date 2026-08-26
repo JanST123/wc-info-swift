@@ -88,11 +88,20 @@ struct ResultsView: View {
             )
             Analytics.shared.trackEvent(category: "results", action: "loaded", name: location.name, value: Float(toilets.count))
         } catch {
-            ErrorManager.shared.report(error, context: [
+            var context: [String: Any] = [
                 "action": "fetchToiletsNearby",
                 "latitude": location.coordinate.latitude,
                 "longitude": location.coordinate.longitude
-            ])
+            ]
+            var logToSentry = true
+            if let apiError = error as? WCInfoAPIError {
+                context.merge(apiError.diagnosticContext) { _, new in new }
+                // invalidResponse already captured by the service with the full response body.
+                if case .invalidResponse = apiError {
+                    logToSentry = false
+                }
+            }
+            ErrorManager.shared.report(error, context: context, logToSentry: logToSentry)
             Analytics.shared.trackEvent(category: "results", action: "error", name: location.name)
         }
     }

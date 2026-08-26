@@ -6,24 +6,37 @@ import CoreLocation
 final class PlacesService: ObservableObject {
     private let client = GMSPlacesClient.shared()
 
-    func autocomplete(query: String) async throws -> [GMSAutocompletePrediction] {
-        let token = GMSAutocompleteSessionToken()
+    func autocomplete(query: String) async throws -> [GMSAutocompletePlaceSuggestion] {
+        let request = GMSAutocompleteRequest(query: query)
+        let filter = GMSAutocompleteFilter()
+        filter.types = ["geocode", "establishment"]
+        request.filter = filter
+
         return try await withCheckedThrowingContinuation { continuation in
-            let filter = GMSAutocompleteFilter()
-            filter.types = ["geocode", "establishment"]
-            client.findAutocompletePredictions(fromQuery: query, filter: filter, sessionToken: token) { results, error in
+            client.fetchAutocompleteSuggestions(from: request) { suggestions, error in
                 if let error = error {
                     continuation.resume(throwing: error)
                 } else {
-                    continuation.resume(returning: results ?? [])
+                    let placeSuggestions = (suggestions ?? []).compactMap { $0.placeSuggestion }
+                    continuation.resume(returning: placeSuggestions)
                 }
             }
         }
     }
 
     func fetchCoordinates(for placeID: String) async throws -> CLLocationCoordinate2D {
+        if let cached = placeDetailsCache[placeID]?.coordinate {
+            return cached
+        }
+
+        let request = GMSFetchPlaceRequest(
+            placeID: placeID,
+            placeProperties: [GMSPlaceProperty.coordinate.rawValue],
+            sessionToken: nil
+        )
+
         return try await withCheckedThrowingContinuation { continuation in
-            client.fetchPlace(fromPlaceID: placeID, placeFields: [.coordinate], sessionToken: nil) { place, error in
+            client.fetchPlace(with: request) { place, error in
                 if let error = error {
                     continuation.resume(throwing: error)
                 } else if let coordinate = place?.coordinate {

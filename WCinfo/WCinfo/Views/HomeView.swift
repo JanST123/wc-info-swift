@@ -7,7 +7,7 @@ struct HomeView: View {
     @StateObject private var locationManager = LocationManager()
 
     @State private var searchText = ""
-    @State private var predictions: [GMSAutocompletePrediction] = []
+    @State private var predictions: [GMSAutocompletePlaceSuggestion] = []
     @State private var selectedLocation: SearchedLocation?
     @State private var keyboardHeight: CGFloat = 0
     @State private var showSearchValidation = false
@@ -215,7 +215,7 @@ struct HomeView: View {
         }
     }
 
-    private func selectPrediction(_ prediction: GMSAutocompletePrediction) {
+    private func selectPrediction(_ prediction: GMSAutocompletePlaceSuggestion) {
         searchText = prediction.attributedFullText.string
         predictions = []
         showSearchValidation = false

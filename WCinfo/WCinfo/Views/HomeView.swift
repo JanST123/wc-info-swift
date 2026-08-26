@@ -47,7 +47,6 @@ struct HomeView: View {
                 .scrollDismissesKeyboard(.immediately)
             }
             .navigationTitle("")
-            .preferredColorScheme(.light)
             .navigationDestination(item: $selectedLocation) { location in
                 ResultsView(location: location)
             }
@@ -127,7 +126,7 @@ struct HomeView: View {
             }
             .padding(.horizontal, 16)
             .frame(height: 52)
-            .background(isSearchInvalid ? Color.red.opacity(0.08) : Color.white)
+            .background(isSearchInvalid ? Color.red.opacity(0.08) : Color(uiColor: .systemBackground))
             .overlay(
                 RoundedRectangle(cornerRadius: 12)
                     .stroke(isSearchInvalid ? Color.red : Color.clear, lineWidth: 2)

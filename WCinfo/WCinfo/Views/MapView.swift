@@ -119,12 +119,13 @@ private final class ToiletInfoWindowView: UIView {
 
     init(toilet: Toilet) {
         super.init(frame: .zero)
-        backgroundColor = .white
+        backgroundColor = .systemBackground
 
         let titleLabel = UILabel()
         titleLabel.text = toilet.displayName
         titleLabel.font = .preferredFont(forTextStyle: .headline)
         titleLabel.numberOfLines = 1
+        titleLabel.textColor = .label
 
         let snippetLabel = UILabel()
         snippetLabel.text = toilet.accessibilitySnippet

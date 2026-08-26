@@ -12,6 +12,7 @@ struct CreateScreen: View {
     @State private var nearbyPlaces: [NearbyPlaceOption] = []
     @State private var selectedPlace: NearbyPlaceOption?
     @State private var isLoadingPlaces = false
+    @State private var placesError: String?
 
     @State private var toiletName = ""
     @State private var isGenderSeparated = false
@@ -30,6 +31,28 @@ struct CreateScreen: View {
             ScrollView {
                 VStack(alignment: .leading, spacing: 20) {
                     placeAssociationSection
+
+                    if let placesError {
+                        HStack(alignment: .top, spacing: 8) {
+                            Image(systemName: "exclamationmark.triangle.fill")
+                                .foregroundColor(.orange)
+                                .font(.caption)
+                            Text(placesError)
+                                .font(.caption)
+                                .foregroundColor(.secondary)
+                                .frame(maxWidth: .infinity, alignment: .leading)
+                            Button {
+                                Task { await loadInitialData() }
+                            } label: {
+                                Text("Erneut versuchen")
+                                    .font(.caption.bold())
+                                    .foregroundColor(.purple)
+                            }
+                        }
+                        .padding(10)
+                        .background(Color.orange.opacity(0.1))
+                        .clipShape(RoundedRectangle(cornerRadius: 8))
+                    }
 
                     toiletNameSection
 
@@ -366,6 +389,7 @@ struct CreateScreen: View {
     private func loadInitialData() async {
         guard let location else { return }
         isLoadingPlaces = true
+        placesError = nil
         defer { isLoadingPlaces = false }
 
         if address.isEmpty {
@@ -383,7 +407,17 @@ struct CreateScreen: View {
                 selectPlace(first)
             }
         } catch {
-            print("[CreateScreen] fetchNearbyPlaces error: \(error)")
+            let message = "Orte in der Nähe konnten nicht geladen werden: \(error.localizedDescription)"
+            placesError = message
+            ErrorManager.shared.report(
+                error,
+                context: [
+                    "action": "fetchNearbyPlaces",
+                    "lat": location.coordinate.latitude,
+                    "lon": location.coordinate.longitude
+                ],
+                showToUser: false // shown inline in the sheet instead
+            )
         }
     }
 

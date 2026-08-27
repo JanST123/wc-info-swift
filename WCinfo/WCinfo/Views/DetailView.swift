@@ -4,6 +4,7 @@ import MapKit
 struct DetailView: View {
     @Environment(\.dismiss) private var dismiss
     let toilet: Toilet
+    @State private var selectedPhotoIndex: Int? = nil
 
     var body: some View {
         NavigationStack {
@@ -32,6 +33,51 @@ struct DetailView: View {
                     }
                     .accessibilityLabel("Navigieren zu \(toilet.name)")
                     .accessibilityHint("Öffnet die Karten-App mit der Route zur Toilette.")
+
+                    if !toilet.photos.isEmpty {
+                        VStack(alignment: .leading, spacing: 8) {
+                            Text("Fotos")
+                                .font(.subheadline.bold())
+
+                            ScrollView(.horizontal, showsIndicators: false) {
+                                HStack(spacing: 10) {
+                                    ForEach(Array(toilet.photos.enumerated()), id: \.offset) { index, photo in
+                                        Button {
+                                            selectedPhotoIndex = index
+                                        } label: {
+                                            AsyncImage(url: URL(string: photo.urlThumb)) { phase in
+                                                switch phase {
+                                                case .empty:
+                                                    ProgressView()
+                                                        .frame(width: 100, height: 100)
+                                                        .background(Color(uiColor: .secondarySystemBackground))
+                                                case .success(let image):
+                                                    image
+                                                        .resizable()
+                                                        .scaledToFill()
+                                                        .frame(width: 100, height: 100)
+                                                        .clipped()
+                                                case .failure:
+                                                    Image(systemName: "photo")
+                                                        .font(.title2)
+                                                        .foregroundColor(.secondary)
+                                                        .frame(width: 100, height: 100)
+                                                        .background(Color(uiColor: .secondarySystemBackground))
+                                                @unknown default:
+                                                    EmptyView()
+                                                }
+                                            }
+                                            .frame(width: 100, height: 100)
+                                            .clipShape(RoundedRectangle(cornerRadius: 10))
+                                            .shadow(color: .black.opacity(0.1), radius: 2, x: 0, y: 1)
+                                        }
+                                        .buttonStyle(.plain)
+                                    }
+                                }
+                                .padding(.vertical, 2)
+                            }
+                        }
+                    }
 
                     if let address = toilet.address, !address.isEmpty {
                         VStack(alignment: .leading, spacing: 4) {
@@ -72,6 +118,14 @@ struct DetailView: View {
                         dismiss()
                     }
                     .accessibilityLabel("Details schließen")
+                }
+            }
+            .fullScreenCover(isPresented: Binding(
+                get: { selectedPhotoIndex != nil },
+                set: { if !$0 { selectedPhotoIndex = nil } }
+            )) {
+                if let index = selectedPhotoIndex {
+                    PhotoLightboxView(photos: toilet.photos, selectedIndex: index)
                 }
             }
         }

@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="200" height="200" fill="none" stroke="#FFFFFF" stroke-width="4" stroke-linecap="round" stroke-linejoin="round">
+  <!-- Shelf Plank & Wall Brackets -->
+  <rect x="14" y="42" width="72" height="6" rx="1.5" />
+  <line x1="24" y1="48" x2="24" y2="56" />
+  <line x1="76" y1="48" x2="76" y2="56" />
+  
+  <!-- Backpack Resting on Shelf -->
+  <path d="M 58 20 A 4 4 0 0 1 66 20" />
+  <path d="M 54 26 C 54 20 70 20 70 26 L 72 42 L 52 42 Z" />
+  <line x1="53" y1="31" x2="71" y2="31" />
+  <rect x="57" y="34" width="10" height="6" rx="1" />
+  
+  <!-- Hanging Jacket Silhouette Below Shelf -->
+  <path d="M 38 48 L 38 52" />
+  <path d="M 38 52 L 26 58 L 22 84 L 30 82 L 32 66 L 32 88 L 44 88 L 44 66 L 46 82 L 54 84 L 50 58 Z" />
+</svg>

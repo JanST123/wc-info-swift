@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="200" height="200" fill="none" stroke="#FFFFFF" stroke-width="4" stroke-linecap="round" stroke-linejoin="round">
+  <!-- Outer Prohibitory Circle -->
+  <circle cx="50" cy="50" r="44" />
+  <!-- Diagonal Slash -->
+  <line x1="19" y1="19" x2="81" y2="81" />
+  <!-- Backpack Top Handle -->
+  <path d="M 42 32 A 8 8 0 0 1 58 32" />
+  <!-- Backpack Main Body -->
+  <path d="M 33 42 C 33 32 67 32 67 42 L 67 68 C 67 71 64 73 60 73 L 40 73 C 36 73 33 71 33 68 Z" />
+  <!-- Flap / Pocket -->
+  <path d="M 33 46 L 67 46" />
+  <rect x="39" y="55" width="22" height="13" rx="2" />
+</svg>

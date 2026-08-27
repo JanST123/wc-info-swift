@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="200" height="200" fill="none" stroke="#FFFFFF" stroke-width="4" stroke-linecap="round" stroke-linejoin="round">
+  <!-- Wall Mount Base -->
+  <rect x="26" y="24" width="8" height="24" rx="2" />
+  <!-- Hook Curve -->
+  <path d="M 34 36 C 44 36 48 48 40 52 C 36 54 32 50 32 46" />
+  <!-- Hanger Hook & Body -->
+  <path d="M 52 46 C 52 42 56 40 58 43 C 60 46 58 50 58 52" />
+  <path d="M 58 52 L 32 68 L 84 68 Z" />
+  <!-- Small Hanging Item / Towel -->
+  <path d="M 48 68 L 48 84 L 68 84 L 68 68" />
+  <line x1="53" y1="84" x2="53" y2="88" />
+  <line x1="63" y1="84" x2="63" y2="88" />
+</svg>

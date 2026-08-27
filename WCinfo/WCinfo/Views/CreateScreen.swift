@@ -37,6 +37,7 @@ struct CreateScreen: View {
     @State private var isSubmitting = false
     @State private var errorMessage: String? = nil
     @State private var showHeartAnimation = false
+    @State private var showAddToiletByPhotoSheet = false
 
     // MARK: - Places Data
     @State private var nearbyPlaces: [NearbyPlaceOption] = []
@@ -125,6 +126,13 @@ struct CreateScreen: View {
             .sheet(isPresented: $showingEuroKeyInfo) {
                 EuroKeyInfoView()
             }
+            .sheet(isPresented: $showAddToiletByPhotoSheet) {
+                if let coord = currentAvailableGpsCoordinate {
+                    AddToiletByPhotoSheet(coordinate: coord) {
+                        finishWithCelebration()
+                    }
+                }
+            }
             .task {
                 await loadPlaces()
             }
@@ -132,6 +140,21 @@ struct CreateScreen: View {
                 Analytics.shared.trackScreen("CreateToiletWizard")
             }
         }
+    }
+
+    // MARK: - GPS Coordinate Helper
+
+    private var currentAvailableGpsCoordinate: CLLocationCoordinate2D? {
+        if let initial = initialCoordinate {
+            return initial
+        }
+        if let loc = locationManager.location?.coordinate {
+            return loc
+        }
+        if let gps = gpsCoordinate {
+            return gps
+        }
+        return nil
     }
 
     // MARK: - Progress Bar
@@ -150,11 +173,25 @@ struct CreateScreen: View {
                 Text("Frage \(currentIndex + 1) von \(activeSteps.count)")
                     .font(.caption2.bold())
                     .foregroundColor(.secondary)
+
                 Spacer()
+
                 if createdToiletId != nil {
                     Text("✓ Toilette gespeichert")
                         .font(.caption2.bold())
                         .foregroundColor(.green)
+                } else if locationManager.isAuthorized, currentAvailableGpsCoordinate != nil {
+                    Button {
+                        showAddToiletByPhotoSheet = true
+                    } label: {
+                        HStack(spacing: 4) {
+                            Image(systemName: "camera.fill")
+                            Text("Toilette per Foto anlegen")
+                        }
+                        .font(.caption2.bold())
+                        .foregroundColor(.purple)
+                    }
+                    .buttonStyle(.plain)
                 }
             }
             .padding(.horizontal, 20)

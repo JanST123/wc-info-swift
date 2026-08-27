@@ -4,6 +4,7 @@ import ImageIO
 
 struct PhotoUpload: View {
     var toiletId: Int? = nil
+    var fixedGeo: String? = nil
     var onPhotoUploaded: ((UploadPhotoResponse) -> Void)? = nil
     var onPhotosChanged: (([UploadedPhotoItem]) -> Void)? = nil
 
@@ -209,7 +210,8 @@ struct PhotoUpload: View {
                 let response = try await WCInfoAPIService.shared.uploadPhoto(
                     imageData: item.rawData,
                     toiletId: toiletId,
-                    exif: item.exifJSON
+                    exif: item.exifJSON,
+                    fixedGeo: fixedGeo
                 )
 
                 // If cancelled while network request was running, delete the newly created remote photo

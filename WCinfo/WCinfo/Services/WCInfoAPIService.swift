@@ -145,7 +145,7 @@ actor WCInfoAPIService {
         }
     }
 
-    func uploadPhoto(imageData: Data, toiletId: Int? = nil, exif: String? = nil, mimeType: String = "image/jpeg", filename: String = "photo.jpg") async throws -> UploadPhotoResponse {
+    func uploadPhoto(imageData: Data, toiletId: Int? = nil, exif: String? = nil, fixedGeo: String? = nil, mimeType: String = "image/jpeg", filename: String = "photo.jpg") async throws -> UploadPhotoResponse {
         guard let url = URL(string: "\(baseURL)/upload") else {
             throw WCInfoAPIError.invalidURL
         }
@@ -172,6 +172,13 @@ actor WCInfoAPIService {
             body.append("--\(boundary)\r\n".data(using: .utf8)!)
             body.append("Content-Disposition: form-data; name=\"exif\"\r\n\r\n".data(using: .utf8)!)
             body.append("\(exif)\r\n".data(using: .utf8)!)
+        }
+
+        // 4. fixed_geo (optional JSON string)
+        if let fixedGeo, !fixedGeo.isEmpty {
+            body.append("--\(boundary)\r\n".data(using: .utf8)!)
+            body.append("Content-Disposition: form-data; name=\"fixed_geo\"\r\n\r\n".data(using: .utf8)!)
+            body.append("\(fixedGeo)\r\n".data(using: .utf8)!)
         }
 
         // Close boundary

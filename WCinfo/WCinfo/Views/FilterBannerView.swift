@@ -37,7 +37,7 @@ struct ToiletFilterSettings: Equatable, Codable {
         var pairs: [String] = []
 
         if !showClosed {
-            pairs.append("is_closed:false")
+            pairs.append("is_open:true")
         }
         if !showNonPublic {
             pairs.append("public_accessible:true")

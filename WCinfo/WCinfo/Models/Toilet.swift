@@ -18,6 +18,7 @@ struct Toilet: Identifiable, Codable, Hashable {
     let address: String?
     let website: String?
     let comment: String?
+    let euroKey: String?
     let storageSpace: String?
     let accessibleOutsideOpeningTimes: Bool
     let isPublicAccessible: Bool
@@ -43,6 +44,7 @@ struct Toilet: Identifiable, Codable, Hashable {
         case hasWheelchairAccess = "has_wheelchair_access"
         case hasChangingTable = "has_changing_table"
         case source, address, website, comment
+        case euroKey = "euro_key"
         case storageSpace = "storage_space"
         case accessibleOutsideOpeningTimes = "accessible_outside_opening_times"
         case isPublicAccessible = "public_accessible"
@@ -99,6 +101,7 @@ struct Toilet: Identifiable, Codable, Hashable {
         address = try container.decodeIfPresent(String.self, forKey: .address)
         website = try container.decodeIfPresent(String.self, forKey: .website)
         comment = try container.decodeIfPresent(String.self, forKey: .comment)
+        euroKey = try container.decodeIfPresent(String.self, forKey: .euroKey)
         storageSpace = try container.decodeIfPresent(String.self, forKey: .storageSpace)
         isOpen = container.decodeFlexibleBoolIfPresent(forKey: .isOpen)
         distance = try container.decodeIfPresent(Double.self, forKey: .distance)

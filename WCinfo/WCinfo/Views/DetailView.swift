@@ -7,6 +7,7 @@ struct DetailView: View {
     var onPhotosUpdated: (() -> Void)? = nil
     @State private var selectedPhotoIndex: Int? = nil
     @State private var isShowingPhotoUploadSheet = false
+    @State private var isShowingEuroKeyInfoSheet = false
 
     var body: some View {
         NavigationStack {
@@ -51,6 +52,52 @@ struct DetailView: View {
                     .accessibilityLabel("Navigieren zu \(toilet.name)")
                     .accessibilityHint("Öffnet die Karten-App mit der Route zur Toilette.")
                     
+                    // Features checklist
+                    VStack(alignment: .leading, spacing: 8) {
+                        HStack(alignment: .center, spacing: 8) {
+                            featureStatusIcon(isAvailable: toilet.isUnisex)
+                            Text("Toilette ohne Geschlechtertrennung vorhanden")
+                                .font(.body)
+                        }
+
+                        HStack(alignment: .center, spacing: 8) {
+                            featureStatusIcon(isAvailable: toilet.isGenderSeparated)
+                            Text("Nach Geschlecht getrennte Toiletten vorhanden")
+                                .font(.body)
+                        }
+
+                        HStack(alignment: .center, spacing: 8) {
+                            featureStatusIcon(isAvailable: toilet.hasWheelchairAccess)
+                            Text("Barrierefreie Toilette vorhanden")
+                                .font(.body)
+                        }
+
+                        if toilet.hasWheelchairAccess || toilet.euroKey != nil {
+                            HStack(alignment: .center, spacing: 8) {
+                                euroKeyStatusIcon(toilet.euroKey)
+                                Text("Euroschlüssel erforderlich")
+                                    .font(.body)
+
+                                Button {
+                                    isShowingEuroKeyInfoSheet = true
+                                } label: {
+                                    Image(systemName: "info.circle")
+                                        .font(.body)
+                                        .foregroundColor(.purple)
+                                }
+                                .buttonStyle(.plain)
+                                .accessibilityLabel("Informationen zum Euroschlüssel")
+                            }
+                        }
+
+                        HStack(alignment: .center, spacing: 8) {
+                            featureStatusIcon(isAvailable: toilet.hasChangingTable)
+                            Text("Wickelraum vorhanden")
+                                .font(.body)
+                        }
+                    }
+                    .padding(.vertical, 2)
+
                     Spacer(minLength: 4)
 
                     // Photos Section with thumbnails and upload button
@@ -307,10 +354,51 @@ struct DetailView: View {
                 .presentationDetents([.medium, .large])
                 .presentationDragIndicator(.visible)
             }
+            .sheet(isPresented: $isShowingEuroKeyInfoSheet) {
+                EuroKeyInfoView()
+                    .presentationDetents([.medium, .large])
+                    .presentationDragIndicator(.visible)
+            }
         }
         .onAppear {
             Analytics.shared.trackScreen("Detail")
             Analytics.shared.trackEvent(category: "detail", action: "view", name: toilet.name)
+        }
+    }
+
+    @ViewBuilder
+    private func featureStatusIcon(isAvailable: Bool) -> some View {
+        if isAvailable {
+            Image(systemName: "checkmark")
+                .font(.body.bold())
+                .foregroundColor(.green)
+                .frame(width: 20)
+        } else {
+            Image(systemName: "xmark")
+                .font(.body.bold())
+                .foregroundColor(.red)
+                .frame(width: 20)
+        }
+    }
+
+    @ViewBuilder
+    private func euroKeyStatusIcon(_ status: String?) -> some View {
+        switch status?.lowercased() {
+        case "yes", "true", "1":
+            Image(systemName: "checkmark")
+                .font(.body.bold())
+                .foregroundColor(.green)
+                .frame(width: 20)
+        case "no", "false", "0":
+            Image(systemName: "xmark")
+                .font(.body.bold())
+                .foregroundColor(.red)
+                .frame(width: 20)
+        default:
+            Image(systemName: "questionmark")
+                .font(.body.bold())
+                .foregroundColor(.orange)
+                .frame(width: 20)
         }
     }
 

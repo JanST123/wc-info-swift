@@ -5,9 +5,11 @@ struct OpeningTimeComponent: View {
     let isOpen: Bool?
     let openTimestamp: Date?
     let closeTimestamp: Date?
+    var accessibleOutsideOpeningTimes: Bool = false
+    var alignment: HorizontalAlignment = .trailing
 
     var body: some View {
-        VStack(alignment: .trailing, spacing: 2) {
+        VStack(alignment: alignment, spacing: 2) {
             if hasOpeningHours ?? false {
                 Text(isOpen ?? false ? "Geöffnet" : "Geschlossen")
                     .font(.subheadline.bold())
@@ -22,13 +24,25 @@ struct OpeningTimeComponent: View {
                         .font(.caption)
                         .foregroundColor(.purple)
                 }
+
+                if !(isOpen ?? false) && accessibleOutsideOpeningTimes {
+                    Text("Auch außerhalb der Öffnungszeiten zugänglich")
+                        .font(.caption2)
+                        .foregroundColor(.secondary)
+                }
             } else {
                 Text("Keine Öffnungszeiten")
                     .font(.subheadline)
                     .foregroundStyle(.secondary)
+
+                if accessibleOutsideOpeningTimes {
+                    Text("Auch außerhalb der Öffnungszeiten zugänglich")
+                        .font(.caption2)
+                        .foregroundColor(.secondary)
+                }
             }
         }
-        .multilineTextAlignment(.trailing)
+        .multilineTextAlignment(alignment == .leading ? .leading : .trailing)
         .accessibilityElement(children: .combine)
         .accessibilityLabel(accessibilityLabel)
     }
@@ -42,8 +56,14 @@ struct OpeningTimeComponent: View {
             } else if !isOpen, let openTimestamp {
                 parts.append("öffnet \(timeUntil(openTimestamp, prefix: ""))")
             }
+            if !isOpen && accessibleOutsideOpeningTimes {
+                parts.append("Auch außerhalb der Öffnungszeiten zugänglich")
+            }
         } else {
             parts.append("Keine Öffnungszeiten verfügbar")
+            if accessibleOutsideOpeningTimes {
+                parts.append("Auch außerhalb der Öffnungszeiten zugänglich")
+            }
         }
         return parts.joined(separator: ", ")
     }

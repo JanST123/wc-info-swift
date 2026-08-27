@@ -77,7 +77,8 @@ struct ToiletRowView: View {
                     hasOpeningHours: toilet.placeOpeningHours != nil,
                     isOpen: toilet.isOpen,
                     openTimestamp: toilet.openTimestamp,
-                    closeTimestamp: toilet.closeTimestamp
+                    closeTimestamp: toilet.closeTimestamp,
+                    accessibleOutsideOpeningTimes: toilet.accessibleOutsideOpeningTimes
                 )
             }
 

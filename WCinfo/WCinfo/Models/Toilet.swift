@@ -17,6 +17,7 @@ struct Toilet: Identifiable, Codable, Hashable {
     let source: String?
     let address: String?
     let website: String?
+    let accessibleOutsideOpeningTimes: Bool
     let isOpen: Bool?
     let distance: Double?
     let photos: [ToiletPhoto]
@@ -39,6 +40,7 @@ struct Toilet: Identifiable, Codable, Hashable {
         case hasWheelchairAccess = "has_wheelchair_access"
         case hasChangingTable = "has_changing_table"
         case source, address, website
+        case accessibleOutsideOpeningTimes = "accessible_outside_opening_times"
         case isOpen = "is_open"
         case distance, photos
         case openTimestamp = "open_timestamp"
@@ -85,6 +87,7 @@ struct Toilet: Identifiable, Codable, Hashable {
         isGenderSeparated = container.decodeFlexibleBool(forKey: .isGenderSeparated)
         hasWheelchairAccess = container.decodeFlexibleBool(forKey: .hasWheelchairAccess)
         hasChangingTable = container.decodeFlexibleBool(forKey: .hasChangingTable)
+        accessibleOutsideOpeningTimes = container.decodeFlexibleBool(forKey: .accessibleOutsideOpeningTimes)
 
         source = try container.decodeIfPresent(String.self, forKey: .source)
         address = try container.decodeIfPresent(String.self, forKey: .address)

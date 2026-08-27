@@ -98,7 +98,7 @@ struct DetailView: View {
                     }
 
                     if let periods = toilet.placeOpeningHours, !periods.isEmpty {
-                        VStack(alignment: .leading, spacing: 4) {
+                        VStack(alignment: .leading, spacing: 6) {
                             Text("Öffnungszeiten")
                                 .font(.subheadline.bold())
                             ForEach(periods.indices, id: \.self) { index in
@@ -106,9 +106,33 @@ struct DetailView: View {
                                     .font(.body)
                                     .foregroundStyle(.secondary)
                             }
+
+                            OpeningTimeComponent(
+                                hasOpeningHours: true,
+                                isOpen: toilet.isOpen,
+                                openTimestamp: toilet.openTimestamp,
+                                closeTimestamp: toilet.closeTimestamp,
+                                accessibleOutsideOpeningTimes: toilet.accessibleOutsideOpeningTimes,
+                                alignment: .leading
+                            )
+                            .padding(.top, 4)
                         }
                         .accessibilityElement(children: .combine)
                         .accessibilityLabel("Öffnungszeiten: \(periods.map(\.formatted).joined(separator: ", "))")
+                    } else if toilet.accessibleOutsideOpeningTimes {
+                        VStack(alignment: .leading, spacing: 4) {
+                            Text("Öffnungszeiten")
+                                .font(.subheadline.bold())
+
+                            OpeningTimeComponent(
+                                hasOpeningHours: false,
+                                isOpen: toilet.isOpen,
+                                openTimestamp: toilet.openTimestamp,
+                                closeTimestamp: toilet.closeTimestamp,
+                                accessibleOutsideOpeningTimes: toilet.accessibleOutsideOpeningTimes,
+                                alignment: .leading
+                            )
+                        }
                     }
 
                     Spacer(minLength: 40)

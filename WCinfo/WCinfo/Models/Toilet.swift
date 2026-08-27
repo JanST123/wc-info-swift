@@ -487,6 +487,23 @@ struct PlaceDetails: Hashable {
     let formattedAddress: String?
     let website: String?
     let coordinate: CLLocationCoordinate2D?
+    let openingHours: [GooglePlacesPeriod]?
+
+    init(
+        placeID: String,
+        name: String?,
+        formattedAddress: String?,
+        website: String?,
+        coordinate: CLLocationCoordinate2D?,
+        openingHours: [GooglePlacesPeriod]? = nil
+    ) {
+        self.placeID = placeID
+        self.name = name
+        self.formattedAddress = formattedAddress
+        self.website = website
+        self.coordinate = coordinate
+        self.openingHours = openingHours
+    }
 
     func hash(into hasher: inout Hasher) {
         hasher.combine(placeID)

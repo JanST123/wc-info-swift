@@ -96,7 +96,7 @@ final class PlacesService: ObservableObject {
             return cached
         }
 
-        let properties: [GMSPlaceProperty] = [.name, .formattedAddress, .website, .coordinate]
+        let properties: [GMSPlaceProperty] = [.name, .formattedAddress, .website, .coordinate, .openingHours]
         let request = GMSFetchPlaceRequest(placeID: placeID, placeProperties: properties.map(\.rawValue), sessionToken: nil)
 
         return try await withCheckedThrowingContinuation { [weak self] continuation in
@@ -104,12 +104,27 @@ final class PlacesService: ObservableObject {
                 if let error = error {
                     continuation.resume(throwing: error)
                 } else if let place = place {
+                    var parsedPeriods: [GooglePlacesPeriod]? = nil
+                    if let gmsPeriods = place.openingHours?.periods, !gmsPeriods.isEmpty {
+                        parsedPeriods = gmsPeriods.map { p in
+                            let openDay = Int(p.openEvent.day.rawValue)
+                            let openPoint = GooglePlacesPoint(day: openDay, hour: Int(p.openEvent.time.hour), minute: Int(p.openEvent.time.minute))
+                            var closePoint: GooglePlacesPoint? = nil
+                            if let closeEvent = p.closeEvent {
+                                let closeDay = Int(closeEvent.day.rawValue)
+                                closePoint = GooglePlacesPoint(day: closeDay, hour: Int(closeEvent.time.hour), minute: Int(closeEvent.time.minute))
+                            }
+                            return GooglePlacesPeriod(open: openPoint, close: closePoint)
+                        }
+                    }
+
                     let details = PlaceDetails(
                         placeID: placeID,
                         name: place.name,
                         formattedAddress: place.formattedAddress,
                         website: place.website?.absoluteString,
-                        coordinate: place.coordinate
+                        coordinate: place.coordinate,
+                        openingHours: parsedPeriods
                     )
                     self?.placeDetailsCache[placeID] = details
                     continuation.resume(returning: details)

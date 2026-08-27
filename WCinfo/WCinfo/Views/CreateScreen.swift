@@ -616,30 +616,92 @@ struct CreateScreen: View {
                 title: "Gibt es Ablageflächen, Kleiderhaken usw.?"
             )
 
-            VStack(spacing: 10) {
-                secondaryChoiceButton(title: "Keine") {
+            LazyVGrid(
+                columns: [
+                    GridItem(.flexible(), spacing: 12),
+                    GridItem(.flexible(), spacing: 12)
+                ],
+                spacing: 12
+            ) {
+                storageChoiceButton(
+                    title: "Keine",
+                    imageAsset: "storage-none",
+                    isPrimary: true
+                ) {
                     storageSpace = "none"
                     patchCurrentState()
                     advanceToNextStep()
                 }
 
-                secondaryChoiceButton(title: "Wenig") {
+                storageChoiceButton(
+                    title: "Wenig",
+                    imageAsset: "storage-little",
+                    isPrimary: true
+                ) {
                     storageSpace = "little"
                     patchCurrentState()
                     advanceToNextStep()
                 }
 
-                secondaryChoiceButton(title: "Viel") {
+                storageChoiceButton(
+                    title: "Viel",
+                    imageAsset: "storage-much",
+                    isPrimary: true
+                ) {
                     storageSpace = "much"
                     patchCurrentState()
                     advanceToNextStep()
                 }
 
-                secondaryChoiceButton(title: "Keine Angabe") {
+                storageChoiceButton(
+                    title: "Keine Angabe",
+                    systemImage: "questionmark.circle",
+                    isPrimary: false
+                ) {
                     advanceToNextStep()
                 }
             }
         }
+    }
+
+    private func storageChoiceButton(
+        title: String,
+        imageAsset: String? = nil,
+        systemImage: String? = nil,
+        isPrimary: Bool,
+        action: @escaping () -> Void
+    ) -> some View {
+        Button(action: action) {
+            VStack(spacing: 8) {
+                if let imageAsset {
+                    Image(imageAsset)
+                        .renderingMode(.template)
+                        .resizable()
+                        .aspectRatio(contentMode: .fit)
+                        .frame(width: 32, height: 32)
+                        .foregroundColor(isPrimary ? .white : .primary)
+                } else if let systemImage {
+                    Image(systemName: systemImage)
+                        .font(.system(size: 28))
+                        .foregroundColor(isPrimary ? .white : .secondary)
+                }
+
+                Text(title)
+                    .font(.headline)
+                    .foregroundColor(isPrimary ? .white : .primary)
+                    .multilineTextAlignment(.center)
+            }
+            .frame(maxWidth: .infinity)
+            .frame(height: 94)
+            .background(isPrimary ? Color.purple : Color(uiColor: .secondarySystemBackground))
+            .clipShape(RoundedRectangle(cornerRadius: 12))
+            .overlay(
+                RoundedRectangle(cornerRadius: 12)
+                    .stroke(isPrimary ? Color.clear : Color(.systemGray4), lineWidth: 1)
+            )
+            .shadow(color: isPrimary ? Color.purple.opacity(0.25) : Color.clear, radius: 4, x: 0, y: 2)
+        }
+        .buttonStyle(.plain)
     }
 
     // MARK: - Question 15: Photos
@@ -805,28 +867,28 @@ struct CreateScreen: View {
             steps.append(.euroKey)
         }
 
-        // Optional Steps (9-16)
-        steps.append(.publicAccess)
-
         // Q10 (Skipped if place has formatted_address)
         if selectedPlace == nil || selectedPlaceDetails?.formattedAddress == nil {
             steps.append(.address)
         }
 
-        // Q11 (Disabled for now)
-        // if selectedPlace == nil || selectedPlaceDetails?.website == nil {
-        //     steps.append(.website)
-        // }
-
-        // Q12
+        // Q12 Opening Times
         steps.append(.openingTimes)
-        // Q13
-        steps.append(.outsideOpeningTimes)
-        // Q14
+
+        // Q9 Public Access & Q13 Outside Opening Times (Skipped if no opening times available from place or user input)
+        let hasOpeningTimes = (placeOpeningHours != nil && !placeOpeningHours!.isEmpty) ||
+            (selectedPlaceDetails?.openingHours != nil && !selectedPlaceDetails!.openingHours!.isEmpty)
+
+        if hasOpeningTimes {
+            steps.append(.publicAccess)
+            steps.append(.outsideOpeningTimes)
+        }
+
+        // Q14 Storage Space
         steps.append(.storageSpace)
-        // Q15
+        // Q15 Photos
         steps.append(.photos)
-        // Q16
+        // Q16 Comment
         steps.append(.comment)
 
         return steps

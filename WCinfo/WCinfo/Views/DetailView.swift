@@ -31,6 +31,8 @@ struct DetailView: View {
                             .foregroundStyle(.primary)
                             .accessibilityLabel("Öffentlich zugängliche Toilette")
                     }
+                    
+                    Spacer(minLength: 4)
 
                     Button(action: navigateToToilet) {
                         HStack {
@@ -46,6 +48,8 @@ struct DetailView: View {
                     }
                     .accessibilityLabel("Navigieren zu \(toilet.name)")
                     .accessibilityHint("Öffnet die Karten-App mit der Route zur Toilette.")
+                    
+                    Spacer(minLength: 4)
 
                     if !toilet.photos.isEmpty {
                         VStack(alignment: .leading, spacing: 8) {
@@ -90,6 +94,8 @@ struct DetailView: View {
                                 .padding(.vertical, 2)
                             }
                         }
+                        
+                        Spacer(minLength: 4)
                     }
 
                    
@@ -114,12 +120,15 @@ struct DetailView: View {
 
                             ForEach(periods.indices, id: \.self) { index in
                                 Text(periods[index].formatted)
-                                    .font(.body)
+                                    .font(.caption)
                                     .foregroundStyle(.secondary)
                             }
                         }
                         .accessibilityElement(children: .combine)
                         .accessibilityLabel("Öffnungszeiten: \(periods.map(\.formatted).joined(separator: ", "))")
+                        
+                        Spacer(minLength: 4)
+                        
                     } else if toilet.accessibleOutsideOpeningTimes {
                         VStack(alignment: .leading, spacing: 10) {
                             Text("Öffnungszeiten")
@@ -138,6 +147,8 @@ struct DetailView: View {
                             .background(Color(uiColor: .secondarySystemBackground))
                             .clipShape(RoundedRectangle(cornerRadius: 10))
                         }
+                        
+                        Spacer(minLength: 4)
                     }
 
                     if let address = toilet.address, !address.isEmpty {
@@ -150,6 +161,8 @@ struct DetailView: View {
                         }
                         .accessibilityElement(children: .combine)
                         .accessibilityLabel("Adresse: \(address)")
+                        
+                        Spacer(minLength: 4)
                     }
 
                     if let storageSpace = toilet.storageSpace, let title = storageTitle(for: storageSpace) {
@@ -175,6 +188,8 @@ struct DetailView: View {
                         }
                         .accessibilityElement(children: .combine)
                         .accessibilityLabel("Ablagefläche: \(title)")
+                        
+                        Spacer(minLength: 4)
                     }
 
                     if let website = toilet.website, !website.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
@@ -209,6 +224,8 @@ struct DetailView: View {
                         }
                         .accessibilityElement(children: .combine)
                         .accessibilityLabel("Webseite: \(trimmed)")
+                        
+                        Spacer(minLength: 4)
                     }
                     
                     if let comment = toilet.comment, !comment.isEmpty {

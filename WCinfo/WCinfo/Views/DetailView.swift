@@ -5,6 +5,7 @@ struct DetailView: View {
     @Environment(\.dismiss) private var dismiss
     let toilet: Toilet
     @State private var selectedPhotoIndex: Int? = nil
+    @State private var isShowingPhotoUploadSheet = false
 
     var body: some View {
         NavigationStack {
@@ -51,54 +52,73 @@ struct DetailView: View {
                     
                     Spacer(minLength: 4)
 
-                    if !toilet.photos.isEmpty {
-                        VStack(alignment: .leading, spacing: 8) {
-                            Text("Fotos")
-                                .font(.subheadline.bold())
+                    // Photos Section with thumbnails and upload button
+                    VStack(alignment: .leading, spacing: 8) {
+                        Text("Fotos")
+                            .font(.subheadline.bold())
 
-                            ScrollView(.horizontal, showsIndicators: false) {
-                                HStack(spacing: 10) {
-                                    ForEach(Array(toilet.photos.enumerated()), id: \.offset) { index, photo in
-                                        Button {
-                                            selectedPhotoIndex = index
-                                        } label: {
-                                            AsyncImage(url: URL(string: photo.urlThumb)) { phase in
-                                                switch phase {
-                                                case .empty:
-                                                    ProgressView()
-                                                        .frame(width: 100, height: 100)
-                                                        .background(Color(uiColor: .secondarySystemBackground))
-                                                case .success(let image):
-                                                    image
-                                                        .resizable()
-                                                        .scaledToFill()
-                                                        .frame(width: 100, height: 100)
-                                                        .clipped()
-                                                case .failure:
-                                                    Image(systemName: "photo")
-                                                        .font(.title2)
-                                                        .foregroundColor(.secondary)
-                                                        .frame(width: 100, height: 100)
-                                                        .background(Color(uiColor: .secondarySystemBackground))
-                                                @unknown default:
-                                                    EmptyView()
-                                                }
+                        ScrollView(.horizontal, showsIndicators: false) {
+                            HStack(spacing: 10) {
+                                ForEach(Array(toilet.photos.enumerated()), id: \.offset) { index, photo in
+                                    Button {
+                                        selectedPhotoIndex = index
+                                    } label: {
+                                        AsyncImage(url: URL(string: photo.urlThumb)) { phase in
+                                            switch phase {
+                                            case .empty:
+                                                ProgressView()
+                                                    .frame(width: 100, height: 100)
+                                                    .background(Color(uiColor: .secondarySystemBackground))
+                                            case .success(let image):
+                                                image
+                                                    .resizable()
+                                                    .scaledToFill()
+                                                    .frame(width: 100, height: 100)
+                                                    .clipped()
+                                            case .failure:
+                                                Image(systemName: "photo")
+                                                    .font(.title2)
+                                                    .foregroundColor(.secondary)
+                                                    .frame(width: 100, height: 100)
+                                                    .background(Color(uiColor: .secondarySystemBackground))
+                                            @unknown default:
+                                                EmptyView()
                                             }
-                                            .frame(width: 100, height: 100)
-                                            .clipShape(RoundedRectangle(cornerRadius: 10))
-                                            .shadow(color: .black.opacity(0.1), radius: 2, x: 0, y: 1)
                                         }
-                                        .buttonStyle(.plain)
+                                        .frame(width: 100, height: 100)
+                                        .clipShape(RoundedRectangle(cornerRadius: 10))
+                                        .shadow(color: .black.opacity(0.1), radius: 2, x: 0, y: 1)
                                     }
+                                    .buttonStyle(.plain)
                                 }
-                                .padding(.vertical, 2)
-                            }
-                        }
-                        
-                        Spacer(minLength: 4)
-                    }
 
-                   
+                                // Upload photo button (always visible)
+                                Button {
+                                    isShowingPhotoUploadSheet = true
+                                } label: {
+                                    VStack(spacing: 6) {
+                                        Image(systemName: "camera.badge.plus")
+                                            .font(.system(size: 26, weight: .semibold))
+                                            .foregroundColor(.white)
+                                        Text("Foto hinzufügen")
+                                            .font(.caption2.bold())
+                                            .foregroundColor(.white)
+                                            .multilineTextAlignment(.center)
+                                            .lineLimit(2)
+                                    }
+                                    .frame(width: 100, height: 100)
+                                    .background(Color.purple)
+                                    .clipShape(RoundedRectangle(cornerRadius: 10))
+                                    .shadow(color: Color.purple.opacity(0.3), radius: 3, x: 0, y: 2)
+                                }
+                                .buttonStyle(.plain)
+                                .accessibilityLabel("Foto hinzufügen")
+                            }
+                            .padding(.vertical, 2)
+                        }
+                    }
+                    
+                    Spacer(minLength: 4)
 
                     if let periods = toilet.placeOpeningHours, !periods.isEmpty {
                         VStack(alignment: .leading, spacing: 10) {
@@ -262,6 +282,27 @@ struct DetailView: View {
                 if let index = selectedPhotoIndex {
                     PhotoLightboxView(photos: toilet.photos, selectedIndex: index)
                 }
+            }
+            .sheet(isPresented: $isShowingPhotoUploadSheet) {
+                NavigationStack {
+                    ScrollView {
+                        VStack(alignment: .leading, spacing: 16) {
+                            PhotoUpload(toiletId: toilet.id)
+                                .padding()
+                        }
+                    }
+                    .navigationTitle("Fotos hochladen")
+                    .navigationBarTitleDisplayMode(.inline)
+                    .toolbar {
+                        ToolbarItem(placement: .cancellationAction) {
+                            Button("Fertig") {
+                                isShowingPhotoUploadSheet = false
+                            }
+                        }
+                    }
+                }
+                .presentationDetents([.medium, .large])
+                .presentationDragIndicator(.visible)
             }
         }
         .onAppear {

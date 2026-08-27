@@ -626,7 +626,7 @@ struct CreateScreen: View {
                 title: "Möchtest du Fotos hinzufügen?"
             )
 
-            PhotoUpload()
+            PhotoUpload(toiletId: createdToiletId)
 
             secondaryChoiceButton(title: "Weiter") {
                 advanceToNextStep()

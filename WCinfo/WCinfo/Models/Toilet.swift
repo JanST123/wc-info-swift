@@ -364,6 +364,24 @@ public struct AddToiletPropertiesResponse: Codable {
     public let count: Int
 }
 
+public struct UploadPhotoResponse: Codable {
+    public let success: Bool
+    public let hasGeo: String?
+    public let placeId: String?
+    public let imageUrl: String
+    public let filename: String
+    public let toiletId: Int
+
+    enum CodingKeys: String, CodingKey {
+        case success
+        case hasGeo = "hasGeo"
+        case placeId = "placeId"
+        case imageUrl = "imageUrl"
+        case filename
+        case toiletId = "toiletId"
+    }
+}
+
 struct AddToiletPayload: Codable {
     var name: String?
     var owner: String?

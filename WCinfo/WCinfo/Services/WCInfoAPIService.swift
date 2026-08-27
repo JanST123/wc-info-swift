@@ -145,7 +145,48 @@ actor WCInfoAPIService {
         }
     }
 
-    private func performRequest(url: URL, method: String = "GET", body: Data? = nil, isRetryAfterCSRF: Bool = false) async throws -> Data {
+    func uploadPhoto(imageData: Data, toiletId: Int? = nil, exif: String? = nil, mimeType: String = "image/jpeg", filename: String = "photo.jpg") async throws -> UploadPhotoResponse {
+        guard let url = URL(string: "\(baseURL)/upload") else {
+            throw WCInfoAPIError.invalidURL
+        }
+
+        let boundary = "Boundary-\(UUID().uuidString)"
+        var body = Data()
+
+        // 1. Image binary
+        body.append("--\(boundary)\r\n".data(using: .utf8)!)
+        body.append("Content-Disposition: form-data; name=\"file\"; filename=\"\(filename)\"\r\n".data(using: .utf8)!)
+        body.append("Content-Type: \(mimeType)\r\n\r\n".data(using: .utf8)!)
+        body.append(imageData)
+        body.append("\r\n".data(using: .utf8)!)
+
+        // 2. toilet_id (optional)
+        if let toiletId {
+            body.append("--\(boundary)\r\n".data(using: .utf8)!)
+            body.append("Content-Disposition: form-data; name=\"toilet_id\"\r\n\r\n".data(using: .utf8)!)
+            body.append("\(toiletId)\r\n".data(using: .utf8)!)
+        }
+
+        // 3. exif (optional JSON string)
+        if let exif, !exif.isEmpty {
+            body.append("--\(boundary)\r\n".data(using: .utf8)!)
+            body.append("Content-Disposition: form-data; name=\"exif\"\r\n\r\n".data(using: .utf8)!)
+            body.append("\(exif)\r\n".data(using: .utf8)!)
+        }
+
+        // Close boundary
+        body.append("--\(boundary)--\r\n".data(using: .utf8)!)
+
+        let data = try await performRequest(url: url, method: "POST", body: body, customContentType: "multipart/form-data; boundary=\(boundary)")
+        do {
+            return try decoder.decode(UploadPhotoResponse.self, from: data)
+        } catch {
+            let rawBody = String(data: data, encoding: .utf8)
+            throw WCInfoAPIError.decodingError(underlying: error, responseBody: rawBody)
+        }
+    }
+
+    private func performRequest(url: URL, method: String = "GET", body: Data? = nil, customContentType: String? = nil, isRetryAfterCSRF: Bool = false) async throws -> Data {
         addBreadcrumb(category: "api", message: "\(method) \(url.absoluteString)")
 
         var request = URLRequest(url: url)
@@ -154,7 +195,7 @@ actor WCInfoAPIService {
 
         if let body {
             request.httpBody = body
-            request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+            request.setValue(customContentType ?? "application/json", forHTTPHeaderField: "Content-Type")
         }
 
         // Attach XSRF-TOKEN if available in cookie storage

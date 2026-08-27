@@ -9,6 +9,7 @@ struct MapView: UIViewRepresentable {
     let selectedToiletID: Int?
     var onShowDetails: (Toilet) -> Void = { _ in }
     var onAddToiletAtCoordinate: ((CLLocationCoordinate2D) -> Void)? = nil
+    var onCameraIdle: ((_ south: Double, _ west: Double, _ north: Double, _ east: Double) -> Void)? = nil
 
     func makeUIView(context: Context) -> GMSMapView {
         let camera = GMSCameraPosition.camera(withLatitude: center.latitude, longitude: center.longitude, zoom: 14)
@@ -18,6 +19,7 @@ struct MapView: UIViewRepresentable {
         mapView.overrideUserInterfaceStyle = colorScheme == .dark ? .dark : .light
         mapView.accessibilityLabel = "Karte mit \(toilets.count) Toiletten in der Nähe"
         mapView.isAccessibilityElement = true
+        context.coordinator.lastCenter = center
         print("[MapView] Created map at \(center.latitude), \(center.longitude)")
         return mapView
     }
@@ -26,17 +28,19 @@ struct MapView: UIViewRepresentable {
         context.coordinator.toilets = toilets
         context.coordinator.onShowDetails = onShowDetails
         context.coordinator.onAddToiletAtCoordinate = onAddToiletAtCoordinate
+        context.coordinator.onCameraIdle = onCameraIdle
 
         let targetStyle: UIUserInterfaceStyle = colorScheme == .dark ? .dark : .light
         if mapView.overrideUserInterfaceStyle != targetStyle {
             mapView.overrideUserInterfaceStyle = targetStyle
         }
 
-        let currentCenter = mapView.camera.target
-        let centerChanged = abs(currentCenter.latitude - center.latitude) > 0.0001
-            || abs(currentCenter.longitude - center.longitude) > 0.0001
+        let centerChanged = context.coordinator.lastCenter == nil ||
+            abs(context.coordinator.lastCenter!.latitude - center.latitude) > 0.0001 ||
+            abs(context.coordinator.lastCenter!.longitude - center.longitude) > 0.0001
 
         if centerChanged {
+            context.coordinator.lastCenter = center
             let camera = GMSCameraPosition.camera(withLatitude: center.latitude, longitude: center.longitude, zoom: 14)
             mapView.animate(to: camera)
         }
@@ -85,10 +89,12 @@ struct MapView: UIViewRepresentable {
     }
 
     final class Coordinator: NSObject, GMSMapViewDelegate {
+        var lastCenter: CLLocationCoordinate2D?
         var lastSelectedID: Int?
         var toilets: [Toilet] = []
         var onShowDetails: (Toilet) -> Void = { _ in }
         var onAddToiletAtCoordinate: ((CLLocationCoordinate2D) -> Void)? = nil
+        var onCameraIdle: ((_ south: Double, _ west: Double, _ north: Double, _ east: Double) -> Void)? = nil
         var addMarker: GMSMarker?
 
         @MainActor
@@ -103,6 +109,16 @@ struct MapView: UIViewRepresentable {
 
         func mapViewDidFinishTileRendering(_ mapView: GMSMapView) {
             print("[MapView] Finished tile rendering")
+        }
+
+        func mapView(_ mapView: GMSMapView, idleAt position: GMSCameraPosition) {
+            let visibleRegion = mapView.projection.visibleRegion()
+            let bounds = GMSCoordinateBounds(region: visibleRegion)
+            let south = bounds.southWest.latitude
+            let west = bounds.southWest.longitude
+            let north = bounds.northEast.latitude
+            let east = bounds.northEast.longitude
+            onCameraIdle?(south, west, north, east)
         }
 
         func mapView(_ mapView: GMSMapView, didTapAt coordinate: CLLocationCoordinate2D) {

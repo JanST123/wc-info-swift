@@ -82,7 +82,7 @@ actor WCInfoAPIService {
         }
     }
 
-    func fetchToiletsInBounds(south: Double, west: Double, north: Double, east: Double, filter: String? = nil) async throws -> [ToiletListItem] {
+    func fetchToiletsInBounds(south: Double, west: Double, north: Double, east: Double, filter: String? = nil) async throws -> [Toilet] {
         var urlComponents = URLComponents(string: "\(baseURL)/toilets/bounds/\(south)/\(west)/\(north)/\(east)")
         if let filter = filter, !filter.isEmpty {
             urlComponents?.queryItems = [URLQueryItem(name: "filter", value: filter)]
@@ -93,7 +93,7 @@ actor WCInfoAPIService {
         }
         let data = try await performRequest(url: url)
         do {
-            return try decoder.decode([ToiletListItem].self, from: data)
+            return try decoder.decode([Toilet].self, from: data)
         } catch {
             let rawBody = String(data: data, encoding: .utf8)
             throw WCInfoAPIError.decodingError(underlying: error, responseBody: rawBody)

@@ -15,6 +15,8 @@ struct ResultsView: View {
     @State private var isShowingCreateSheet = false
     @State private var createSheetCoordinate: CLLocationCoordinate2D? = nil
     @State private var filterSettings = ToiletFilterSettings.load()
+    @State private var currentBounds: (south: Double, west: Double, north: Double, east: Double)? = nil
+    @State private var boundsFetchTask: Task<Void, Never>? = nil
 
     var body: some View {
         GeometryReader { geometry in
@@ -145,6 +147,15 @@ struct ResultsView: View {
             onAddToiletAtCoordinate: { coordinate in
                 createSheetCoordinate = coordinate
                 isShowingCreateSheet = true
+            },
+            onCameraIdle: { south, west, north, east in
+                currentBounds = (south, west, north, east)
+                boundsFetchTask?.cancel()
+                boundsFetchTask = Task {
+                    try? await Task.sleep(nanoseconds: 300_000_000)
+                    guard !Task.isCancelled else { return }
+                    await loadToiletsForBounds(south: south, west: west, north: north, east: east)
+                }
             }
         )
         .ignoresSafeArea(edges: [.bottom, .leading, .trailing])
@@ -164,6 +175,17 @@ struct ResultsView: View {
     }
 
     private func loadToilets(isPullToRefresh: Bool = false) async {
+        if let bounds = currentBounds {
+            await loadToiletsForBounds(
+                south: bounds.south,
+                west: bounds.west,
+                north: bounds.north,
+                east: bounds.east,
+                isPullToRefresh: isPullToRefresh
+            )
+            return
+        }
+
         if !isPullToRefresh {
             isLoading = true
         }
@@ -193,6 +215,44 @@ struct ResultsView: View {
             }
             ErrorManager.shared.report(error, context: context, logToSentry: logToSentry)
             Analytics.shared.trackEvent(category: "results", action: "error", name: location.name)
+        }
+    }
+
+    private func loadToiletsForBounds(south: Double, west: Double, north: Double, east: Double, isPullToRefresh: Bool = false) async {
+        if !isPullToRefresh && toilets.isEmpty {
+            isLoading = true
+        }
+        defer { isLoading = false }
+        do {
+            let fetched = try await WCInfoAPIService.shared.fetchToiletsInBounds(
+                south: south,
+                west: west,
+                north: north,
+                east: east,
+                filter: filterSettings.apiFilterQueryString
+            )
+            guard !Task.isCancelled else { return }
+            toilets = fetched
+            Analytics.shared.trackEvent(category: "results", action: isPullToRefresh ? "refresh_bounds" : "loaded_bounds", name: location.name, value: Float(toilets.count))
+        } catch {
+            guard !Task.isCancelled else { return }
+            var context: [String: Any] = [
+                "action": "fetchToiletsInBounds",
+                "south": south,
+                "west": west,
+                "north": north,
+                "east": east,
+                "filter": filterSettings.apiFilterQueryString ?? ""
+            ]
+            var logToSentry = true
+            if let apiError = error as? WCInfoAPIError {
+                context.merge(apiError.diagnosticContext) { _, new in new }
+                if case .invalidResponse = apiError {
+                    logToSentry = false
+                }
+            }
+            ErrorManager.shared.report(error, context: context, logToSentry: logToSentry)
+            Analytics.shared.trackEvent(category: "results", action: "error_bounds", name: location.name)
         }
     }
 }

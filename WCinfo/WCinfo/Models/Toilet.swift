@@ -49,28 +49,53 @@ struct Toilet: Identifiable, Codable, Hashable {
 
     init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
-        id = try container.decode(Int.self, forKey: .id)
-        name = try container.decode(String.self, forKey: .name)
-        owner = try container.decode(String.self, forKey: .owner)
-        lat = try container.decode(Double.self, forKey: .lat)
-        lon = try container.decode(Double.self, forKey: .lon)
+
+        if let intId = try? container.decode(Int.self, forKey: .id) {
+            id = intId
+        } else if let strId = try? container.decode(String.self, forKey: .id), let intVal = Int(strId) {
+            id = intVal
+        } else {
+            id = try container.decode(Int.self, forKey: .id)
+        }
+
+        name = (try? container.decode(String.self, forKey: .name)) ?? ""
+        owner = (try? container.decode(String.self, forKey: .owner)) ?? ""
+
+        if let dLat = try? container.decode(Double.self, forKey: .lat) {
+            lat = dLat
+        } else if let strLat = try? container.decode(String.self, forKey: .lat), let dVal = Double(strLat) {
+            lat = dVal
+        } else {
+            lat = try container.decode(Double.self, forKey: .lat)
+        }
+
+        if let dLon = try? container.decode(Double.self, forKey: .lon) {
+            lon = dLon
+        } else if let strLon = try? container.decode(String.self, forKey: .lon), let dVal = Double(strLon) {
+            lon = dVal
+        } else {
+            lon = try container.decode(Double.self, forKey: .lon)
+        }
+
         placeId = try container.decodeIfPresent(String.self, forKey: .placeId)
-        status = try container.decode(String.self, forKey: .status)
-        isQualified = try container.decode(Bool.self, forKey: .isQualified)
-        isUnisex = try container.decode(Bool.self, forKey: .isUnisex)
-        isGenderSeparated = try container.decode(Bool.self, forKey: .isGenderSeparated)
-        hasWheelchairAccess = try container.decode(Bool.self, forKey: .hasWheelchairAccess)
-        hasChangingTable = try container.decode(Bool.self, forKey: .hasChangingTable)
+        status = (try? container.decode(String.self, forKey: .status)) ?? "active"
+        isQualified = (try? container.decode(Bool.self, forKey: .isQualified)) ?? false
+
+        isUnisex = container.decodeFlexibleBool(forKey: .isUnisex)
+        isGenderSeparated = container.decodeFlexibleBool(forKey: .isGenderSeparated)
+        hasWheelchairAccess = container.decodeFlexibleBool(forKey: .hasWheelchairAccess)
+        hasChangingTable = container.decodeFlexibleBool(forKey: .hasChangingTable)
+
         source = try container.decodeIfPresent(String.self, forKey: .source)
         address = try container.decodeIfPresent(String.self, forKey: .address)
         website = try container.decodeIfPresent(String.self, forKey: .website)
-        isOpen = try container.decodeIfPresent(Bool.self, forKey: .isOpen)
+        isOpen = container.decodeFlexibleBoolIfPresent(forKey: .isOpen)
         distance = try container.decodeIfPresent(Double.self, forKey: .distance)
         photos = (try? container.decode([ToiletPhoto].self, forKey: .photos)) ?? []
         openTimestamp = try container.decodeISO8601IfPresent(forKey: .openTimestamp)
         closeTimestamp = try container.decodeISO8601IfPresent(forKey: .closeTimestamp)
         placeOpeningHours = try container.decodeIfPresent([OpeningHoursPeriod].self, forKey: .placeOpeningHours)
-        updated = try container.decode(String.self, forKey: .updated)
+        updated = (try? container.decode(String.self, forKey: .updated)) ?? ""
     }
 }
 
@@ -109,6 +134,32 @@ struct OpeningHoursTime: Codable, Hashable {
 }
 
 private extension KeyedDecodingContainer {
+    func decodeFlexibleBool(forKey key: K) -> Bool {
+        if let boolVal = try? decode(Bool.self, forKey: key) {
+            return boolVal
+        }
+        if let strVal = try? decode(String.self, forKey: key) {
+            return strVal == "1" || strVal.lowercased() == "true"
+        }
+        if let intVal = try? decode(Int.self, forKey: key) {
+            return intVal == 1
+        }
+        return false
+    }
+
+    func decodeFlexibleBoolIfPresent(forKey key: K) -> Bool? {
+        if let boolVal = try? decodeIfPresent(Bool.self, forKey: key) {
+            return boolVal
+        }
+        if let strVal = try? decodeIfPresent(String.self, forKey: key) {
+            return strVal == "1" || strVal.lowercased() == "true"
+        }
+        if let intVal = try? decodeIfPresent(Int.self, forKey: key) {
+            return intVal == 1
+        }
+        return nil
+    }
+
     func decodeISO8601IfPresent(forKey key: K) throws -> Date? {
         guard let string = try decodeIfPresent(String.self, forKey: key), !string.isEmpty else {
             return nil

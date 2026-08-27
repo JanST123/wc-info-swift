@@ -661,27 +661,12 @@ struct CreateScreen: View {
     // MARK: - Celebration Animation View
 
     private var celebrationHeartsView: some View {
-        ZStack {
-            ForEach(0..<6, id: \.self) { i in
-                Text("❤️")
-                    .font(.system(size: CGFloat.random(in: 40...70)))
-                    .offset(x: CGFloat(i * 40 - 100), y: showHeartAnimation ? -350 : 300)
-                    .opacity(showHeartAnimation ? 0.0 : 1.0)
-                    .animation(
-                        .easeInOut(duration: 1.6).delay(Double(i) * 0.1),
-                        value: showHeartAnimation
-                    )
-            }
-        }
-        .allowsHitTesting(false)
+        FloatingHeartsOverlay()
     }
 
     private func finishWithCelebration() {
-        withAnimation(.easeInOut(duration: 0.3)) {
-            showHeartAnimation = true
-        }
-
-        DispatchQueue.main.asyncAfter(deadline: .now() + 1.2) {
+        showHeartAnimation = true
+        DispatchQueue.main.asyncAfter(deadline: .now() + 2.2) {
             onToiletCreated?()
             dismiss()
         }
@@ -972,6 +957,91 @@ struct CreateScreen: View {
         } catch {
             print("[CreateScreen] fetchNearbyPlaces error: \(error)")
         }
+    }
+}
+
+struct FloatingHeartsOverlay: View {
+    @State private var isAnimating = false
+
+    fileprivate struct HeartParticle: Identifiable {
+        let id: Int
+        let xOffset: CGFloat
+        let size: CGFloat
+        let delay: Double
+        let duration: Double
+    }
+
+    private let particles: [HeartParticle] = [
+        .init(id: 0, xOffset: -110, size: 52, delay: 0.0, duration: 1.8),
+        .init(id: 1, xOffset: -40, size: 70, delay: 0.12, duration: 2.0),
+        .init(id: 2, xOffset: 25, size: 58, delay: 0.05, duration: 1.9),
+        .init(id: 3, xOffset: 100, size: 54, delay: 0.22, duration: 2.1),
+        .init(id: 4, xOffset: -70, size: 44, delay: 0.28, duration: 1.7),
+        .init(id: 5, xOffset: 65, size: 78, delay: 0.16, duration: 2.0),
+        .init(id: 6, xOffset: 0, size: 88, delay: 0.08, duration: 1.9),
+        .init(id: 7, xOffset: -130, size: 48, delay: 0.32, duration: 2.1),
+        .init(id: 8, xOffset: 130, size: 50, delay: 0.26, duration: 1.8)
+    ]
+
+    var body: some View {
+        ZStack {
+            Color.black.opacity(isAnimating ? 0.35 : 0.0)
+                .ignoresSafeArea()
+
+            VStack(spacing: 8) {
+                Text("❤️")
+                    .font(.system(size: 64))
+                    .scaleEffect(isAnimating ? 1.15 : 0.8)
+
+                Text("Vielen Dank!")
+                    .font(.title2.bold())
+                    .foregroundColor(.white)
+
+                Text("Deine Angaben wurden gespeichert.")
+                    .font(.subheadline)
+                    .foregroundColor(.white.opacity(0.9))
+            }
+            .padding(.horizontal, 28)
+            .padding(.vertical, 22)
+            .background(.ultraThinMaterial)
+            .clipShape(RoundedRectangle(cornerRadius: 18))
+            .shadow(color: .black.opacity(0.25), radius: 16, x: 0, y: 6)
+            .scaleEffect(isAnimating ? 1.0 : 0.75)
+            .opacity(isAnimating ? 1.0 : 0.0)
+
+            ForEach(particles) { particle in
+                SingleFloatingHeart(particle: particle, isAnimating: isAnimating)
+            }
+        }
+        .allowsHitTesting(false)
+        .onAppear {
+            withAnimation(.easeOut(duration: 0.35)) {
+                isAnimating = true
+            }
+        }
+    }
+}
+
+private struct SingleFloatingHeart: View {
+    let particle: FloatingHeartsOverlay.HeartParticle
+    let isAnimating: Bool
+
+    @State private var startRise = false
+
+    var body: some View {
+        Text("❤️")
+            .font(.system(size: particle.size))
+            .offset(x: particle.xOffset, y: startRise ? -550 : 420)
+            .opacity(startRise ? 0.0 : 1.0)
+            .scaleEffect(startRise ? 1.25 : 0.5)
+            .onAppear {
+                withAnimation(
+                    .easeInOut(duration: particle.duration)
+                    .delay(particle.delay)
+                ) {
+                    startRise = true
+                }
+            }
     }
 }
 

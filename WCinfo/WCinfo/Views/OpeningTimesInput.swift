@@ -8,11 +8,6 @@ struct OpeningTimesInput: View {
             selectedDays: [1, 2, 3, 4, 5],
             openTime: TimeRangeDraft.makeTime(hour: 8, minute: 0),
             closeTime: TimeRangeDraft.makeTime(hour: 18, minute: 0)
-        ),
-        TimeRangeDraft(
-            selectedDays: [6, 0],
-            openTime: TimeRangeDraft.makeTime(hour: 10, minute: 0),
-            closeTime: TimeRangeDraft.makeTime(hour: 16, minute: 0)
         )
     ]
 

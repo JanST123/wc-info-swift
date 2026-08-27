@@ -15,23 +15,23 @@ struct QualifiedBadgeView: View {
         .buttonStyle(.plain)
         .accessibilityLabel("Geprüfte Toilette. Tippe für weitere Informationen.")
         .popover(isPresented: $showInfo) {
-            VStack(alignment: .leading, spacing: 10) {
+            VStack(alignment: .leading, spacing: 8) {
                 HStack(spacing: 8) {
                     Image(systemName: "checkmark.seal.fill")
-                        .font(.title2)
+                        .font(.headline)
                         .foregroundColor(.green)
 
                     Text("Geprüfte Angaben")
                         .font(.headline)
                 }
 
-                Text("Die Angaben und Ausstattungsmerkmale dieser Toilette wurden von Gästen oder dem Betreiber überprüft und bestätigt.")
+                Text("Von anderen Gästen oder dem Betreiber vor Ort bestätigt.")
                     .font(.subheadline)
                     .foregroundColor(.secondary)
                     .fixedSize(horizontal: false, vertical: true)
             }
-            .padding(16)
-            .frame(maxWidth: 280)
+            .padding(14)
+            .frame(width: 290)
             .presentationCompactAdaptation(.popover)
         }
     }

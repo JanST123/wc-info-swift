@@ -16,20 +16,26 @@ struct OpeningTimesInput: View {
         )
     ]
 
-    private let weekdays: [(day: Int, name: String)] = [
-        (1, "Mo"),
-        (2, "Di"),
-        (3, "Mi"),
-        (4, "Do"),
-        (5, "Fr"),
-        (6, "Sa"),
-        (0, "So")
-    ]
-
     var body: some View {
         VStack(spacing: 16) {
-            ForEach($drafts) { $draft in
-                timeRangeCard(draft: $draft)
+            ForEach(Array(drafts.enumerated()), id: \.element.id) { index, draft in
+                TimeRangeCardView(
+                    draft: draft,
+                    index: index,
+                    canDelete: drafts.count > 1,
+                    onUpdate: { updated in
+                        if let idx = drafts.firstIndex(where: { $0.id == updated.id }) {
+                            drafts[idx] = updated
+                            syncOutput()
+                        }
+                    },
+                    onDelete: {
+                        withAnimation(.easeInOut(duration: 0.25)) {
+                            drafts.removeAll { $0.id == draft.id }
+                        }
+                        syncOutput()
+                    }
+                )
             }
 
             Button {
@@ -62,144 +68,6 @@ struct OpeningTimesInput: View {
         }
     }
 
-    private func timeRangeCard(draft: Binding<TimeRangeDraft>) -> some View {
-        let index = drafts.firstIndex(where: { $0.id == draft.wrappedValue.id }) ?? 0
-
-        return VStack(alignment: .leading, spacing: 12) {
-            // Header
-            HStack {
-                Text("Zeitraum \(index + 1)")
-                    .font(.subheadline.bold())
-                    .foregroundColor(.primary)
-
-                Spacer()
-
-                if drafts.count > 1 {
-                    Button {
-                        withAnimation {
-                            drafts.removeAll { $0.id == draft.wrappedValue.id }
-                        }
-                        syncOutput()
-                    } label: {
-                        Image(systemName: "trash")
-                            .font(.caption)
-                            .foregroundColor(.red)
-                            .padding(6)
-                            .background(Color.red.opacity(0.1))
-                            .clipShape(Circle())
-                    }
-                    .buttonStyle(.plain)
-                    .accessibilityLabel("Zeitraum \(index + 1) entfernen")
-                }
-            }
-
-            // Quick select presets
-            HStack(spacing: 8) {
-                presetButton(title: "Mo–Fr", days: [1, 2, 3, 4, 5], draft: draft)
-                presetButton(title: "Sa–So", days: [6, 0], draft: draft)
-                presetButton(title: "Täglich", days: [0, 1, 2, 3, 4, 5, 6], draft: draft)
-            }
-
-            // Weekday Chips
-            HStack(spacing: 6) {
-                ForEach(weekdays, id: \.day) { item in
-                    let isSelected = draft.wrappedValue.selectedDays.contains(item.day)
-                    Button {
-                        if isSelected {
-                            draft.wrappedValue.selectedDays.remove(item.day)
-                        } else {
-                            draft.wrappedValue.selectedDays.insert(item.day)
-                        }
-                        syncOutput()
-                    } label: {
-                        Text(item.name)
-                            .font(.system(size: 13, weight: .semibold))
-                            .foregroundColor(isSelected ? .white : .primary)
-                            .frame(maxWidth: .infinity)
-                            .frame(height: 36)
-                            .background(isSelected ? Color.purple : Color(.systemGray5))
-                            .clipShape(RoundedRectangle(cornerRadius: 8))
-                    }
-                    .buttonStyle(.plain)
-                }
-            }
-
-            Divider()
-
-            // 24 Hours Toggle
-            Toggle(isOn: draft.is24Hours) {
-                Text("24 Stunden geöffnet")
-                    .font(.footnote)
-                    .foregroundColor(.secondary)
-            }
-            .tint(.purple)
-            .onChange(of: draft.wrappedValue.is24Hours) { _, _ in
-                syncOutput()
-            }
-
-            // Time Pickers (if not 24h)
-            if !draft.wrappedValue.is24Hours {
-                HStack(spacing: 12) {
-                    VStack(alignment: .leading, spacing: 4) {
-                        Text("Öffnet um")
-                            .font(.caption)
-                            .foregroundColor(.secondary)
-                        DatePicker(
-                            "",
-                            selection: draft.openTime,
-                            displayedComponents: .hourAndMinute
-                        )
-                        .labelsHidden()
-                        .onChange(of: draft.wrappedValue.openTime) { _, _ in
-                            syncOutput()
-                        }
-                    }
-                    .frame(maxWidth: .infinity, alignment: .leading)
-
-                    VStack(alignment: .leading, spacing: 4) {
-                        Text("Schließt um")
-                            .font(.caption)
-                            .foregroundColor(.secondary)
-                        DatePicker(
-                            "",
-                            selection: draft.closeTime,
-                            displayedComponents: .hourAndMinute
-                        )
-                        .labelsHidden()
-                        .onChange(of: draft.wrappedValue.closeTime) { _, _ in
-                            syncOutput()
-                        }
-                    }
-                    .frame(maxWidth: .infinity, alignment: .leading)
-                }
-            }
-        }
-        .padding(14)
-        .background(Color(uiColor: .secondarySystemBackground))
-        .clipShape(RoundedRectangle(cornerRadius: 12))
-        .overlay(
-            RoundedRectangle(cornerRadius: 12)
-                .stroke(Color(.systemGray4), lineWidth: 0.8)
-        )
-    }
-
-    private func presetButton(title: String, days: Set<Int>, draft: Binding<TimeRangeDraft>) -> some View {
-        let isMatching = draft.wrappedValue.selectedDays == days
-        return Button {
-            draft.wrappedValue.selectedDays = days
-            syncOutput()
-        } label: {
-            Text(title)
-                .font(.caption2.bold())
-                .foregroundColor(isMatching ? .white : .purple)
-                .padding(.horizontal, 10)
-                .padding(.vertical, 4)
-                .background(isMatching ? Color.purple : Color.purple.opacity(0.12))
-                .clipShape(Capsule())
-        }
-        .buttonStyle(.plain)
-    }
-
     private func syncOutput() {
         var computedPeriods: [GooglePlacesPeriod] = []
 
@@ -227,6 +95,172 @@ struct OpeningTimesInput: View {
         }
 
         periods = computedPeriods.isEmpty ? nil : computedPeriods
+    }
+}
+
+private struct TimeRangeCardView: View {
+    let draft: TimeRangeDraft
+    let index: Int
+    let canDelete: Bool
+    let onUpdate: (TimeRangeDraft) -> Void
+    let onDelete: () -> Void
+
+    @State private var localDraft: TimeRangeDraft
+
+    private let weekdays: [(day: Int, name: String)] = [
+        (1, "Mo"),
+        (2, "Di"),
+        (3, "Mi"),
+        (4, "Do"),
+        (5, "Fr"),
+        (6, "Sa"),
+        (0, "So")
+    ]
+
+    init(
+        draft: TimeRangeDraft,
+        index: Int,
+        canDelete: Bool,
+        onUpdate: @escaping (TimeRangeDraft) -> Void,
+        onDelete: @escaping () -> Void
+    ) {
+        self.draft = draft
+        self.index = index
+        self.canDelete = canDelete
+        self.onUpdate = onUpdate
+        self.onDelete = onDelete
+        self._localDraft = State(initialValue: draft)
+    }
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            // Header
+            HStack {
+                Text("Zeitraum \(index + 1)")
+                    .font(.subheadline.bold())
+                    .foregroundColor(.primary)
+
+                Spacer()
+
+                if canDelete {
+                    Button(action: onDelete) {
+                        Image(systemName: "trash")
+                            .font(.caption)
+                            .foregroundColor(.red)
+                            .padding(6)
+                            .background(Color.red.opacity(0.1))
+                            .clipShape(Circle())
+                    }
+                    .buttonStyle(.plain)
+                    .accessibilityLabel("Zeitraum \(index + 1) entfernen")
+                }
+            }
+
+            // Quick select presets
+            HStack(spacing: 8) {
+                presetButton(title: "Mo–Fr", days: [1, 2, 3, 4, 5])
+                presetButton(title: "Sa–So", days: [6, 0])
+                presetButton(title: "Täglich", days: [0, 1, 2, 3, 4, 5, 6])
+            }
+
+            // Weekday Chips
+            HStack(spacing: 6) {
+                ForEach(weekdays, id: \.day) { item in
+                    let isSelected = localDraft.selectedDays.contains(item.day)
+                    Button {
+                        if isSelected {
+                            localDraft.selectedDays.remove(item.day)
+                        } else {
+                            localDraft.selectedDays.insert(item.day)
+                        }
+                        onUpdate(localDraft)
+                    } label: {
+                        Text(item.name)
+                            .font(.system(size: 13, weight: .semibold))
+                            .foregroundColor(isSelected ? .white : .primary)
+                            .frame(maxWidth: .infinity)
+                            .frame(height: 36)
+                            .background(isSelected ? Color.purple : Color(.systemGray5))
+                            .clipShape(RoundedRectangle(cornerRadius: 8))
+                    }
+                    .buttonStyle(.plain)
+                }
+            }
+
+            Divider()
+
+            // 24 Hours Toggle
+            Toggle(isOn: $localDraft.is24Hours) {
+                Text("24 Stunden geöffnet")
+                    .font(.footnote)
+                    .foregroundColor(.secondary)
+            }
+            .tint(.purple)
+            .onChange(of: localDraft.is24Hours) { _, _ in
+                onUpdate(localDraft)
+            }
+
+            // Time Pickers (if not 24h)
+            if !localDraft.is24Hours {
+                HStack(spacing: 12) {
+                    VStack(alignment: .leading, spacing: 4) {
+                        Text("Öffnet um")
+                            .font(.caption)
+                            .foregroundColor(.secondary)
+                        DatePicker(
+                            "",
+                            selection: $localDraft.openTime,
+                            displayedComponents: .hourAndMinute
+                        )
+                        .labelsHidden()
+                        .onChange(of: localDraft.openTime) { _, _ in
+                            onUpdate(localDraft)
+                        }
+                    }
+                    .frame(maxWidth: .infinity, alignment: .leading)
+
+                    VStack(alignment: .leading, spacing: 4) {
+                        Text("Schließt um")
+                            .font(.caption)
+                            .foregroundColor(.secondary)
+                        DatePicker(
+                            "",
+                            selection: $localDraft.closeTime,
+                            displayedComponents: .hourAndMinute
+                        )
+                        .labelsHidden()
+                        .onChange(of: localDraft.closeTime) { _, _ in
+                            onUpdate(localDraft)
+                        }
+                    }
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                }
+            }
+        }
+        .padding(14)
+        .background(Color(uiColor: .secondarySystemBackground))
+        .clipShape(RoundedRectangle(cornerRadius: 12))
+        .overlay(
+            RoundedRectangle(cornerRadius: 12)
+                .stroke(Color(.systemGray4), lineWidth: 0.8)
+        )
+    }
+
+    private func presetButton(title: String, days: Set<Int>) -> some View {
+        let isMatching = localDraft.selectedDays == days
+        return Button {
+            localDraft.selectedDays = days
+            onUpdate(localDraft)
+        } label: {
+            Text(title)
+                .font(.caption2.bold())
+                .foregroundColor(isMatching ? .white : .purple)
+                .padding(.horizontal, 10)
+                .padding(.vertical, 4)
+                .background(isMatching ? Color.purple : Color.purple.opacity(0.12))
+                .clipShape(Capsule())
+        }
+        .buttonStyle(.plain)
     }
 }
 

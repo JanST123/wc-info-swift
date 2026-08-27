@@ -366,7 +366,7 @@ public struct AddToiletPropertiesResponse: Codable {
 
 public struct UploadPhotoResponse: Codable {
     public let success: Bool
-    public let hasGeo: String?
+    public let hasGeo: Bool?
     public let placeId: String?
     public let imageUrl: String
     public let filename: String

@@ -9,6 +9,7 @@ struct PhotoUpload: View {
 
     @State private var selectedPickerItems: [PhotosPickerItem] = []
     @State private var photoItems: [UploadedPhotoItem] = []
+    @State private var uploadTasks: [UUID: Task<Void, Never>] = [:]
 
     private let columns = [
         GridItem(.adaptive(minimum: 100, maximum: 140), spacing: 12)
@@ -67,6 +68,12 @@ struct PhotoUpload: View {
         .frame(maxWidth: .infinity, alignment: .leading)
         .background(Color(uiColor: .secondarySystemBackground))
         .clipShape(RoundedRectangle(cornerRadius: 14))
+        .onDisappear {
+            for task in uploadTasks.values {
+                task.cancel()
+            }
+            uploadTasks.removeAll()
+        }
     }
 
     private func photoCard(for item: UploadedPhotoItem) -> some View {
@@ -98,9 +105,7 @@ struct PhotoUpload: View {
                             .foregroundColor(.white)
                     case .failed:
                         Button {
-                            Task {
-                                await uploadSingleItem(item)
-                            }
+                            startUpload(for: item)
                         } label: {
                             HStack(spacing: 3) {
                                 Image(systemName: "arrow.clockwise")
@@ -140,6 +145,13 @@ struct PhotoUpload: View {
     }
 
     private func removePhotoItem(_ item: UploadedPhotoItem) {
+        // 1. Cancel in-flight upload task if still running
+        if let runningTask = uploadTasks[item.id] {
+            runningTask.cancel()
+            uploadTasks.removeValue(forKey: item.id)
+        }
+
+        // 2. If already uploaded successfully, call DELETE /deletePhoto API
         if case .success(_, let tId, let fn) = item.status {
             Task {
                 do {
@@ -178,42 +190,60 @@ struct PhotoUpload: View {
             photoItems.append(photoItem)
             onPhotosChanged?(photoItems)
 
-            await uploadSingleItem(photoItem)
+            startUpload(for: photoItem)
         }
 
         // Reset picker selection to allow picking more photos later
         selectedPickerItems.removeAll()
     }
 
-    private func uploadSingleItem(_ item: UploadedPhotoItem) async {
+    private func startUpload(for item: UploadedPhotoItem) {
         guard let index = photoItems.firstIndex(where: { $0.id == item.id }) else { return }
         photoItems[index].status = .uploading
 
-        do {
-            let response = try await WCInfoAPIService.shared.uploadPhoto(
-                imageData: item.rawData,
-                toiletId: toiletId,
-                exif: item.exifJSON
-            )
+        // Cancel previous task for this item if any
+        uploadTasks[item.id]?.cancel()
 
-            if let idx = photoItems.firstIndex(where: { $0.id == item.id }) {
-                photoItems[idx].status = .success(
-                    imageUrl: response.imageUrl,
-                    toiletId: response.toiletId,
-                    filename: response.filename
+        let task = Task {
+            do {
+                let response = try await WCInfoAPIService.shared.uploadPhoto(
+                    imageData: item.rawData,
+                    toiletId: toiletId,
+                    exif: item.exifJSON
                 )
-                onPhotosChanged?(photoItems)
-                onPhotoUploaded?(response)
-                Analytics.shared.trackEvent(category: "photo", action: "upload_success", name: String(response.toiletId))
+
+                // If cancelled while network request was running, delete the newly created remote photo
+                if Task.isCancelled {
+                    _ = try? await WCInfoAPIService.shared.deletePhoto(
+                        toiletId: response.toiletId,
+                        filename: response.filename
+                    )
+                    return
+                }
+
+                if let idx = photoItems.firstIndex(where: { $0.id == item.id }) {
+                    photoItems[idx].status = .success(
+                        imageUrl: response.imageUrl,
+                        toiletId: response.toiletId,
+                        filename: response.filename
+                    )
+                    onPhotosChanged?(photoItems)
+                    onPhotoUploaded?(response)
+                    Analytics.shared.trackEvent(category: "photo", action: "upload_success", name: String(response.toiletId))
+                }
+            } catch {
+                guard !Task.isCancelled else { return }
+                if let idx = photoItems.firstIndex(where: { $0.id == item.id }) {
+                    photoItems[idx].status = .failed(error: error.localizedDescription)
+                    onPhotosChanged?(photoItems)
+                    ErrorManager.shared.report(error, context: ["action": "uploadPhoto", "toiletId": toiletId ?? 0])
+                    Analytics.shared.trackEvent(category: "photo", action: "upload_failed")
+                }
             }
-        } catch {
-            if let idx = photoItems.firstIndex(where: { $0.id == item.id }) {
-                photoItems[idx].status = .failed(error: error.localizedDescription)
-                onPhotosChanged?(photoItems)
-                ErrorManager.shared.report(error, context: ["action": "uploadPhoto", "toiletId": toiletId ?? 0])
-                Analytics.shared.trackEvent(category: "photo", action: "upload_failed")
-            }
+            uploadTasks.removeValue(forKey: item.id)
         }
+
+        uploadTasks[item.id] = task
     }
 }
 

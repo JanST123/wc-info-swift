@@ -25,6 +25,13 @@ struct DetailView: View {
                         .foregroundStyle(.primary)
                         .accessibilityLabel("Betreiber: \(toilet.owner)")
 
+                    if toilet.isPublicAccessible {
+                        Label("Öffentlich zugänglich", systemImage: "figure.walk")
+                            .font(.body)
+                            .foregroundStyle(.primary)
+                            .accessibilityLabel("Öffentlich zugängliche Toilette")
+                    }
+
                     Button(action: navigateToToilet) {
                         HStack {
                             Image(systemName: "arrow.turn.up.right")

@@ -17,7 +17,7 @@ struct ToiletSymbolComponent: View {
             if hasChangingTable {
                 toiletIcon("baby-solid-full", label: "Wickeltisch")
             }
-            if isUnisex {
+            if isUnisex && !isGenderSeparated {
                 toiletIcon("toilet-paper-solid-full", label: "Unisex")
             }
         }

@@ -60,6 +60,7 @@ struct CreateScreen: View {
     @State private var publicAccessible: Bool?
     @State private var addressInput = ""
     @State private var websiteInput = ""
+    @State private var isEnteringOpeningTimes = false
     @State private var placeOpeningHours: [GooglePlacesPeriod]?
     @State private var accessibleOutsideOpeningTimes: Bool?
     @State private var storageSpace: String?
@@ -535,22 +536,46 @@ struct CreateScreen: View {
 
     private var question12OpeningTimesView: some View {
         VStack(spacing: 20) {
-            questionHeader(
-                iconName: "clock.fill",
-                title: "Möchtest du Öffnungszeiten angeben?",
-                subtitle: "Du kannst auch im nächsten Schritt ein Foto der Öffnungszeiten hochladen, dann machen wir das für dich."
-            )
+            if !isEnteringOpeningTimes {
+                questionHeader(
+                    iconName: "clock.fill",
+                    title: "Möchtest du Öffnungszeiten angeben?",
+                    subtitle: "Du kannst auch im nächsten Schritt ein Foto der Öffnungszeiten hochladen, dann machen wir das für dich."
+                )
 
-            OpeningTimesInput(periods: $placeOpeningHours)
+                VStack(spacing: 12) {
+                    primaryChoiceButton(title: "Ja, Öffnungszeiten eingeben") {
+                        withAnimation(.easeInOut(duration: 0.25)) {
+                            isEnteringOpeningTimes = true
+                        }
+                    }
 
-            VStack(spacing: 12) {
-                primaryChoiceButton(title: "Öffnungszeiten speichern") {
-                    patchCurrentState()
-                    advanceToNextStep()
+                    secondaryChoiceButton(title: "Nein, keine Öffnungszeiten") {
+                        placeOpeningHours = nil
+                        patchCurrentState()
+                        advanceToNextStep()
+                    }
                 }
+            } else {
+                questionHeader(
+                    iconName: "clock.fill",
+                    title: "Öffnungszeiten festlegen",
+                    subtitle: "Wähle die Wochentage und trage die Öffnungs- und Schließzeiten ein:"
+                )
 
-                secondaryChoiceButton(title: "Nein, weiter") {
-                    advanceToNextStep()
+                OpeningTimesInput(periods: $placeOpeningHours)
+
+                VStack(spacing: 12) {
+                    primaryChoiceButton(title: "Öffnungszeiten speichern") {
+                        patchCurrentState()
+                        advanceToNextStep()
+                    }
+
+                    secondaryChoiceButton(title: "Abbrechen") {
+                        withAnimation(.easeInOut(duration: 0.25)) {
+                            isEnteringOpeningTimes = false
+                        }
+                    }
                 }
             }
         }
@@ -788,10 +813,10 @@ struct CreateScreen: View {
             steps.append(.address)
         }
 
-        // Q11 (Skipped if place has website)
-        if selectedPlace == nil || selectedPlaceDetails?.website == nil {
-            steps.append(.website)
-        }
+        // Q11 (Disabled for now)
+        // if selectedPlace == nil || selectedPlaceDetails?.website == nil {
+        //     steps.append(.website)
+        // }
 
         // Q12
         steps.append(.openingTimes)
@@ -808,6 +833,7 @@ struct CreateScreen: View {
     }
 
     private func advanceToNextStep() {
+        isEnteringOpeningTimes = false
         let activeSteps = determineActiveSteps()
 
         guard let currentIndex = activeSteps.firstIndex(of: currentStep) else { return }
@@ -837,6 +863,12 @@ struct CreateScreen: View {
     }
 
     private func goBack() {
+        if currentStep == .openingTimes && isEnteringOpeningTimes {
+            withAnimation(.easeInOut(duration: 0.25)) {
+                isEnteringOpeningTimes = false
+            }
+            return
+        }
         guard let previous = stepHistory.popLast() else { return }
         withAnimation(.easeInOut(duration: 0.25)) {
             currentStep = previous

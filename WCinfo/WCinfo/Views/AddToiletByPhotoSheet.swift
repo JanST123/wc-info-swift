@@ -71,9 +71,6 @@ struct AddToiletByPhotoSheet: View {
 
                         PhotoUpload(
                             fixedGeo: fixedGeoJSON,
-                            onPhotoUploaded: { response in
-                                uploadedPhotoCount += 1
-                            },
                             onPhotosChanged: { items in
                                 let successItems = items.filter { item in
                                     if case .success = item.status { return true }

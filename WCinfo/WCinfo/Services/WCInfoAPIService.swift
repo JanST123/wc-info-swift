@@ -130,6 +130,21 @@ actor WCInfoAPIService {
         }
     }
 
+    func addToiletProperties(toiletId: Int, properties: [ToiletPropertyItem]) async throws -> AddToiletPropertiesResponse {
+        guard let url = URL(string: "\(baseURL)/toilet/add-properties/\(toiletId)") else {
+            throw WCInfoAPIError.invalidURL
+        }
+        let encoder = JSONEncoder()
+        let bodyData = try encoder.encode(properties)
+        let data = try await performRequest(url: url, method: "POST", body: bodyData)
+        do {
+            return try decoder.decode(AddToiletPropertiesResponse.self, from: data)
+        } catch {
+            let rawBody = String(data: data, encoding: .utf8)
+            throw WCInfoAPIError.decodingError(underlying: error, responseBody: rawBody)
+        }
+    }
+
     private func performRequest(url: URL, method: String = "GET", body: Data? = nil, isRetryAfterCSRF: Bool = false) async throws -> Data {
         addBreadcrumb(category: "api", message: "\(method) \(url.absoluteString)")
 

@@ -62,8 +62,15 @@ actor WCInfoAPIService {
         #endif
     }
 
-    func fetchToiletsNearby(latitude: Double, longitude: Double, distance: Int = 25) async throws -> [Toilet] {
-        guard let url = URL(string: "\(baseURL)/toilets/nearby/\(latitude)/\(longitude)?distance=\(distance)") else {
+    func fetchToiletsNearby(latitude: Double, longitude: Double, distance: Int = 25, filter: String? = nil) async throws -> [Toilet] {
+        var urlComponents = URLComponents(string: "\(baseURL)/toilets/nearby/\(latitude)/\(longitude)")
+        var queryItems = [URLQueryItem(name: "distance", value: String(distance))]
+        if let filter = filter, !filter.isEmpty {
+            queryItems.append(URLQueryItem(name: "filter", value: filter))
+        }
+        urlComponents?.queryItems = queryItems
+
+        guard let url = urlComponents?.url else {
             throw WCInfoAPIError.invalidURL
         }
         let data = try await performRequest(url: url)
@@ -75,8 +82,13 @@ actor WCInfoAPIService {
         }
     }
 
-    func fetchToiletsInBounds(south: Double, west: Double, north: Double, east: Double) async throws -> [ToiletListItem] {
-        guard let url = URL(string: "\(baseURL)/toilets/bounds/\(south)/\(west)/\(north)/\(east)") else {
+    func fetchToiletsInBounds(south: Double, west: Double, north: Double, east: Double, filter: String? = nil) async throws -> [ToiletListItem] {
+        var urlComponents = URLComponents(string: "\(baseURL)/toilets/bounds/\(south)/\(west)/\(north)/\(east)")
+        if let filter = filter, !filter.isEmpty {
+            urlComponents?.queryItems = [URLQueryItem(name: "filter", value: filter)]
+        }
+
+        guard let url = urlComponents?.url else {
             throw WCInfoAPIError.invalidURL
         }
         let data = try await performRequest(url: url)

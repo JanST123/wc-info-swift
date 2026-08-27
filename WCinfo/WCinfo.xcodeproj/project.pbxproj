@@ -14,6 +14,7 @@
 		0CDD01A1104F0B0AD58FC906 /* LocationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 741A6F3C66231D4657FACB0D /* LocationManager.swift */; };
 		122B967E687BE9E819A028A7 /* ToiletRowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F26E9CA4889FD50D1DFD152 /* ToiletRowView.swift */; };
 		145E34CD420C9A2DC6BDAC0C /* CreateScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8444E0C552CCF3D62F63ED84 /* CreateScreen.swift */; };
+		1773BC379D73E05576BAC7E3 /* FilterBannerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3DE4CC45EE50019278FC83D /* FilterBannerView.swift */; };
 		18F4A9DE47C1F1897B9C9D69 /* WCinfoApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 925DEEFD3CE16497190BF220 /* WCinfoApp.swift */; };
 		1B6C3C2CD9302A3D8587AEB5 /* ResultsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 54EAD5A8713A39D5023CEFF9 /* ResultsView.swift */; };
 		2519E29D392BDCA6B930C850 /* DetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40B98EAAE3DDD2D2813555C1 /* DetailView.swift */; };
@@ -68,6 +69,7 @@
 		A787E4597E149070DF6A1DA9 /* Config.plist.template */ = {isa = PBXFileReference; path = Config.plist.template; sourceTree = "<group>"; };
 		AD15A702EDED596300914B49 /* MapView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapView.swift; sourceTree = "<group>"; };
 		CF7C971ECE106A8C4D81E879 /* LocationPickerMapView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationPickerMapView.swift; sourceTree = "<group>"; };
+		E3DE4CC45EE50019278FC83D /* FilterBannerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FilterBannerView.swift; sourceTree = "<group>"; };
 		E44E24B4A1CB41771AAD8444 /* WCinfo.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = WCinfo.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		EE1DEC3A217CD0ADCD9C63D8 /* UpdateScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UpdateScreen.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -92,6 +94,7 @@
 			children = (
 				8444E0C552CCF3D62F63ED84 /* CreateScreen.swift */,
 				40B98EAAE3DDD2D2813555C1 /* DetailView.swift */,
+				E3DE4CC45EE50019278FC83D /* FilterBannerView.swift */,
 				49C7B4EAF1737DA3F6D21CC6 /* HomeView.swift */,
 				CF7C971ECE106A8C4D81E879 /* LocationPickerMapView.swift */,
 				AD15A702EDED596300914B49 /* MapView.swift */,
@@ -258,6 +261,7 @@
 				145E34CD420C9A2DC6BDAC0C /* CreateScreen.swift in Sources */,
 				2519E29D392BDCA6B930C850 /* DetailView.swift in Sources */,
 				A678300D3E8290C73D892652 /* ErrorManager.swift in Sources */,
+				1773BC379D73E05576BAC7E3 /* FilterBannerView.swift in Sources */,
 				3530D800C9089F27660DA170 /* HomeView.swift in Sources */,
 				0CDD01A1104F0B0AD58FC906 /* LocationManager.swift in Sources */,
 				F61EB100D45A5D6BBA55EE46 /* LocationPickerMapView.swift in Sources */,

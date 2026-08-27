@@ -13,6 +13,7 @@ struct ResultsView: View {
     @State private var selectedToilet: Toilet?
     @State private var detailToilet: Toilet?
     @State private var isShowingCreateSheet = false
+    @State private var filterSettings = ToiletFilterSettings.default
 
     var body: some View {
         GeometryReader { geometry in
@@ -54,8 +55,13 @@ struct ResultsView: View {
     }
 
     private var listContent: some View {
-        VStack(spacing: 0) {
-            Spacer(minLength: 8)
+        VStack(spacing: 8) {
+            FilterBannerView(filterSettings: $filterSettings) {
+                Task {
+                    await loadToilets()
+                }
+            }
+
             addToiletBanner
 
             if isLoading && toilets.isEmpty {
@@ -119,7 +125,7 @@ struct ResultsView: View {
             .shadow(color: .purple.opacity(0.3), radius: 4, x: 0, y: 2)
         }
         .padding(.horizontal, 16)
-        .padding(.bottom, 6)
+        .padding(.bottom, 2)
         .accessibilityLabel("Fehlt eine Toilette? Klicke hier um eine Toilette hinzuzufügen")
     }
 
@@ -157,14 +163,16 @@ struct ResultsView: View {
             toilets = try await WCInfoAPIService.shared.fetchToiletsNearby(
                 latitude: location.coordinate.latitude,
                 longitude: location.coordinate.longitude,
-                distance: 25
+                distance: 25,
+                filter: filterSettings.apiFilterQueryString
             )
             Analytics.shared.trackEvent(category: "results", action: isPullToRefresh ? "refresh" : "loaded", name: location.name, value: Float(toilets.count))
         } catch {
             var context: [String: Any] = [
                 "action": "fetchToiletsNearby",
                 "latitude": location.coordinate.latitude,
-                "longitude": location.coordinate.longitude
+                "longitude": location.coordinate.longitude,
+                "filter": filterSettings.apiFilterQueryString ?? ""
             ]
             var logToSentry = true
             if let apiError = error as? WCInfoAPIError {

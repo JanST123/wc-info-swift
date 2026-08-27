@@ -79,7 +79,7 @@ struct Toilet: Identifiable, Codable, Hashable {
 
         placeId = try container.decodeIfPresent(String.self, forKey: .placeId)
         status = (try? container.decode(String.self, forKey: .status)) ?? "active"
-        isQualified = (try? container.decode(Bool.self, forKey: .isQualified)) ?? false
+        isQualified = container.decodeFlexibleBool(forKey: .isQualified)
 
         isUnisex = container.decodeFlexibleBool(forKey: .isUnisex)
         isGenderSeparated = container.decodeFlexibleBool(forKey: .isGenderSeparated)

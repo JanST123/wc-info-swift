@@ -57,8 +57,14 @@ struct ToiletRowView: View {
         VStack(alignment: .leading, spacing: 6) {
             HStack(alignment: .top, spacing: 12) {
                 VStack(alignment: .leading, spacing: 2) {
-                    Text(toilet.owner)
-                        .font(.headline.bold())
+                    HStack(alignment: .center, spacing: 6) {
+                        Text(toilet.owner)
+                            .font(.headline.bold())
+
+                        if toilet.isQualified {
+                            QualifiedBadgeView(iconSize: 15)
+                        }
+                    }
 
                     Text(toilet.name)
                         .font(.subheadline.weight(.regular))
@@ -151,6 +157,7 @@ struct ToiletRowView: View {
         if let distance = formattedDistance {
             parts.append("Entfernung \(distance)")
         }
+        if toilet.isQualified { parts.append("Geprüfte Toilette") }
         if toilet.hasWheelchairAccess { parts.append("Rollstuhlgerecht") }
         if toilet.hasChangingTable { parts.append("Wickeltisch") }
         if toilet.isGenderSeparated { parts.append("Getrennte Toiletten") }

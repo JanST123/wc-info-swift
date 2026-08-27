@@ -10,9 +10,15 @@ struct DetailView: View {
         NavigationStack {
             ScrollView {
                 VStack(alignment: .leading, spacing: 16) {
-                    Text(toilet.name)
-                        .font(.title.bold())
-                        .accessibilityLabel("Name: \(toilet.name)")
+                    HStack(alignment: .firstTextBaseline, spacing: 8) {
+                        Text(toilet.name)
+                            .font(.title.bold())
+                            .accessibilityLabel("Name: \(toilet.name)")
+
+                        if toilet.isQualified {
+                            QualifiedBadgeView(iconSize: 22)
+                        }
+                    }
 
                     Label("Betreiber: \(toilet.owner)", systemImage: "building.2")
                         .font(.body)

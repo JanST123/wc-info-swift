@@ -226,6 +226,28 @@ struct SearchedLocation: Identifiable, Hashable {
     }
 }
 
+public struct GooglePlacesPeriod: Codable, Hashable, Equatable {
+    public var `open`: GooglePlacesPoint
+    public var close: GooglePlacesPoint?
+
+    public init(open: GooglePlacesPoint, close: GooglePlacesPoint? = nil) {
+        self.open = open
+        self.close = close
+    }
+}
+
+public struct GooglePlacesPoint: Codable, Hashable, Equatable {
+    public var day: Int       // 0: Sunday, 1: Monday, ..., 6: Saturday
+    public var hour: Int      // 0..23
+    public var minute: Int    // 0..59
+
+    public init(day: Int, hour: Int, minute: Int) {
+        self.day = day
+        self.hour = hour
+        self.minute = minute
+    }
+}
+
 struct AddToiletPayload: Codable {
     var name: String?
     var owner: String?
@@ -238,7 +260,7 @@ struct AddToiletPayload: Codable {
     var hasChangingTable: Bool?
     var accessibleOutsideOpeningTimes: Bool?
     var publicAccessible: Bool?
-    var placeOpeningHours: [String]?
+    var placeOpeningHours: [GooglePlacesPeriod]?
     var address: String?
     var website: String?
     var comment: String?
@@ -281,7 +303,7 @@ struct UpdateToiletPayload: Codable {
     var hasChangingTable: Bool?
     var accessibleOutsideOpeningTimes: Bool?
     var publicAccessible: Bool?
-    var placeOpeningHours: [String]?
+    var placeOpeningHours: [GooglePlacesPeriod]?
     var address: String?
     var website: String?
     var comment: String?

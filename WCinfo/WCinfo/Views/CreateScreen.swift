@@ -60,7 +60,7 @@ struct CreateScreen: View {
     @State private var publicAccessible: Bool?
     @State private var addressInput = ""
     @State private var websiteInput = ""
-    @State private var placeOpeningHours: [String]?
+    @State private var placeOpeningHours: [GooglePlacesPeriod]?
     @State private var accessibleOutsideOpeningTimes: Bool?
     @State private var storageSpace: String?
     @State private var commentInput = ""
@@ -541,7 +541,7 @@ struct CreateScreen: View {
                 subtitle: "Du kannst auch im nächsten Schritt ein Foto der Öffnungszeiten hochladen, dann machen wir das für dich."
             )
 
-            OpeningTimesInput(openingHours: $placeOpeningHours)
+            OpeningTimesInput(periods: $placeOpeningHours)
 
             VStack(spacing: 12) {
                 primaryChoiceButton(title: "Öffnungszeiten speichern") {

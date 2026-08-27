@@ -39,9 +39,13 @@ struct ResultsView: View {
             Analytics.shared.trackScreen("Results")
         }
         .sheet(item: $detailToilet) { toilet in
-            DetailView(toilet: toilet)
-                .presentationDetents([.medium, .large])
-                .presentationDragIndicator(.visible)
+            DetailView(toilet: toilet, onPhotosUpdated: {
+                Task {
+                    await loadToilets(isPullToRefresh: true)
+                }
+            })
+            .presentationDetents([.medium, .large])
+            .presentationDragIndicator(.visible)
         }
         .sheet(isPresented: $isShowingCreateSheet) {
             CreateScreen(
@@ -205,6 +209,9 @@ struct ResultsView: View {
                 return loc1.distance(from: targetLocation) < loc2.distance(from: targetLocation)
             }
             toilets = sorted
+            if let currentDetail = detailToilet, let updated = sorted.first(where: { $0.id == currentDetail.id }) {
+                detailToilet = updated
+            }
             Analytics.shared.trackEvent(category: "results", action: isPullToRefresh ? "refresh_bounds" : "loaded_bounds", name: location.name, value: Float(toilets.count))
         } catch {
             guard !Task.isCancelled else { return }

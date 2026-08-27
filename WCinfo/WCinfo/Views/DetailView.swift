@@ -4,6 +4,7 @@ import MapKit
 struct DetailView: View {
     @Environment(\.dismiss) private var dismiss
     let toilet: Toilet
+    var onPhotosUpdated: (() -> Void)? = nil
     @State private var selectedPhotoIndex: Int? = nil
     @State private var isShowingPhotoUploadSheet = false
 
@@ -96,16 +97,13 @@ struct DetailView: View {
                                 Button {
                                     isShowingPhotoUploadSheet = true
                                 } label: {
-                                    VStack(spacing: 6) {
-                                        Image(systemName: "camera.badge.plus")
-                                            .font(.system(size: 26, weight: .semibold))
-                                            .foregroundColor(.white)
-                                        Text("Foto hinzufügen")
-                                            .font(.caption2.bold())
-                                            .foregroundColor(.white)
-                                            .multilineTextAlignment(.center)
-                                            .lineLimit(2)
+                                    HStack(spacing: 4) {
+                                        Image(systemName: "camera.fill")
+                                            .font(.system(size: 26))
+                                        Image(systemName: "plus")
+                                            .font(.system(size: 20, weight: .bold))
                                     }
+                                    .foregroundColor(.white)
                                     .frame(width: 100, height: 100)
                                     .background(Color.purple)
                                     .clipShape(RoundedRectangle(cornerRadius: 10))
@@ -287,8 +285,13 @@ struct DetailView: View {
                 NavigationStack {
                     ScrollView {
                         VStack(alignment: .leading, spacing: 16) {
-                            PhotoUpload(toiletId: toilet.id)
-                                .padding()
+                            PhotoUpload(
+                                toiletId: toilet.id,
+                                onPhotoUploaded: { _ in
+                                    onPhotosUpdated?()
+                                }
+                            )
+                            .padding()
                         }
                     }
                     .navigationTitle("Fotos hochladen")

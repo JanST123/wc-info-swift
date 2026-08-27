@@ -182,7 +182,7 @@ struct DetailView: View {
                         .accessibilityLabel("Website: \(website)")
                     }
                     
-                    /*if let comment = toilet.comment, !comment.isEmpty {
+                    if let comment = toilet.comment, !comment.isEmpty {
                         VStack(alignment: .leading, spacing: 4) {
                             Text("Bemerkung")
                                 .font(.subheadline.bold())
@@ -192,7 +192,7 @@ struct DetailView: View {
                         }
                         .accessibilityElement(children: .combine)
                         .accessibilityLabel("Bemerkung: \(comment)")
-                    }*/
+                    }
 
                     Spacer(minLength: 40)
                 }

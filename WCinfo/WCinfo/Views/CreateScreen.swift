@@ -112,9 +112,11 @@ struct CreateScreen: View {
                     Button(createdToiletId != nil ? "Fertig" : "Abbrechen") {
                         if createdToiletId != nil {
                             finishWithCelebration()
+                        } else {
+                            dismiss()
                         }
-                        dismiss()
                     }
+                    .disabled(showHeartAnimation)
                     .accessibilityLabel(createdToiletId != nil ? "Fertigstellen" : "Abbrechen")
                 }
             }

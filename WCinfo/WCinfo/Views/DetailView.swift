@@ -95,10 +95,10 @@ struct DetailView: View {
                    
 
                     if let periods = toilet.placeOpeningHours, !periods.isEmpty {
-                        VStack(alignment: .leading, spacing: 6) {
+                        VStack(alignment: .leading, spacing: 10) {
                             Text("Öffnungszeiten")
                                 .font(.subheadline.bold())
-                            
+
                             OpeningTimeComponent(
                                 hasOpeningHours: true,
                                 isOpen: toilet.isOpen,
@@ -107,20 +107,21 @@ struct DetailView: View {
                                 accessibleOutsideOpeningTimes: toilet.accessibleOutsideOpeningTimes,
                                 alignment: .leading
                             )
-                            .padding(.top, 4)
-                            
+                            .padding(12)
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                            .background(Color(uiColor: .secondarySystemBackground))
+                            .clipShape(RoundedRectangle(cornerRadius: 10))
+
                             ForEach(periods.indices, id: \.self) { index in
                                 Text(periods[index].formatted)
                                     .font(.body)
                                     .foregroundStyle(.secondary)
                             }
-
-                           
                         }
                         .accessibilityElement(children: .combine)
                         .accessibilityLabel("Öffnungszeiten: \(periods.map(\.formatted).joined(separator: ", "))")
                     } else if toilet.accessibleOutsideOpeningTimes {
-                        VStack(alignment: .leading, spacing: 4) {
+                        VStack(alignment: .leading, spacing: 10) {
                             Text("Öffnungszeiten")
                                 .font(.subheadline.bold())
 
@@ -132,9 +133,13 @@ struct DetailView: View {
                                 accessibleOutsideOpeningTimes: toilet.accessibleOutsideOpeningTimes,
                                 alignment: .leading
                             )
+                            .padding(12)
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                            .background(Color(uiColor: .secondarySystemBackground))
+                            .clipShape(RoundedRectangle(cornerRadius: 10))
                         }
                     }
-                    
+
                     if let address = toilet.address, !address.isEmpty {
                         VStack(alignment: .leading, spacing: 4) {
                             Text("Adresse")
@@ -171,15 +176,39 @@ struct DetailView: View {
                         .accessibilityElement(children: .combine)
                         .accessibilityLabel("Ablagefläche: \(title)")
                     }
-                    
-                    if let website = toilet.website, !website.isEmpty {
+
+                    if let website = toilet.website, !website.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+                        let trimmed = website.trimmingCharacters(in: .whitespacesAndNewlines)
+                        let url: URL? = {
+                            if trimmed.lowercased().hasPrefix("http://") || trimmed.lowercased().hasPrefix("https://") {
+                                return URL(string: trimmed)
+                            } else {
+                                return URL(string: "https://" + trimmed)
+                            }
+                        }()
+
                         VStack(alignment: .leading, spacing: 4) {
-                            Text(website)
-                                .font(.body)
-                                .foregroundStyle(.secondary)
+                            Text("Webseite")
+                                .font(.subheadline.bold())
+
+                            if let url {
+                                Link(destination: url) {
+                                    HStack(spacing: 6) {
+                                        Image(systemName: "safari")
+                                        Text(trimmed)
+                                            .underline()
+                                    }
+                                    .font(.body)
+                                    .foregroundColor(.purple)
+                                }
+                            } else {
+                                Text(trimmed)
+                                    .font(.body)
+                                    .foregroundStyle(.secondary)
+                            }
                         }
                         .accessibilityElement(children: .combine)
-                        .accessibilityLabel("Website: \(website)")
+                        .accessibilityLabel("Webseite: \(trimmed)")
                     }
                     
                     if let comment = toilet.comment, !comment.isEmpty {

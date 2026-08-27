@@ -143,16 +143,19 @@ struct DetailView: View {
                     }
 
                     if let storageSpace = toilet.storageSpace, let title = storageTitle(for: storageSpace) {
-                        VStack(alignment: .leading, spacing: 4) {
+                        VStack(alignment: .leading, spacing: 6) {
                             Text("Ablagefläche")
                                 .font(.subheadline.bold())
 
-                            HStack(spacing: 8) {
+                            HStack(spacing: 10) {
                                 if let iconName = storageIconName(for: storageSpace) {
                                     Image(iconName)
                                         .resizable()
                                         .aspectRatio(contentMode: .fit)
-                                        .frame(width: 24, height: 24)
+                                        .frame(width: 20, height: 20)
+                                        .padding(6)
+                                        .background(Color.purple)
+                                        .clipShape(RoundedRectangle(cornerRadius: 8))
                                 }
 
                                 Text(title)

@@ -8,6 +8,7 @@ struct MapView: UIViewRepresentable {
     let toilets: [Toilet]
     let selectedToiletID: Int?
     var onShowDetails: (Toilet) -> Void = { _ in }
+    var onAddToiletAtCoordinate: ((CLLocationCoordinate2D) -> Void)? = nil
 
     func makeUIView(context: Context) -> GMSMapView {
         let camera = GMSCameraPosition.camera(withLatitude: center.latitude, longitude: center.longitude, zoom: 14)
@@ -24,6 +25,7 @@ struct MapView: UIViewRepresentable {
     func updateUIView(_ mapView: GMSMapView, context: Context) {
         context.coordinator.toilets = toilets
         context.coordinator.onShowDetails = onShowDetails
+        context.coordinator.onAddToiletAtCoordinate = onAddToiletAtCoordinate
 
         let targetStyle: UIUserInterfaceStyle = colorScheme == .dark ? .dark : .light
         if mapView.overrideUserInterfaceStyle != targetStyle {
@@ -53,6 +55,11 @@ struct MapView: UIViewRepresentable {
             }
         }
 
+        // Restore active addMarker if present
+        if let addMarker = context.coordinator.addMarker {
+            addMarker.map = mapView
+        }
+
         if let selectedMarker {
             mapView.selectedMarker = selectedMarker
 
@@ -65,7 +72,7 @@ struct MapView: UIViewRepresentable {
                 mapView.animate(to: camera)
                 context.coordinator.lastSelectedID = selectedToiletID
             }
-        } else {
+        } else if context.coordinator.addMarker == nil {
             mapView.selectedMarker = nil
             context.coordinator.lastSelectedID = selectedToiletID
         }
@@ -81,6 +88,8 @@ struct MapView: UIViewRepresentable {
         var lastSelectedID: Int?
         var toilets: [Toilet] = []
         var onShowDetails: (Toilet) -> Void = { _ in }
+        var onAddToiletAtCoordinate: ((CLLocationCoordinate2D) -> Void)? = nil
+        var addMarker: GMSMarker?
 
         @MainActor
         func mapView(_ mapView: GMSMapView, didFailToLocateUserWithError error: Error) {
@@ -96,7 +105,30 @@ struct MapView: UIViewRepresentable {
             print("[MapView] Finished tile rendering")
         }
 
+        func mapView(_ mapView: GMSMapView, didTapAt coordinate: CLLocationCoordinate2D) {
+            addMarker?.map = nil
+            let marker = GMSMarker(position: coordinate)
+            marker.title = "Neue Toilette hinzufügen"
+            marker.snippet = "Tippe hier, um eine Toilette hinzuzufügen ›"
+            marker.icon = GMSMarker.markerImage(with: .systemPurple)
+            marker.userData = "add_toilet_marker"
+            marker.map = mapView
+            mapView.selectedMarker = marker
+            addMarker = marker
+        }
+
+        func mapView(_ mapView: GMSMapView, didTap marker: GMSMarker) -> Bool {
+            if marker.userData as? String != "add_toilet_marker" {
+                addMarker?.map = nil
+                addMarker = nil
+            }
+            return false
+        }
+
         func mapView(_ mapView: GMSMapView, markerInfoWindow marker: GMSMarker) -> UIView? {
+            if marker.userData as? String == "add_toilet_marker" {
+                return AddToiletInfoWindowView(userInterfaceStyle: mapView.overrideUserInterfaceStyle)
+            }
             guard let toiletID = marker.userData as? Int,
                   let toilet = toilets.first(where: { $0.id == toiletID }) else {
                 return nil
@@ -105,6 +137,13 @@ struct MapView: UIViewRepresentable {
         }
 
         func mapView(_ mapView: GMSMapView, didTapInfoWindowOf marker: GMSMarker) {
+            if marker.userData as? String == "add_toilet_marker" {
+                let coordinate = marker.position
+                marker.map = nil
+                addMarker = nil
+                onAddToiletAtCoordinate?(coordinate)
+                return
+            }
             guard let toiletID = marker.userData as? Int,
                   let toilet = toilets.first(where: { $0.id == toiletID }) else {
                 return
@@ -176,6 +215,64 @@ private final class ToiletInfoWindowView: UIView {
         isAccessibilityElement = true
         accessibilityLabel = "\(toilet.displayName). \(toilet.accessibilitySnippet)"
         accessibilityHint = "Doppeltippen, um Details zu öffnen."
+        accessibilityTraits = .button
+    }
+
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+}
+
+private final class AddToiletInfoWindowView: UIView {
+    private static let maxWidth: CGFloat = 250
+    private static let horizontalPadding: CGFloat = 12
+    private static let verticalPadding: CGFloat = 8
+
+    init(userInterfaceStyle: UIUserInterfaceStyle = .unspecified) {
+        super.init(frame: .zero)
+        overrideUserInterfaceStyle = userInterfaceStyle
+        backgroundColor = .systemBackground
+
+        let titleLabel = UILabel()
+        titleLabel.text = "Neue Toilette hinzufügen"
+        titleLabel.font = .preferredFont(forTextStyle: .headline)
+        titleLabel.numberOfLines = 1
+        titleLabel.textColor = .systemPurple
+
+        let snippetLabel = UILabel()
+        snippetLabel.text = "Tippe hier, um an diesem Ort eine Toilette einzutragen ›"
+        snippetLabel.font = .preferredFont(forTextStyle: .footnote)
+        snippetLabel.textColor = .secondaryLabel
+        snippetLabel.numberOfLines = 2
+
+        let textStack = UIStackView(arrangedSubviews: [titleLabel, snippetLabel])
+        textStack.axis = .vertical
+        textStack.spacing = 4
+        textStack.frame = CGRect(
+            x: Self.horizontalPadding,
+            y: Self.verticalPadding,
+            width: Self.maxWidth - Self.horizontalPadding * 2,
+            height: 0
+        )
+
+        addSubview(textStack)
+
+        let fittingSize = textStack.systemLayoutSizeFitting(
+            CGSize(width: Self.maxWidth - Self.horizontalPadding * 2, height: .greatestFiniteMagnitude),
+            withHorizontalFittingPriority: .required,
+            verticalFittingPriority: .fittingSizeLevel
+        )
+        textStack.frame.size = fittingSize
+        frame = CGRect(
+            x: 0,
+            y: 0,
+            width: Self.maxWidth,
+            height: fittingSize.height + Self.verticalPadding * 2
+        )
+
+        isAccessibilityElement = true
+        accessibilityLabel = "Neue Toilette an diesem Ort hinzufügen"
+        accessibilityHint = "Doppeltippen, um die Toilettenerfassung zu starten."
         accessibilityTraits = .button
     }
 

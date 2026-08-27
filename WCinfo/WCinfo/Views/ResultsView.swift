@@ -13,6 +13,7 @@ struct ResultsView: View {
     @State private var selectedToilet: Toilet?
     @State private var detailToilet: Toilet?
     @State private var isShowingCreateSheet = false
+    @State private var createSheetCoordinate: CLLocationCoordinate2D? = nil
     @State private var filterSettings = ToiletFilterSettings.load()
 
     var body: some View {
@@ -44,7 +45,10 @@ struct ResultsView: View {
                 .presentationDragIndicator(.visible)
         }
         .sheet(isPresented: $isShowingCreateSheet) {
-            CreateScreen(location: location) {
+            CreateScreen(
+                location: location,
+                initialCoordinate: createSheetCoordinate
+            ) {
                 Task {
                     await loadToilets()
                 }
@@ -104,6 +108,7 @@ struct ResultsView: View {
 
     private var addToiletBanner: some View {
         Button {
+            createSheetCoordinate = nil
             isShowingCreateSheet = true
             Analytics.shared.trackEvent(category: "results", action: "click_add_toilet_banner")
         } label: {
@@ -136,6 +141,10 @@ struct ResultsView: View {
             selectedToiletID: selectedToilet?.id,
             onShowDetails: { toilet in
                 openDetails(for: toilet, source: "marker")
+            },
+            onAddToiletAtCoordinate: { coordinate in
+                createSheetCoordinate = coordinate
+                isShowingCreateSheet = true
             }
         )
         .ignoresSafeArea(edges: [.bottom, .leading, .trailing])

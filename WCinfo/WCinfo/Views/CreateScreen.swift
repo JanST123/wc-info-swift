@@ -24,6 +24,7 @@ enum QuestionStep: Int, CaseIterable, Identifiable {
 struct CreateScreen: View {
     @Environment(\.dismiss) private var dismiss
     let location: SearchedLocation?
+    var initialCoordinate: CLLocationCoordinate2D? = nil
     var onToiletCreated: (() -> Void)? = nil
 
     @StateObject private var placesService = PlacesService()
@@ -756,14 +757,17 @@ struct CreateScreen: View {
         // Q2
         steps.append(.name)
 
-        // Q3 (Skipped if no location authorization)
-        if locationManager.authorizationStatus == .authorizedWhenInUse || locationManager.authorizationStatus == .authorizedAlways {
-            steps.append(.gpsLocation)
-        }
+        // Q3 & Q4 (Skipped if coordinate was already provided, e.g. tapped from map)
+        if initialCoordinate == nil {
+            // Q3 (Skipped if no location authorization)
+            if locationManager.authorizationStatus == .authorizedWhenInUse || locationManager.authorizationStatus == .authorizedAlways {
+                steps.append(.gpsLocation)
+            }
 
-        // Q4 (Appears only if no place_id and no lat/lon from Q3)
-        if selectedPlace == nil && gpsCoordinate == nil {
-            steps.append(.mapPicker)
+            // Q4 (Appears only if no place_id and no lat/lon from Q3)
+            if selectedPlace == nil && gpsCoordinate == nil {
+                steps.append(.mapPicker)
+            }
         }
 
         // Q5
@@ -842,6 +846,9 @@ struct CreateScreen: View {
     // MARK: - API Calls
 
     private func resolveCoordinates() -> (lat: Double?, lon: Double?) {
+        if let initial = initialCoordinate {
+            return (initial.latitude, initial.longitude)
+        }
         if let gps = gpsCoordinate {
             return (gps.latitude, gps.longitude)
         }
@@ -949,12 +956,12 @@ struct CreateScreen: View {
     }
 
     private func loadPlaces() async {
-        guard let location else { return }
+        guard let coordinate = initialCoordinate ?? location?.coordinate else { return }
         isLoadingPlaces = true
         defer { isLoadingPlaces = false }
 
         do {
-            let places = try await placesService.fetchNearbyPlaces(coordinate: location.coordinate, radius: 200.0)
+            let places = try await placesService.fetchNearbyPlaces(coordinate: coordinate, radius: 200.0)
             nearbyPlaces = places
         } catch {
             print("[CreateScreen] fetchNearbyPlaces error: \(error)")

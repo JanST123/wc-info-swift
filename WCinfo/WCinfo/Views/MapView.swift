@@ -14,6 +14,7 @@ struct MapView: UIViewRepresentable {
     func makeUIView(context: Context) -> GMSMapView {
         let camera = GMSCameraPosition.camera(withLatitude: center.latitude, longitude: center.longitude, zoom: 14)
         let mapView = GMSMapView(frame: .zero, camera: camera)
+        mapView.isMyLocationEnabled = true
         mapView.settings.myLocationButton = true
         mapView.delegate = context.coordinator
         mapView.overrideUserInterfaceStyle = colorScheme == .dark ? .dark : .light
@@ -29,6 +30,10 @@ struct MapView: UIViewRepresentable {
         context.coordinator.onShowDetails = onShowDetails
         context.coordinator.onAddToiletAtCoordinate = onAddToiletAtCoordinate
         context.coordinator.onCameraIdle = onCameraIdle
+
+        if !mapView.isMyLocationEnabled {
+            mapView.isMyLocationEnabled = true
+        }
 
         let targetStyle: UIUserInterfaceStyle = colorScheme == .dark ? .dark : .light
         if mapView.overrideUserInterfaceStyle != targetStyle {
@@ -109,6 +114,19 @@ struct MapView: UIViewRepresentable {
 
         func mapViewDidFinishTileRendering(_ mapView: GMSMapView) {
             print("[MapView] Finished tile rendering")
+        }
+
+        func didTapMyLocationButton(for mapView: GMSMapView) -> Bool {
+            if let userLocation = mapView.myLocation {
+                let camera = GMSCameraPosition.camera(
+                    withLatitude: userLocation.coordinate.latitude,
+                    longitude: userLocation.coordinate.longitude,
+                    zoom: max(mapView.camera.zoom, 15)
+                )
+                mapView.animate(to: camera)
+                return true
+            }
+            return false
         }
 
         func mapView(_ mapView: GMSMapView, idleAt position: GMSCameraPosition) {

@@ -89,6 +89,7 @@ private struct LocationPickerGMSView: UIViewRepresentable {
             zoom: 16
         )
         let mapView = GMSMapView(frame: .zero, camera: camera)
+        mapView.isMyLocationEnabled = true
         mapView.settings.myLocationButton = true
         mapView.settings.compassButton = true
         mapView.delegate = context.coordinator

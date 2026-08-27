@@ -125,10 +125,7 @@ struct PhotoUpload: View {
 
             // Remove Button
             Button {
-                withAnimation {
-                    photoItems.removeAll { $0.id == item.id }
-                }
-                onPhotosChanged?(photoItems)
+                removePhotoItem(item)
             } label: {
                 Image(systemName: "xmark.circle.fill")
                     .foregroundColor(.white)
@@ -140,6 +137,24 @@ struct PhotoUpload: View {
         }
         .frame(width: 100, height: 100)
         .shadow(color: .black.opacity(0.1), radius: 3, x: 0, y: 1)
+    }
+
+    private func removePhotoItem(_ item: UploadedPhotoItem) {
+        if case .success(_, let tId, let fn) = item.status {
+            Task {
+                do {
+                    _ = try await WCInfoAPIService.shared.deletePhoto(toiletId: tId, filename: fn)
+                    Analytics.shared.trackEvent(category: "photo", action: "delete_success", name: fn)
+                } catch {
+                    ErrorManager.shared.report(error, context: ["action": "deletePhoto", "toiletId": tId, "filename": fn])
+                }
+            }
+        }
+
+        withAnimation {
+            photoItems.removeAll { $0.id == item.id }
+        }
+        onPhotosChanged?(photoItems)
     }
 
     private func handlePickedPhotos(_ items: [PhotosPickerItem]) async {
@@ -182,7 +197,11 @@ struct PhotoUpload: View {
             )
 
             if let idx = photoItems.firstIndex(where: { $0.id == item.id }) {
-                photoItems[idx].status = .success(imageUrl: response.imageUrl, toiletId: response.toiletId)
+                photoItems[idx].status = .success(
+                    imageUrl: response.imageUrl,
+                    toiletId: response.toiletId,
+                    filename: response.filename
+                )
                 onPhotosChanged?(photoItems)
                 onPhotoUploaded?(response)
                 Analytics.shared.trackEvent(category: "photo", action: "upload_success", name: String(response.toiletId))
@@ -209,7 +228,7 @@ public struct UploadedPhotoItem: Identifiable {
 public enum UploadStatus: Equatable {
     case pending
     case uploading
-    case success(imageUrl: String, toiletId: Int)
+    case success(imageUrl: String, toiletId: Int, filename: String)
     case failed(error: String)
 }
 

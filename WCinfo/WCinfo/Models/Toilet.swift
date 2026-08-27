@@ -382,6 +382,12 @@ public struct UploadPhotoResponse: Codable {
     }
 }
 
+public struct DeletePhotoResponse: Codable {
+    public let success: Bool
+    public let filename: String
+    public let deletedCount: Int
+}
+
 struct AddToiletPayload: Codable {
     var name: String?
     var owner: String?

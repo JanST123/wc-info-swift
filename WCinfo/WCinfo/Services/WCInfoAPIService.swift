@@ -186,6 +186,19 @@ actor WCInfoAPIService {
         }
     }
 
+    func deletePhoto(toiletId: Int, filename: String) async throws -> DeletePhotoResponse {
+        guard let url = URL(string: "\(baseURL)/deletePhoto/\(toiletId)/\(filename)") else {
+            throw WCInfoAPIError.invalidURL
+        }
+        let data = try await performRequest(url: url, method: "DELETE")
+        do {
+            return try decoder.decode(DeletePhotoResponse.self, from: data)
+        } catch {
+            let rawBody = String(data: data, encoding: .utf8)
+            throw WCInfoAPIError.decodingError(underlying: error, responseBody: rawBody)
+        }
+    }
+
     private func performRequest(url: URL, method: String = "GET", body: Data? = nil, customContentType: String? = nil, isRetryAfterCSRF: Bool = false) async throws -> Data {
         addBreadcrumb(category: "api", message: "\(method) \(url.absoluteString)")
 

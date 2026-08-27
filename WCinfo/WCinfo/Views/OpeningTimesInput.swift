@@ -28,8 +28,8 @@ struct OpeningTimesInput: View {
 
     var body: some View {
         VStack(spacing: 16) {
-            ForEach(Array(drafts.enumerated()), id: \.element.id) { index, draft in
-                timeRangeCard(index: index, draft: binding(for: draft.id))
+            ForEach($drafts) { $draft in
+                timeRangeCard(draft: $draft)
             }
 
             Button {
@@ -62,8 +62,10 @@ struct OpeningTimesInput: View {
         }
     }
 
-    private func timeRangeCard(index: Int, draft: Binding<TimeRangeDraft>) -> some View {
-        VStack(alignment: .leading, spacing: 12) {
+    private func timeRangeCard(draft: Binding<TimeRangeDraft>) -> some View {
+        let index = drafts.firstIndex(where: { $0.id == draft.wrappedValue.id }) ?? 0
+
+        return VStack(alignment: .leading, spacing: 12) {
             // Header
             HStack {
                 Text("Zeitraum \(index + 1)")
@@ -196,13 +198,6 @@ struct OpeningTimesInput: View {
                 .clipShape(Capsule())
         }
         .buttonStyle(.plain)
-    }
-
-    private func binding(for id: UUID) -> Binding<TimeRangeDraft> {
-        guard let index = drafts.firstIndex(where: { $0.id == id }) else {
-            fatalError("TimeRangeDraft not found")
-        }
-        return $drafts[index]
     }
 
     private func syncOutput() {

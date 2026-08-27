@@ -259,7 +259,7 @@ struct UpdateToiletPayload: Codable {
 struct UpdateToiletResponse: Codable {
     let success: Bool
     let id: Int
-    let diff: String?
+    //let diff: String?
 }
 
 struct NearbyPlaceOption: Identifiable, Hashable {

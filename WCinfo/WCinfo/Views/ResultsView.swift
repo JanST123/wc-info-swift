@@ -58,13 +58,19 @@ struct ResultsView: View {
             Spacer(minLength: 8)
             addToiletBanner
 
-            if isLoading {
+            if isLoading && toilets.isEmpty {
                 ProgressView("Suche Toiletten...")
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
                     .accessibilityLabel("Toiletten werden gesucht")
             } else if toilets.isEmpty {
-                ContentUnavailableView("Keine Toiletten gefunden", systemImage: "toilet")
-                    .accessibilityLabel("Keine Toiletten in der Nähe gefunden")
+                ScrollView {
+                    ContentUnavailableView("Keine Toiletten gefunden", systemImage: "toilet")
+                        .accessibilityLabel("Keine Toiletten in der Nähe gefunden")
+                        .padding(.top, 40)
+                }
+                .refreshable {
+                    await loadToilets(isPullToRefresh: true)
+                }
             } else {
                 List(toilets) { toilet in
                     ToiletRowView(
@@ -82,6 +88,9 @@ struct ResultsView: View {
                     }
                 }
                 .listStyle(.plain)
+                .refreshable {
+                    await loadToilets(isPullToRefresh: true)
+                }
                 .accessibilityLabel("Toilettenliste")
             }
         }
@@ -100,18 +109,18 @@ struct ResultsView: View {
                 Text("Klicke hier um eine Toilette hinzuzufügen - wir freuen uns!")
                     .font(.caption)
                     .foregroundStyle(.white.opacity(0.9))
+                    .multilineTextAlignment(.center)
             }
-            .multilineTextAlignment(.center)
             .frame(maxWidth: .infinity)
-            .padding(.vertical, 12)
+            .padding(.vertical, 10)
             .padding(.horizontal, 16)
             .background(Color.purple)
+            .clipShape(RoundedRectangle(cornerRadius: 10))
+            .shadow(color: .purple.opacity(0.3), radius: 4, x: 0, y: 2)
         }
-        .buttonStyle(.plain)
-        .accessibilityElement(children: .combine)
-        .accessibilityLabel("Fehlt eine Toilette? Klicke hier um eine Toilette hinzuzufügen - wir freuen uns!")
-        .accessibilityHint("Öffnet das Formular zum Hinzufügen einer neuen Toilette.")
-        .accessibilityAddTraits(.isButton)
+        .padding(.horizontal, 16)
+        .padding(.bottom, 6)
+        .accessibilityLabel("Fehlt eine Toilette? Klicke hier um eine Toilette hinzuzufügen")
     }
 
     private var mapContent: some View {
@@ -127,6 +136,7 @@ struct ResultsView: View {
     }
 
     private func openDetails(for toilet: Toilet, source: String) {
+        selectedToilet = toilet
         detailToilet = toilet
         Analytics.shared.trackEvent(category: "results", action: "open_details_\(source)", name: String(toilet.id))
     }
@@ -138,8 +148,10 @@ struct ResultsView: View {
         item.openInMaps(launchOptions: [MKLaunchOptionsDirectionsModeKey: MKLaunchOptionsDirectionsModeWalking])
     }
 
-    private func loadToilets() async {
-        isLoading = true
+    private func loadToilets(isPullToRefresh: Bool = false) async {
+        if !isPullToRefresh {
+            isLoading = true
+        }
         defer { isLoading = false }
         do {
             toilets = try await WCInfoAPIService.shared.fetchToiletsNearby(
@@ -147,7 +159,7 @@ struct ResultsView: View {
                 longitude: location.coordinate.longitude,
                 distance: 25
             )
-            Analytics.shared.trackEvent(category: "results", action: "loaded", name: location.name, value: Float(toilets.count))
+            Analytics.shared.trackEvent(category: "results", action: isPullToRefresh ? "refresh" : "loaded", name: location.name, value: Float(toilets.count))
         } catch {
             var context: [String: Any] = [
                 "action": "fetchToiletsNearby",

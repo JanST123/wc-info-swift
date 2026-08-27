@@ -185,10 +185,14 @@ struct AddToiletPayload: Codable {
     var isGenderSeparated: Bool?
     var hasWheelchairAccess: Bool?
     var hasChangingTable: Bool?
+    var accessibleOutsideOpeningTimes: Bool?
+    var publicAccessible: Bool?
+    var placeOpeningHours: [String]?
     var address: String?
     var website: String?
     var comment: String?
     var euroKey: String?
+    var storageSpace: String?
     var status: String?
 
     enum CodingKeys: String, CodingKey {
@@ -198,8 +202,12 @@ struct AddToiletPayload: Codable {
         case isGenderSeparated = "is_gender_separated"
         case hasWheelchairAccess = "has_wheelchair_access"
         case hasChangingTable = "has_changing_table"
+        case accessibleOutsideOpeningTimes = "accessible_outside_opening_times"
+        case publicAccessible = "public_accessible"
+        case placeOpeningHours = "place_opening_hours"
         case address, website, comment
         case euroKey = "euro_key"
+        case storageSpace = "storage_space"
         case status
     }
 }
@@ -207,6 +215,51 @@ struct AddToiletPayload: Codable {
 struct AddToiletResponse: Codable {
     let success: Bool
     let id: Int
+}
+
+struct UpdateToiletPayload: Codable {
+    var name: String?
+    var owner: String?
+    var lat: Double?
+    var lon: Double?
+    var placeId: String?
+    var isQualified: Bool?
+    var isUnisex: Bool?
+    var isGenderSeparated: Bool?
+    var hasWheelchairAccess: Bool?
+    var hasChangingTable: Bool?
+    var accessibleOutsideOpeningTimes: Bool?
+    var publicAccessible: Bool?
+    var placeOpeningHours: [String]?
+    var address: String?
+    var website: String?
+    var comment: String?
+    var euroKey: String?
+    var storageSpace: String?
+    var status: String?
+
+    enum CodingKeys: String, CodingKey {
+        case name, owner, lat, lon
+        case placeId = "place_id"
+        case isQualified = "is_qualified"
+        case isUnisex = "is_unisex"
+        case isGenderSeparated = "is_gender_separated"
+        case hasWheelchairAccess = "has_wheelchair_access"
+        case hasChangingTable = "has_changing_table"
+        case accessibleOutsideOpeningTimes = "accessible_outside_opening_times"
+        case publicAccessible = "public_accessible"
+        case placeOpeningHours = "place_opening_hours"
+        case address, website, comment
+        case euroKey = "euro_key"
+        case storageSpace = "storage_space"
+        case status
+    }
+}
+
+struct UpdateToiletResponse: Codable {
+    let success: Bool
+    let id: Int
+    let diff: String?
 }
 
 struct NearbyPlaceOption: Identifiable, Hashable {

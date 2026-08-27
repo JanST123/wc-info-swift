@@ -1,625 +1,976 @@
 import SwiftUI
 import CoreLocation
 
+enum QuestionStep: Int, CaseIterable, Identifiable {
+    case place = 1
+    case name = 2
+    case gpsLocation = 3
+    case mapPicker = 4
+    case genderSeparated = 5
+    case wheelchair = 6
+    case euroKey = 7
+    case publicAccess = 9
+    case address = 10
+    case website = 11
+    case openingTimes = 12
+    case outsideOpeningTimes = 13
+    case storageSpace = 14
+    case photos = 15
+    case comment = 16
+
+    var id: Int { rawValue }
+}
+
 struct CreateScreen: View {
     @Environment(\.dismiss) private var dismiss
     let location: SearchedLocation?
     var onToiletCreated: (() -> Void)? = nil
 
     @StateObject private var placesService = PlacesService()
+    @StateObject private var locationManager = LocationManager()
 
-    @State private var belongsToPlace = true
+    // MARK: - Navigation & Flow State
+    @State private var currentStep: QuestionStep = .place
+    @State private var stepHistory: [QuestionStep] = []
+    @State private var createdToiletId: Int? = nil
+    @State private var isSubmitting = false
+    @State private var errorMessage: String? = nil
+    @State private var showHeartAnimation = false
+
+    // MARK: - Places Data
     @State private var nearbyPlaces: [NearbyPlaceOption] = []
-    @State private var selectedPlace: NearbyPlaceOption?
     @State private var isLoadingPlaces = false
-    @State private var placesError: String?
+    @State private var selectedPlace: NearbyPlaceOption?
+    @State private var selectedPlaceDetails: PlaceDetails?
+    @State private var isNoneOfThesePlaces = false
 
+    // MARK: - Answers State
     @State private var toiletName = ""
-    @State private var isGenderSeparated = false
-    @State private var hasChangingTable = false
-    @State private var hasWheelchairAccess = false
-    @State private var hasEuroKey = false
+    @State private var usedGpsPosition = false
+    @State private var gpsCoordinate: CLLocationCoordinate2D?
+    @State private var mapSelectedCoordinate: CLLocationCoordinate2D?
+
+    @State private var isGenderSeparated: Bool?
+    @State private var isUnisex: Bool?
+    @State private var hasWheelchairAccess: Bool?
+    @State private var euroKey: String?
     @State private var showingEuroKeyInfo = false
 
-    @State private var website = ""
-    @State private var address = ""
-    @State private var placeCoordinates: CLLocationCoordinate2D?
-
-    @State private var isSubmitting = false
-    @State private var validationError: String?
+    @State private var publicAccessible: Bool?
+    @State private var addressInput = ""
+    @State private var websiteInput = ""
+    @State private var placeOpeningHours: [String]?
+    @State private var accessibleOutsideOpeningTimes: Bool?
+    @State private var storageSpace: String?
+    @State private var commentInput = ""
 
     var body: some View {
         NavigationStack {
-            ScrollView {
-                VStack(alignment: .leading, spacing: 20) {
-                    placeAssociationSection
+            ZStack {
+                Color(uiColor: .systemGroupedBackground)
+                    .ignoresSafeArea()
 
-                    if let placesError {
-                        HStack(alignment: .top, spacing: 8) {
-                            Image(systemName: "exclamationmark.triangle.fill")
-                                .foregroundColor(.orange)
-                                .font(.caption)
-                            Text(placesError)
-                                .font(.caption)
-                                .foregroundColor(.secondary)
-                                .frame(maxWidth: .infinity, alignment: .leading)
-                            Button {
-                                Task { await loadInitialData() }
-                            } label: {
-                                Text("Erneut versuchen")
-                                    .font(.caption.bold())
-                                    .foregroundColor(.purple)
-                            }
+                VStack(spacing: 0) {
+                    progressBar
+
+                    ScrollView {
+                        VStack(spacing: 24) {
+                            questionContentView
+                                .transition(.asymmetric(
+                                    insertion: .opacity.combined(with: .move(edge: .trailing)),
+                                    removal: .opacity.combined(with: .move(edge: .leading))
+                                ))
+                                .id(currentStep)
                         }
-                        .padding(10)
-                        .background(Color.orange.opacity(0.1))
-                        .clipShape(RoundedRectangle(cornerRadius: 8))
+                        .padding(.horizontal, 20)
+                        .padding(.vertical, 24)
                     }
-
-                    toiletNameSection
-
-                    propertiesSection
-
-                    websiteSection
-
-                    addressSection
-
-                    if let validationError {
-                        Text(validationError)
-                            .font(.caption)
-                            .foregroundColor(.red)
-                            .accessibilityLabel("Fehler: \(validationError)")
-                    }
-
-                    submitButton
                 }
-                .padding(.horizontal, 16)
-                .padding(.vertical, 16)
+
+                if showHeartAnimation {
+                    celebrationHeartsView
+                }
             }
             .navigationTitle("Toilette hinzufügen")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
-                    Button("Abbrechen") {
+                    if !stepHistory.isEmpty {
+                        Button {
+                            goBack()
+                        } label: {
+                            HStack(spacing: 4) {
+                                Image(systemName: "chevron.left")
+                                Text("Zurück")
+                            }
+                        }
+                        .accessibilityLabel("Vorherige Frage")
+                    }
+                }
+
+                ToolbarItem(placement: .confirmationAction) {
+                    Button(createdToiletId != nil ? "Fertig" : "Abbrechen") {
+                        if createdToiletId != nil {
+                            onToiletCreated?()
+                        }
                         dismiss()
                     }
-                    .accessibilityLabel("Abbrechen")
+                    .accessibilityLabel(createdToiletId != nil ? "Fertigstellen" : "Abbrechen")
                 }
             }
             .sheet(isPresented: $showingEuroKeyInfo) {
                 EuroKeyInfoView()
             }
-            .onChange(of: hasWheelchairAccess) { _, newValue in
-                if !newValue {
-                    hasEuroKey = false
-                }
-            }
             .task {
-                await loadInitialData()
+                await loadPlaces()
             }
             .onAppear {
-                Analytics.shared.trackScreen("CreateToilet")
+                Analytics.shared.trackScreen("CreateToiletWizard")
             }
         }
     }
 
-    // MARK: - Section 1: Place Association ("Toilette gehört zum Ort")
+    // MARK: - Progress Bar
 
-    private var placeAssociationSection: some View {
-        HStack(spacing: 12) {
-            Button {
-                belongsToPlace.toggle()
-                if !belongsToPlace {
-                    selectedPlace = nil
-                } else if selectedPlace == nil, let first = nearbyPlaces.first {
-                    selectPlace(first)
-                }
-            } label: {
-                HStack(spacing: 8) {
-                    checkboxView(isChecked: belongsToPlace)
-                    Text("Toilette gehört zum Ort")
-                        .font(.subheadline.weight(.medium))
-                        .foregroundStyle(.primary)
+    private var progressBar: some View {
+        let activeSteps = determineActiveSteps()
+        let currentIndex = activeSteps.firstIndex(of: currentStep) ?? 0
+        let progress = Double(currentIndex + 1) / Double(max(activeSteps.count, 1))
+
+        return VStack(spacing: 4) {
+            ProgressView(value: progress, total: 1.0)
+                .tint(.purple)
+                .scaleEffect(x: 1, y: 1.5, anchor: .center)
+
+            HStack {
+                Text("Frage \(currentIndex + 1) von \(activeSteps.count)")
+                    .font(.caption2.bold())
+                    .foregroundColor(.secondary)
+                Spacer()
+                if createdToiletId != nil {
+                    Text("✓ Toilette gespeichert")
+                        .font(.caption2.bold())
+                        .foregroundColor(.green)
                 }
             }
-            .buttonStyle(.plain)
-            .accessibilityLabel("Toilette gehört zum Ort: \(belongsToPlace ? "Ausgewählt" : "Nicht ausgewählt")")
-            .accessibilityHint("Umschalten, ob die Toilette zu einer bestimmten Einrichtung gehört.")
-
-            Spacer()
-
-            if belongsToPlace {
-                placeDropdownMenu
-            }
+            .padding(.horizontal, 20)
+            .padding(.top, 4)
         }
     }
 
-    private var placeDropdownMenu: some View {
-        Menu {
+    // MARK: - Dynamic Step Content
+
+    @ViewBuilder
+    private var questionContentView: some View {
+        switch currentStep {
+        case .place:
+            question1PlaceView
+        case .name:
+            question2NameView
+        case .gpsLocation:
+            question3GpsLocationView
+        case .mapPicker:
+            question4MapPickerView
+        case .genderSeparated:
+            question5GenderSeparatedView
+        case .wheelchair:
+            question6WheelchairView
+        case .euroKey:
+            question7EuroKeyView
+        case .publicAccess:
+            question9PublicAccessView
+        case .address:
+            question10AddressView
+        case .website:
+            question11WebsiteView
+        case .openingTimes:
+            question12OpeningTimesView
+        case .outsideOpeningTimes:
+            question13OutsideOpeningTimesView
+        case .storageSpace:
+            question14StorageSpaceView
+        case .photos:
+            question15PhotosView
+        case .comment:
+            question16CommentView
+        }
+    }
+
+    // MARK: - Question 1: Place ("Gehört die Toilette zu einem dieser Orte?")
+
+    private var question1PlaceView: some View {
+        VStack(spacing: 20) {
+            questionHeader(
+                iconName: "building.2.crop.circle.fill",
+                title: "Gehört die Toilette zu einem dieser Orte?",
+                subtitle: "Wähle den Ort aus, zu dem die Toilette gehört:"
+            )
+
             if isLoadingPlaces {
-                Text("Orte werden geladen...")
-            } else if nearbyPlaces.isEmpty {
-                Text("Keine Orte in der Nähe gefunden")
+                ProgressView("Orte in der Nähe werden gesucht...")
+                    .padding()
             } else {
-                ForEach(nearbyPlaces) { place in
-                    Button {
-                        selectPlace(place)
-                    } label: {
-                        if place.id == selectedPlace?.id {
-                            Label(place.name, systemImage: "checkmark")
-                        } else {
-                            Text(place.name)
+                VStack(spacing: 12) {
+                    ForEach(nearbyPlaces.prefix(3)) { place in
+                        primaryChoiceButton(title: place.name, subtitle: place.secondaryText) {
+                            selectPlaceOption(place)
                         }
+                    }
+
+                    secondaryChoiceButton(title: "Keiner dieser Orte") {
+                        selectPlaceOption(nil)
                     }
                 }
             }
-        } label: {
-            HStack(spacing: 6) {
-                Text(selectedPlace?.name ?? (isLoadingPlaces ? "Laden..." : "Ort wählen"))
-                    .font(.subheadline)
-                    .foregroundStyle(.primary)
-                    .lineLimit(1)
-                    .truncationMode(.tail)
-                    .frame(maxWidth: 160, alignment: .leading)
-
-                Image(systemName: "chevron.down")
-                    .font(.caption.bold())
-                    .foregroundColor(.purple)
-            }
-            .padding(.horizontal, 10)
-            .padding(.vertical, 7)
-            .background(Color(uiColor: .systemBackground))
-            .overlay(
-                RoundedRectangle(cornerRadius: 8)
-                    .stroke(Color.purple, lineWidth: 1.5)
-            )
         }
-        .accessibilityLabel("Ort auswählen. Aktuell ausgewählt: \(selectedPlace?.name ?? "Keiner")")
     }
 
-    // MARK: - Section 2: Name der Toilette (optional)
+    private func selectPlaceOption(_ place: NearbyPlaceOption?) {
+        selectedPlace = place
+        isNoneOfThesePlaces = (place == nil)
 
-    private var toiletNameSection: some View {
-        VStack(alignment: .leading, spacing: 6) {
-            Text("Name der Toilette (optional)")
-                .font(.subheadline.bold())
-                .foregroundStyle(.primary)
+        if let place {
+            Task {
+                do {
+                    let details = try await placesService.fetchPlaceDetails(for: place.id)
+                    selectedPlaceDetails = details
+                    if addressInput.isEmpty, let addr = details.formattedAddress {
+                        addressInput = addr
+                    }
+                    if websiteInput.isEmpty, let site = details.website {
+                        websiteInput = site
+                    }
+                } catch {
+                    print("[CreateScreen] Error loading place details: \(error)")
+                }
+            }
+        } else {
+            selectedPlaceDetails = nil
+        }
 
-            TextField("z.B. \"Hauptgebäude\" falls es mehrere Toiletten gibt", text: $toiletName)
+        advanceToNextStep()
+    }
+
+    // MARK: - Question 2: Name ("Wo befindet sich die Toilette?")
+
+    private var question2NameView: some View {
+        VStack(spacing: 20) {
+            questionHeader(
+                iconName: "signpost.right.and.left.fill",
+                title: "Wo befindet sich die Toilette?",
+                subtitle: "Gib eine kurze Ortsangabe oder Bezeichnung an:"
+            )
+
+            TextField("z.B. 1. Stock bei den Umkleiden", text: $toiletName)
                 .textFieldStyle(.plain)
-                .padding(.horizontal, 12)
-                .padding(.vertical, 10)
+                .padding(14)
                 .background(Color(uiColor: .systemBackground))
-                .overlay(
-                    RoundedRectangle(cornerRadius: 6)
-                        .stroke(Color(.systemGray4), lineWidth: 1)
-                )
-                .accessibilityLabel("Name der Toilette")
+                .clipShape(RoundedRectangle(cornerRadius: 10))
+                .overlay(RoundedRectangle(cornerRadius: 10).stroke(Color(.systemGray4), lineWidth: 1))
+
+            primaryChoiceButton(title: "Weiter") {
+                advanceToNextStep()
+            }
         }
     }
 
-    // MARK: - Section 3: Eigenschaften
+    // MARK: - Question 3: GPS Position
 
-    private var propertiesSection: some View {
-        VStack(alignment: .leading, spacing: 8) {
-            Text("Eigenschaften:")
-                .font(.subheadline.bold())
-                .foregroundStyle(.primary)
-
-            HStack(spacing: 8) {
-                propertyCard(
-                    iconName: "toiletIconGenderSeparated",
-                    title: "Nach Geschlecht getrennte Toiletten vorhanden",
-                    isChecked: $isGenderSeparated
-                )
-
-                propertyCard(
-                    iconName: "toiletIconChangingTable",
-                    title: "Wickelraum vorhanden",
-                    isChecked: $hasChangingTable
-                )
-
-                propertyCard(
-                    iconName: "toiletIconWheelchair",
-                    title: "Barrierefreie Toilette vorhanden",
-                    isChecked: $hasWheelchairAccess
-                )
-            }
-
-            euroKeyCard
-        }
-    }
-
-    private func propertyCard(iconName: String, title: String, isChecked: Binding<Bool>) -> some View {
-        Button {
-            isChecked.wrappedValue.toggle()
-        } label: {
-            VStack(alignment: .leading, spacing: 8) {
-                Image(iconName)
-                    .renderingMode(.template)
-                    .resizable()
-                    .aspectRatio(contentMode: .fit)
-                    .frame(width: 28, height: 28)
-                    .foregroundColor(Color(red: 0.35, green: 0.35, blue: 0.45))
-
-                Text(title)
-                    .font(.system(size: 12))
-                    .foregroundStyle(.primary)
-                    .multilineTextAlignment(.leading)
-                    .lineLimit(4)
-                    .fixedSize(horizontal: false, vertical: true)
-
-                Spacer(minLength: 4)
-
-                HStack {
-                    Spacer()
-                    checkboxView(isChecked: isChecked.wrappedValue, size: 18)
-                }
-            }
-            .padding(10)
-            .frame(maxWidth: .infinity, minHeight: 130, alignment: .topLeading)
-            .background(Color(uiColor: .systemBackground))
-            .overlay(
-                RoundedRectangle(cornerRadius: 8)
-                    .stroke(isChecked.wrappedValue ? Color.purple : Color(.systemGray4), lineWidth: isChecked.wrappedValue ? 1.5 : 1)
+    private var question3GpsLocationView: some View {
+        VStack(spacing: 20) {
+            questionHeader(
+                iconName: "location.fill",
+                title: "Befindest du dich gerade unter freiem Himmel und vor dem Eingang der Toilette?",
+                subtitle: "Dann können wir deine aktuelle Position zur Toilette hinzufügen, um anderen die Navigation zu erleichtern."
             )
-            .clipShape(RoundedRectangle(cornerRadius: 8))
-        }
-        .buttonStyle(.plain)
-        .accessibilityElement(children: .combine)
-        .accessibilityLabel("\(title): \(isChecked.wrappedValue ? "Ausgewählt" : "Nicht ausgewählt")")
-        .accessibilityHint("Doppeltippen, um diese Eigenschaft umzuschalten.")
-        .accessibilityAddTraits(.isButton)
-    }
 
-    private var euroKeyCard: some View {
-        HStack(spacing: 12) {
-            Button {
-                if hasWheelchairAccess {
-                    hasEuroKey.toggle()
+            VStack(spacing: 12) {
+                primaryChoiceButton(title: "Ja, benutzt meine Position") {
+                    locationManager.requestLocation()
+                    if let userCoord = locationManager.location?.coordinate {
+                        gpsCoordinate = userCoord
+                        usedGpsPosition = true
+                    } else if let locCoord = location?.coordinate {
+                        gpsCoordinate = locCoord
+                        usedGpsPosition = true
+                    }
+                    advanceToNextStep()
                 }
-            } label: {
-                HStack(spacing: 12) {
-                    Image(systemName: "key.fill")
-                        .font(.body)
-                        .foregroundColor(hasWheelchairAccess ? Color(red: 0.35, green: 0.35, blue: 0.45) : Color(.systemGray3))
 
-                    Text("Kann mit Euroschlüssel geöffnet werden")
-                        .font(.system(size: 13))
-                        .foregroundColor(hasWheelchairAccess ? .primary : Color(.systemGray2))
-                        .multilineTextAlignment(.leading)
+                secondaryChoiceButton(title: "Nein") {
+                    usedGpsPosition = false
+                    gpsCoordinate = nil
+                    advanceToNextStep()
                 }
             }
-            .buttonStyle(.plain)
-            .disabled(!hasWheelchairAccess)
+        }
+    }
 
-            Button {
-                showingEuroKeyInfo = true
-            } label: {
-                Image(systemName: "info.circle")
+    // MARK: - Question 4: Map Point Picker
+
+    private var question4MapPickerView: some View {
+        VStack(spacing: 16) {
+            questionHeader(
+                iconName: "map.fill",
+                title: "Bitte wähle den Punkt auf der Karte, an dem sich die Toilette befindet",
+                subtitle: "Tippe auf die Karte oder verschiebe die Markierung:"
+            )
+
+            let centerCoord = location?.coordinate ?? CLLocationCoordinate2D(latitude: 50.8957, longitude: 7.3556)
+
+            LocationPickerMapView(
+                initialCoordinate: mapSelectedCoordinate ?? centerCoord,
+                selectedCoordinate: $mapSelectedCoordinate
+            ) { confirmedCoord in
+                mapSelectedCoordinate = confirmedCoord
+                advanceToNextStep()
+            }
+            .frame(height: 300)
+            .clipShape(RoundedRectangle(cornerRadius: 12))
+        }
+    }
+
+    // MARK: - Question 5: Gender Separated
+
+    private var question5GenderSeparatedView: some View {
+        VStack(spacing: 20) {
+            questionHeader(
+                iconAsset: "restroom-solid-full",
+                title: "Ist die Toilette nach Geschlecht getrennt?"
+            )
+
+            VStack(spacing: 12) {
+                primaryChoiceButton(title: "Ja") {
+                    isGenderSeparated = true
+                    isUnisex = false
+                    advanceToNextStep()
+                }
+
+                secondaryChoiceButton(title: "Nein, Unisex") {
+                    isGenderSeparated = false
+                    isUnisex = true
+                    advanceToNextStep()
+                }
+            }
+        }
+    }
+
+    // MARK: - Question 6: Wheelchair Access
+
+    private var question6WheelchairView: some View {
+        VStack(spacing: 20) {
+            questionHeader(
+                iconAsset: "wheelchair-solid-full",
+                title: "Ist eine barrierefreie Toilette vorhanden?"
+            )
+
+            VStack(spacing: 12) {
+                primaryChoiceButton(title: "Ja") {
+                    hasWheelchairAccess = true
+                    advanceToNextStep()
+                }
+
+                secondaryChoiceButton(title: "Nein") {
+                    hasWheelchairAccess = false
+                    euroKey = nil
+                    advanceToNextStep()
+                }
+            }
+        }
+    }
+
+    // MARK: - Question 7: Euro Key
+
+    private var question7EuroKeyView: some View {
+        VStack(spacing: 20) {
+            VStack(spacing: 10) {
+                Image(systemName: "key.fill")
+                    .font(.system(size: 44))
+                    .foregroundColor(.purple)
+
+                HStack(spacing: 6) {
+                    Text("Kann die Türe mit Euro-Schlüssel geöffnet werden?")
+                        .font(.title3.bold())
+                        .multilineTextAlignment(.center)
+
+                    Button {
+                        showingEuroKeyInfo = true
+                    } label: {
+                        Image(systemName: "info.circle")
+                            .font(.title3)
+                            .foregroundColor(.purple)
+                    }
+                    .buttonStyle(.plain)
+                    .accessibilityLabel("Informationen zum Euroschlüssel")
+                }
+
+                Text("Diese Information ist oft in der Nähe des Schlosses zu lesen.")
                     .font(.subheadline)
-                    .foregroundColor(hasWheelchairAccess ? .purple : Color(.systemGray3))
+                    .foregroundColor(.secondary)
+                    .multilineTextAlignment(.center)
             }
-            .buttonStyle(.plain)
-            .accessibilityLabel("Informationen zum Euroschlüssel anzeigen")
 
-            Spacer()
+            if isSubmitting {
+                ProgressView("Toilette wird gespeichert...")
+                    .padding()
+            } else {
+                VStack(spacing: 12) {
+                    primaryChoiceButton(title: "Ja") {
+                        euroKey = "yes"
+                        advanceToNextStep()
+                    }
 
-            Button {
-                if hasWheelchairAccess {
-                    hasEuroKey.toggle()
-                }
-            } label: {
-                if hasWheelchairAccess {
-                    checkboxView(isChecked: hasEuroKey, size: 18)
-                } else {
-                    RoundedRectangle(cornerRadius: 4)
-                        .stroke(Color(.systemGray4), lineWidth: 1)
-                        .frame(width: 18, height: 18)
-                        .foregroundColor(Color(.systemGray5))
+                    secondaryChoiceButton(title: "Nicht sicher") {
+                        euroKey = "unknown"
+                        advanceToNextStep()
+                    }
+
+                    secondaryChoiceButton(title: "Nein") {
+                        euroKey = "no"
+                        advanceToNextStep()
+                    }
                 }
             }
-            .buttonStyle(.plain)
-            .disabled(!hasWheelchairAccess)
         }
-        .padding(.horizontal, 12)
-        .padding(.vertical, 12)
-        .background(Color(uiColor: .systemBackground))
-        .overlay(
-            RoundedRectangle(cornerRadius: 8)
-                .stroke(
-                    hasWheelchairAccess && hasEuroKey
-                        ? Color.purple
-                        : (hasWheelchairAccess ? Color(.systemGray4) : Color(.systemGray5)),
-                    lineWidth: hasWheelchairAccess && hasEuroKey ? 1.5 : 1
-                )
-        )
-        .clipShape(RoundedRectangle(cornerRadius: 8))
-        .accessibilityElement(children: .contain)
-        .accessibilityLabel("Euroschlüssel: \(hasWheelchairAccess ? (hasEuroKey ? "Ausgewählt" : "Nicht ausgewählt") : "Deaktiviert, erfordert barrierefreie Toilette")")
     }
 
-    // MARK: - Section 4: Webseite
+    // MARK: - Question 9: Public Access
 
-    private var websiteSection: some View {
-        VStack(alignment: .leading, spacing: 6) {
-            Text("Webseite")
-                .font(.subheadline.bold())
-                .foregroundStyle(.primary)
+    private var question9PublicAccessView: some View {
+        VStack(spacing: 20) {
+            questionHeader(
+                iconName: "person.2.fill",
+                title: "Ist der Zugang öffentlich möglich?",
+                subtitle: "Gib an, ob man diese Toilette auch nutzen kann, ohne eine Eintrittskarte zu haben, Mitglied zu sein oder etwas zu kaufen etc."
+            )
 
-            TextField("http://www.beispiel.de", text: $website)
+            VStack(spacing: 12) {
+                primaryChoiceButton(title: "Ja, öffentlicher Zugang möglich") {
+                    publicAccessible = true
+                    patchCurrentState()
+                    advanceToNextStep()
+                }
+
+                secondaryChoiceButton(title: "Nein, nicht ohne weiteres möglich") {
+                    publicAccessible = false
+                    patchCurrentState()
+                    advanceToNextStep()
+                }
+            }
+        }
+    }
+
+    // MARK: - Question 10: Address
+
+    private var question10AddressView: some View {
+        VStack(spacing: 20) {
+            questionHeader(
+                iconName: "envelope.fill",
+                title: "Möchtest du eine Adresse angeben?"
+            )
+
+            TextField("Adresse eingeben", text: $addressInput, axis: .vertical)
+                .lineLimit(3...6)
+                .textFieldStyle(.plain)
+                .padding(14)
+                .background(Color(uiColor: .systemBackground))
+                .clipShape(RoundedRectangle(cornerRadius: 10))
+                .overlay(RoundedRectangle(cornerRadius: 10).stroke(Color(.systemGray4), lineWidth: 1))
+
+            VStack(spacing: 12) {
+                primaryChoiceButton(title: "Adresse speichern") {
+                    let trimmed = addressInput.trimmingCharacters(in: .whitespacesAndNewlines)
+                    if !trimmed.isEmpty {
+                        patchCurrentState()
+                        advanceToNextStep()
+                    }
+                }
+
+                secondaryChoiceButton(title: "Nein, weiter") {
+                    advanceToNextStep()
+                }
+            }
+        }
+    }
+
+    // MARK: - Question 11: Website
+
+    private var question11WebsiteView: some View {
+        VStack(spacing: 20) {
+            questionHeader(
+                iconName: "globe",
+                title: "Möchtest du eine Webseite angeben?"
+            )
+
+            TextField("http://www.beispiel.de", text: $websiteInput)
                 .textFieldStyle(.plain)
                 .keyboardType(.URL)
                 .textInputAutocapitalization(.never)
                 .autocorrectionDisabled()
-                .padding(.horizontal, 12)
-                .padding(.vertical, 10)
+                .padding(14)
                 .background(Color(uiColor: .systemBackground))
-                .overlay(
-                    RoundedRectangle(cornerRadius: 6)
-                        .stroke(Color(.systemGray4), lineWidth: 1)
-                )
-                .accessibilityLabel("Webseite der Toilette oder Einrichtung")
-        }
-    }
+                .clipShape(RoundedRectangle(cornerRadius: 10))
+                .overlay(RoundedRectangle(cornerRadius: 10).stroke(Color(.systemGray4), lineWidth: 1))
 
-    // MARK: - Section 5: Adresse
-
-    private var addressSection: some View {
-        VStack(alignment: .leading, spacing: 6) {
-            Text("Adresse")
-                .font(.subheadline.bold())
-                .foregroundStyle(.primary)
-
-            TextField("Adresse eingeben", text: $address, axis: .vertical)
-                .lineLimit(2...4)
-                .textFieldStyle(.plain)
-                .padding(.horizontal, 12)
-                .padding(.vertical, 10)
-                .background(Color(uiColor: .systemBackground))
-                .overlay(
-                    RoundedRectangle(cornerRadius: 6)
-                        .stroke(Color(.systemGray4), lineWidth: 1)
-                )
-                .accessibilityLabel("Adresse der Toilette")
-        }
-    }
-
-    // MARK: - Section 6: Submit Button
-
-    private var submitButton: some View {
-        Button(action: submitToilet) {
-            HStack(spacing: 8) {
-                if isSubmitting {
-                    ProgressView()
-                        .tint(.white)
+            VStack(spacing: 12) {
+                primaryChoiceButton(title: "Website speichern") {
+                    let trimmed = websiteInput.trimmingCharacters(in: .whitespacesAndNewlines)
+                    if !trimmed.isEmpty {
+                        patchCurrentState()
+                        advanceToNextStep()
+                    }
                 }
-                Text(isSubmitting ? "Wird gespeichert..." : "Toilette hinzufügen")
+
+                secondaryChoiceButton(title: "Nein, weiter") {
+                    advanceToNextStep()
+                }
+            }
+        }
+    }
+
+    // MARK: - Question 12: Opening Times
+
+    private var question12OpeningTimesView: some View {
+        VStack(spacing: 20) {
+            questionHeader(
+                iconName: "clock.fill",
+                title: "Möchtest du Öffnungszeiten angeben?",
+                subtitle: "Du kannst auch im nächsten Schritt ein Foto der Öffnungszeiten hochladen, dann machen wir das für dich."
+            )
+
+            OpeningTimesInput(openingHours: $placeOpeningHours)
+
+            VStack(spacing: 12) {
+                primaryChoiceButton(title: "Öffnungszeiten speichern") {
+                    patchCurrentState()
+                    advanceToNextStep()
+                }
+
+                secondaryChoiceButton(title: "Nein, weiter") {
+                    advanceToNextStep()
+                }
+            }
+        }
+    }
+
+    // MARK: - Question 13: Outside Opening Times
+
+    private var question13OutsideOpeningTimesView: some View {
+        VStack(spacing: 20) {
+            questionHeader(
+                iconName: "moon.stars.fill",
+                title: "Ist der Zugang auch ausserhalb der Öffnungszeiten möglich?",
+                subtitle: "z.B. wenn die Toilette von aussen oder per Euro-Schlüssel zugänglich ist"
+            )
+
+            VStack(spacing: 12) {
+                primaryChoiceButton(title: "Ja, auf jeden Fall möglich") {
+                    accessibleOutsideOpeningTimes = true
+                    patchCurrentState()
+                    advanceToNextStep()
+                }
+
+                secondaryChoiceButton(title: "Nein oder nicht sicher") {
+                    accessibleOutsideOpeningTimes = false
+                    patchCurrentState()
+                    advanceToNextStep()
+                }
+            }
+        }
+    }
+
+    // MARK: - Question 14: Storage Space
+
+    private var question14StorageSpaceView: some View {
+        VStack(spacing: 20) {
+            questionHeader(
+                iconName: "square.grid.2x2.fill",
+                title: "Gibt es Ablageflächen, Kleiderhaken usw.?"
+            )
+
+            VStack(spacing: 10) {
+                primaryChoiceButton(title: "Keine") {
+                    storageSpace = "none"
+                    patchCurrentState()
+                    advanceToNextStep()
+                }
+
+                primaryChoiceButton(title: "Wenig") {
+                    storageSpace = "little"
+                    patchCurrentState()
+                    advanceToNextStep()
+                }
+
+                primaryChoiceButton(title: "Viel") {
+                    storageSpace = "much"
+                    patchCurrentState()
+                    advanceToNextStep()
+                }
+
+                secondaryChoiceButton(title: "Keine Angabe") {
+                    advanceToNextStep()
+                }
+            }
+        }
+    }
+
+    // MARK: - Question 15: Photos
+
+    private var question15PhotosView: some View {
+        VStack(spacing: 20) {
+            questionHeader(
+                iconName: "camera.fill",
+                title: "Möchtest du Fotos hinzufügen?"
+            )
+
+            PhotoUpload()
+
+            secondaryChoiceButton(title: "Weiter") {
+                advanceToNextStep()
+            }
+        }
+    }
+
+    // MARK: - Question 16: Comment & Celebration
+
+    private var question16CommentView: some View {
+        VStack(spacing: 20) {
+            questionHeader(
+                iconName: "bubble.left.and.bubble.right.fill",
+                title: "Möchtest du sonst noch etwas zu dieser Toilette schreiben?"
+            )
+
+            TextField("Kommentar oder Hinweise eingeben...", text: $commentInput, axis: .vertical)
+                .lineLimit(4...8)
+                .textFieldStyle(.plain)
+                .padding(14)
+                .background(Color(uiColor: .systemBackground))
+                .clipShape(RoundedRectangle(cornerRadius: 10))
+                .overlay(RoundedRectangle(cornerRadius: 10).stroke(Color(.systemGray4), lineWidth: 1))
+
+            primaryChoiceButton(title: "Toilette speichern") {
+                let trimmed = commentInput.trimmingCharacters(in: .whitespacesAndNewlines)
+                if !trimmed.isEmpty {
+                    patchCurrentState()
+                }
+                finishWithCelebration()
+            }
+        }
+    }
+
+    // MARK: - Celebration Animation View
+
+    private var celebrationHeartsView: some View {
+        ZStack {
+            ForEach(0..<6, id: \.self) { i in
+                Text("❤️")
+                    .font(.system(size: CGFloat.random(in: 40...70)))
+                    .offset(x: CGFloat(i * 40 - 100), y: showHeartAnimation ? -350 : 300)
+                    .opacity(showHeartAnimation ? 0.0 : 1.0)
+                    .animation(
+                        .easeInOut(duration: 1.6).delay(Double(i) * 0.1),
+                        value: showHeartAnimation
+                    )
+            }
+        }
+        .allowsHitTesting(false)
+    }
+
+    private func finishWithCelebration() {
+        withAnimation(.easeInOut(duration: 0.3)) {
+            showHeartAnimation = true
+        }
+
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1.2) {
+            onToiletCreated?()
+            dismiss()
+        }
+    }
+
+    // MARK: - Reusable UI Elements
+
+    private func questionHeader(iconName: String? = nil, iconAsset: String? = nil, title: String, subtitle: String? = nil) -> some View {
+        VStack(spacing: 10) {
+            if let iconAsset {
+                Image(iconAsset)
+                    .renderingMode(.template)
+                    .resizable()
+                    .aspectRatio(contentMode: .fit)
+                    .frame(width: 44, height: 44)
+                    .foregroundColor(.purple)
+            } else if let iconName {
+                Image(systemName: iconName)
+                    .font(.system(size: 40))
+                    .foregroundColor(.purple)
+            }
+
+            Text(title)
+                .font(.title3.bold())
+                .foregroundStyle(.primary)
+                .multilineTextAlignment(.center)
+
+            if let subtitle {
+                Text(subtitle)
+                    .font(.subheadline)
+                    .foregroundColor(.secondary)
+                    .multilineTextAlignment(.center)
+            }
+        }
+        .padding(.bottom, 8)
+    }
+
+    private func primaryChoiceButton(title: String, subtitle: String? = nil, action: @escaping () -> Void) -> some View {
+        Button(action: action) {
+            VStack(spacing: 3) {
+                Text(title)
                     .font(.headline)
                     .foregroundColor(.white)
+                    .multilineTextAlignment(.center)
+
+                if let subtitle {
+                    Text(subtitle)
+                        .font(.caption)
+                        .foregroundColor(.white.opacity(0.85))
+                        .lineLimit(1)
+                }
             }
             .frame(maxWidth: .infinity)
-            .frame(height: 50)
-            .background(isSubmitting ? Color.purple.opacity(0.6) : Color.purple)
-            .clipShape(RoundedRectangle(cornerRadius: 10))
+            .padding(.vertical, 14)
+            .padding(.horizontal, 16)
+            .background(Color.purple)
+            .clipShape(RoundedRectangle(cornerRadius: 12))
+            .shadow(color: .purple.opacity(0.2), radius: 4, x: 0, y: 2)
         }
-        .disabled(isSubmitting)
-        .padding(.top, 8)
-        .accessibilityLabel("Toilette hinzufügen")
-        .accessibilityHint("Speichert die neue Toilette im System.")
+        .accessibilityLabel(title)
     }
 
-    // MARK: - Checkbox Helper View
-
-    private func checkboxView(isChecked: Bool, size: CGFloat = 20) -> some View {
-        ZStack {
-            RoundedRectangle(cornerRadius: 5)
-                .fill(isChecked ? Color.purple : Color.clear)
-                .frame(width: size, height: size)
-                .overlay(
-                    RoundedRectangle(cornerRadius: 5)
-                        .stroke(isChecked ? Color.purple : Color(.systemGray3), lineWidth: 1.5)
-                )
-
-            if isChecked {
-                Image(systemName: "checkmark")
-                    .font(.system(size: size * 0.55, weight: .bold))
-                    .foregroundColor(.white)
-            }
+    private func secondaryChoiceButton(title: String, action: @escaping () -> Void) -> some View {
+        Button(action: action) {
+            Text(title)
+                .font(.headline)
+                .foregroundColor(.purple)
+                .frame(maxWidth: .infinity)
+                .padding(.vertical, 14)
+                .padding(.horizontal, 16)
+                .background(Color(uiColor: .systemBackground))
+                .clipShape(RoundedRectangle(cornerRadius: 12))
+                .overlay(RoundedRectangle(cornerRadius: 12).stroke(Color.purple.opacity(0.5), lineWidth: 1.5))
         }
+        .accessibilityLabel(title)
     }
 
-    // MARK: - Logic & Actions
+    // MARK: - Flow & Step Transitions
 
-    private func loadInitialData() async {
-        guard let location else { return }
-        isLoadingPlaces = true
-        placesError = nil
-        defer { isLoadingPlaces = false }
+    private func determineActiveSteps() -> [QuestionStep] {
+        var steps: [QuestionStep] = []
 
-        if address.isEmpty {
-            address = location.name
+        // Q1
+        steps.append(.place)
+        // Q2
+        steps.append(.name)
+
+        // Q3 (Skipped if no location authorization)
+        if locationManager.authorizationStatus == .authorizedWhenInUse || locationManager.authorizationStatus == .authorizedAlways {
+            steps.append(.gpsLocation)
         }
-        placeCoordinates = location.coordinate
 
-        do {
-            let places = try await placesService.fetchNearbyPlaces(
-                coordinate: location.coordinate,
-                radius: 40.0,
-            
-            )
-            nearbyPlaces = places
-            if let first = places.first {
-                selectPlace(first)
-            }
-        } catch {
-            let message = "Orte in der Nähe konnten nicht geladen werden: \(error.localizedDescription)"
-            placesError = message
-            ErrorManager.shared.report(
-                error,
-                context: [
-                    "action": "fetchNearbyPlaces",
-                    "lat": location.coordinate.latitude,
-                    "lon": location.coordinate.longitude
-                ],
-                showToUser: false // shown inline in the sheet instead
-            )
+        // Q4 (Appears only if no place_id and no lat/lon from Q3)
+        if selectedPlace == nil && gpsCoordinate == nil {
+            steps.append(.mapPicker)
         }
+
+        // Q5
+        steps.append(.genderSeparated)
+        // Q6
+        steps.append(.wheelchair)
+
+        // Q7 (Skipped if wheelchair == false)
+        if hasWheelchairAccess != false {
+            steps.append(.euroKey)
+        }
+
+        // Optional Steps (9-16)
+        steps.append(.publicAccess)
+
+        // Q10 (Skipped if place has formatted_address)
+        if selectedPlace == nil || selectedPlaceDetails?.formattedAddress == nil {
+            steps.append(.address)
+        }
+
+        // Q11 (Skipped if place has website)
+        if selectedPlace == nil || selectedPlaceDetails?.website == nil {
+            steps.append(.website)
+        }
+
+        // Q12
+        steps.append(.openingTimes)
+        // Q13
+        steps.append(.outsideOpeningTimes)
+        // Q14
+        steps.append(.storageSpace)
+        // Q15
+        steps.append(.photos)
+        // Q16
+        steps.append(.comment)
+
+        return steps
     }
 
-    private func selectPlace(_ place: NearbyPlaceOption) {
-        selectedPlace = place
-        Task {
-            do {
-                let details = try await placesService.fetchPlaceDetails(for: place.id)
-                if let formatted = details.formattedAddress, !formatted.isEmpty {
-                    address = formatted
-                }
-                if let site = details.website, !site.isEmpty {
-                    website = site
-                }
-                if let coord = details.coordinate {
-                    placeCoordinates = coord
-                }
-            } catch {
-                print("[CreateScreen] fetchPlaceDetails error: \(error)")
-            }
-        }
-    }
+    private func advanceToNextStep() {
+        let activeSteps = determineActiveSteps()
 
-    private func submitToilet() {
-        validationError = nil
+        guard let currentIndex = activeSteps.firstIndex(of: currentStep) else { return }
 
-        let finalLat = placeCoordinates?.latitude ?? location?.coordinate.latitude
-        let finalLon = placeCoordinates?.longitude ?? location?.coordinate.longitude
+        // Check if we just completed mandatory questions (Q7 or Q6 if Q7 skipped)
+        let isCompletingMandatory = (currentStep == .euroKey) ||
+            (currentStep == .wheelchair && hasWheelchairAccess == false)
 
-        guard let lat = finalLat, let lon = finalLon else {
-            validationError = "Keine Standortkoordinaten gefunden. Bitte wähle einen Ort aus."
+        if isCompletingMandatory && createdToiletId == nil {
+            submitMandatoryToilet()
             return
         }
 
-        let trimmedName = toiletName.trimmingCharacters(in: .whitespacesAndNewlines)
-        let trimmedAddress = address.trimmingCharacters(in: .whitespacesAndNewlines)
-        let trimmedWebsite = website.trimmingCharacters(in: .whitespacesAndNewlines)
+        // If toilet already created and user changed a previous answer, patch it
+        if createdToiletId != nil {
+            patchCurrentState()
+        }
 
-        let ownerName = belongsToPlace ? (selectedPlace?.name) : nil
-        let placeID = belongsToPlace ? (selectedPlace?.id) : nil
+        if currentIndex + 1 < activeSteps.count {
+            stepHistory.append(currentStep)
+            withAnimation(.easeInOut(duration: 0.25)) {
+                currentStep = activeSteps[currentIndex + 1]
+            }
+        } else {
+            finishWithCelebration()
+        }
+    }
+
+    private func goBack() {
+        guard let previous = stepHistory.popLast() else { return }
+        withAnimation(.easeInOut(duration: 0.25)) {
+            currentStep = previous
+        }
+    }
+
+    // MARK: - API Calls
+
+    private func resolveCoordinates() -> (lat: Double?, lon: Double?) {
+        if let gps = gpsCoordinate {
+            return (gps.latitude, gps.longitude)
+        }
+        if let map = mapSelectedCoordinate {
+            return (map.latitude, map.longitude)
+        }
+        if let placeCoord = selectedPlaceDetails?.coordinate {
+            return (placeCoord.latitude, placeCoord.longitude)
+        }
+        if let loc = location?.coordinate {
+            return (loc.latitude, loc.longitude)
+        }
+        return (nil, nil)
+    }
+
+    private func submitMandatoryToilet() {
+        let coords = resolveCoordinates()
+        let trimmedName = toiletName.trimmingCharacters(in: .whitespacesAndNewlines)
+        let trimmedAddress = addressInput.trimmingCharacters(in: .whitespacesAndNewlines)
+        let trimmedWebsite = websiteInput.trimmingCharacters(in: .whitespacesAndNewlines)
 
         let payload = AddToiletPayload(
             name: trimmedName.isEmpty ? nil : trimmedName,
-            owner: ownerName,
-            lat: lat,
-            lon: lon,
-            placeId: placeID,
-            isUnisex: !isGenderSeparated,
+            owner: selectedPlace?.name,
+            lat: coords.lat,
+            lon: coords.lon,
+            placeId: selectedPlace?.id,
+            isUnisex: isUnisex,
             isGenderSeparated: isGenderSeparated,
             hasWheelchairAccess: hasWheelchairAccess,
-            hasChangingTable: hasChangingTable,
-            address: trimmedAddress.isEmpty ? nil : trimmedAddress,
-            website: trimmedWebsite.isEmpty ? nil : trimmedWebsite,
+            hasChangingTable: nil,
+            accessibleOutsideOpeningTimes: nil,
+            publicAccessible: nil,
+            placeOpeningHours: nil,
+            address: trimmedAddress.isEmpty ? selectedPlaceDetails?.formattedAddress : trimmedAddress,
+            website: trimmedWebsite.isEmpty ? selectedPlaceDetails?.website : trimmedWebsite,
             comment: nil,
-            euroKey: (hasWheelchairAccess && hasEuroKey) ? "yes" : nil,
+            euroKey: euroKey,
+            storageSpace: nil,
             status: "active"
         )
 
         isSubmitting = true
-        Analytics.shared.trackEvent(category: "toilet", action: "create_submit", name: ownerName ?? trimmedName)
-
         Task {
             do {
                 let response = try await WCInfoAPIService.shared.addToilet(payload)
                 isSubmitting = false
                 if response.success {
+                    createdToiletId = response.id
                     Analytics.shared.trackEvent(category: "toilet", action: "create_success", name: String(response.id))
-                    onToiletCreated?()
-                    dismiss()
+
+                    let activeSteps = determineActiveSteps()
+                    if let currentIndex = activeSteps.firstIndex(of: currentStep), currentIndex + 1 < activeSteps.count {
+                        stepHistory.append(currentStep)
+                        withAnimation(.easeInOut(duration: 0.25)) {
+                            currentStep = activeSteps[currentIndex + 1]
+                        }
+                    }
                 }
             } catch {
                 isSubmitting = false
-                var context: [String: Any] = [
-                    "action": "addToilet",
-                    "lat": lat,
-                    "lon": lon
-                ]
-                if let apiError = error as? WCInfoAPIError {
-                    context.merge(apiError.diagnosticContext) { _, new in new }
-                    validationError = apiError.message
-                } else {
-                    validationError = error.localizedDescription
-                }
-                ErrorManager.shared.report(error, context: context)
-                Analytics.shared.trackEvent(category: "toilet", action: "create_error")
+                ErrorManager.shared.report(error, context: ["action": "addToiletMandatory"])
             }
         }
     }
-}
 
-struct EuroKeyInfoView: View {
-    @Environment(\.dismiss) private var dismiss
-    @Environment(\.openURL) private var openURL
+    private func patchCurrentState() {
+        guard let toiletId = createdToiletId else { return }
 
-    var body: some View {
-        NavigationStack {
-            ScrollView {
-                VStack(alignment: .leading, spacing: 16) {
-                    Text("Der Euroschlüssel ist ein 1986 vom CBF Darmstadt – Club Behinderter und ihrer Freunde in Darmstadt und Umgebung e. V. – eingeführtes, inzwischen über die Landesgrenzen hinaus genutztes Schließsystem, das es körperlich beeinträchtigten Menschen ermöglicht, mit einem Einheitsschlüssel selbständig Zugang zu behindertengerechten sanitären Anlagen und Einrichtungen zu erhalten, z. B. an teilnehmenden Autobahn- und Bahnhofstoiletten, aber auch für öffentliche Toiletten in Fußgängerzonen, Museen oder Behörden.")
-                        .font(.body)
-                        .foregroundStyle(.primary)
+        let coords = resolveCoordinates()
+        let trimmedName = toiletName.trimmingCharacters(in: .whitespacesAndNewlines)
+        let trimmedAddress = addressInput.trimmingCharacters(in: .whitespacesAndNewlines)
+        let trimmedWebsite = websiteInput.trimmingCharacters(in: .whitespacesAndNewlines)
+        let trimmedComment = commentInput.trimmingCharacters(in: .whitespacesAndNewlines)
 
-                    Text("Der Schlüssel wird ausschließlich an Menschen ausgehändigt, die auf behindertengerechte Toiletten angewiesen sind.")
-                        .font(.body)
-                        .foregroundStyle(.primary)
+        let payload = UpdateToiletPayload(
+            name: trimmedName.isEmpty ? nil : trimmedName,
+            owner: selectedPlace?.name,
+            lat: coords.lat,
+            lon: coords.lon,
+            placeId: selectedPlace?.id,
+            isQualified: nil,
+            isUnisex: isUnisex,
+            isGenderSeparated: isGenderSeparated,
+            hasWheelchairAccess: hasWheelchairAccess,
+            hasChangingTable: nil,
+            accessibleOutsideOpeningTimes: accessibleOutsideOpeningTimes,
+            publicAccessible: publicAccessible,
+            placeOpeningHours: placeOpeningHours,
+            address: trimmedAddress.isEmpty ? nil : trimmedAddress,
+            website: trimmedWebsite.isEmpty ? nil : trimmedWebsite,
+            comment: trimmedComment.isEmpty ? nil : trimmedComment,
+            euroKey: euroKey,
+            storageSpace: storageSpace,
+            status: "active"
+        )
 
-                    VStack(alignment: .leading, spacing: 6) {
-                        Text("Der deutsche Schwerbehindertenausweis gilt als Berechtigung, wenn")
-                            .font(.body)
-                            .foregroundStyle(.primary)
-
-                        Text("• das Merkzeichen: aG, B, H, oder BL")
-                            .font(.body)
-                            .foregroundStyle(.secondary)
-                            .padding(.leading, 8)
-
-                        Text("• oder das Merkzeichen G und der GdB ab 70 und aufwärts enthalten ist.")
-                            .font(.body)
-                            .foregroundStyle(.secondary)
-                            .padding(.leading, 8)
-                    }
-
-                    Text("Quelle: https://www.cbf-da.de/leistungen/euroschluessel")
-                        .font(.footnote)
-                        .foregroundStyle(.secondary)
-                        .padding(.top, 4)
-
-                    if let url = URL(string: "https://www.cbf-da.de/leistungen/euroschluessel") {
-                        Button {
-                            openURL(url)
-                        } label: {
-                            HStack(spacing: 8) {
-                                Image(systemName: "arrow.up.right.square")
-                                Text("Webseite öffnen (cbf-da.de)")
-                                    .fontWeight(.semibold)
-                            }
-                            .frame(maxWidth: .infinity)
-                            .frame(height: 48)
-                            .background(Color.purple)
-                            .foregroundColor(.white)
-                            .clipShape(RoundedRectangle(cornerRadius: 10))
-                        }
-                        .padding(.top, 12)
-                    }
-                }
-                .padding(20)
+        Task {
+            do {
+                _ = try await WCInfoAPIService.shared.updateToilet(id: toiletId, payload: payload)
+            } catch {
+                ErrorManager.shared.report(error, context: ["action": "updateToiletPatch", "toiletId": toiletId])
             }
-            .navigationTitle("Information zum Euroschlüssel")
-            .navigationBarTitleDisplayMode(.inline)
-            .toolbar {
-                ToolbarItem(placement: .confirmationAction) {
-                    Button("Schließen") {
-                        dismiss()
-                    }
-                }
-            }
+        }
+    }
+
+    private func loadPlaces() async {
+        guard let location else { return }
+        isLoadingPlaces = true
+        defer { isLoadingPlaces = false }
+
+        do {
+            let places = try await placesService.fetchNearbyPlaces(coordinate: location.coordinate, radius: 200.0)
+            nearbyPlaces = places
+        } catch {
+            print("[CreateScreen] fetchNearbyPlaces error: \(error)")
         }
     }
 }

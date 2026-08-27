@@ -103,6 +103,21 @@ actor WCInfoAPIService {
         }
     }
 
+    func updateToilet(id: Int, payload: UpdateToiletPayload) async throws -> UpdateToiletResponse {
+        guard let url = URL(string: "\(baseURL)/toilet/\(id)/update") else {
+            throw WCInfoAPIError.invalidURL
+        }
+        let encoder = JSONEncoder()
+        let bodyData = try encoder.encode(payload)
+        let data = try await performRequest(url: url, method: "PATCH", body: bodyData)
+        do {
+            return try decoder.decode(UpdateToiletResponse.self, from: data)
+        } catch {
+            let rawBody = String(data: data, encoding: .utf8)
+            throw WCInfoAPIError.decodingError(underlying: error, responseBody: rawBody)
+        }
+    }
+
     private func performRequest(url: URL, method: String = "GET", body: Data? = nil, isRetryAfterCSRF: Bool = false) async throws -> Data {
         addBreadcrumb(category: "api", message: "\(method) \(url.absoluteString)")
 

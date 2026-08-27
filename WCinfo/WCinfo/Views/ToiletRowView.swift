@@ -8,6 +8,8 @@ struct ToiletRowView: View {
     var onShowDetails: () -> Void = {}
     var onNavigate: () -> Void = {}
 
+    @State private var selectedPhotoIndex: Int? = nil
+
     var body: some View {
         VStack(alignment: .leading, spacing: 6) {
             rowContent
@@ -41,6 +43,14 @@ struct ToiletRowView: View {
             }
         }
         .padding(.vertical, 4)
+        .fullScreenCover(isPresented: Binding(
+            get: { selectedPhotoIndex != nil },
+            set: { if !$0 { selectedPhotoIndex = nil } }
+        )) {
+            if let index = selectedPhotoIndex {
+                PhotoLightboxView(photos: toilet.photos, selectedIndex: index)
+            }
+        }
     }
 
     private var rowContent: some View {
@@ -63,6 +73,45 @@ struct ToiletRowView: View {
                     openTimestamp: toilet.openTimestamp,
                     closeTimestamp: toilet.closeTimestamp
                 )
+            }
+
+            if !toilet.photos.isEmpty {
+                ScrollView(.horizontal, showsIndicators: false) {
+                    HStack(spacing: 8) {
+                        ForEach(Array(toilet.photos.enumerated()), id: \.offset) { index, photo in
+                            Button {
+                                selectedPhotoIndex = index
+                            } label: {
+                                AsyncImage(url: URL(string: photo.urlThumb)) { phase in
+                                    switch phase {
+                                    case .empty:
+                                        ProgressView()
+                                            .frame(width: 100, height: 100)
+                                            .background(Color(uiColor: .secondarySystemBackground))
+                                    case .success(let image):
+                                        image
+                                            .resizable()
+                                            .scaledToFill()
+                                            .frame(width: 100, height: 100)
+                                            .clipped()
+                                    case .failure:
+                                        Image(systemName: "photo")
+                                            .font(.title2)
+                                            .foregroundColor(.secondary)
+                                            .frame(width: 100, height: 100)
+                                            .background(Color(uiColor: .secondarySystemBackground))
+                                    @unknown default:
+                                        EmptyView()
+                                    }
+                                }
+                                .frame(width: 100, height: 100)
+                                .clipShape(RoundedRectangle(cornerRadius: 8))
+                            }
+                            .buttonStyle(.plain)
+                        }
+                    }
+                    .padding(.vertical, 2)
+                }
             }
             
             Spacer(minLength: 8)

@@ -35,9 +35,6 @@ struct ResultsView: View {
         }
         .navigationTitle(location.name)
         .navigationBarTitleDisplayMode(.inline)
-        .task {
-            await loadToilets()
-        }
         .onAppear {
             Analytics.shared.trackScreen("Results")
         }
@@ -183,38 +180,6 @@ struct ResultsView: View {
                 east: bounds.east,
                 isPullToRefresh: isPullToRefresh
             )
-            return
-        }
-
-        if !isPullToRefresh {
-            isLoading = true
-        }
-        defer { isLoading = false }
-        do {
-            toilets = try await WCInfoAPIService.shared.fetchToiletsNearby(
-                latitude: location.coordinate.latitude,
-                longitude: location.coordinate.longitude,
-                distance: 25,
-                filter: filterSettings.apiFilterQueryString
-            )
-            Analytics.shared.trackEvent(category: "results", action: isPullToRefresh ? "refresh" : "loaded", name: location.name, value: Float(toilets.count))
-        } catch {
-            var context: [String: Any] = [
-                "action": "fetchToiletsNearby",
-                "latitude": location.coordinate.latitude,
-                "longitude": location.coordinate.longitude,
-                "filter": filterSettings.apiFilterQueryString ?? ""
-            ]
-            var logToSentry = true
-            if let apiError = error as? WCInfoAPIError {
-                context.merge(apiError.diagnosticContext) { _, new in new }
-                // invalidResponse already captured by the service with the full response body.
-                if case .invalidResponse = apiError {
-                    logToSentry = false
-                }
-            }
-            ErrorManager.shared.report(error, context: context, logToSentry: logToSentry)
-            Analytics.shared.trackEvent(category: "results", action: "error", name: location.name)
         }
     }
 
@@ -232,7 +197,14 @@ struct ResultsView: View {
                 filter: filterSettings.apiFilterQueryString
             )
             guard !Task.isCancelled else { return }
-            toilets = fetched
+
+            let targetLocation = CLLocation(latitude: location.coordinate.latitude, longitude: location.coordinate.longitude)
+            let sorted = fetched.sorted { t1, t2 in
+                let loc1 = CLLocation(latitude: t1.coordinate.latitude, longitude: t1.coordinate.longitude)
+                let loc2 = CLLocation(latitude: t2.coordinate.latitude, longitude: t2.coordinate.longitude)
+                return loc1.distance(from: targetLocation) < loc2.distance(from: targetLocation)
+            }
+            toilets = sorted
             Analytics.shared.trackEvent(category: "results", action: isPullToRefresh ? "refresh_bounds" : "loaded_bounds", name: location.name, value: Float(toilets.count))
         } catch {
             guard !Task.isCancelled else { return }

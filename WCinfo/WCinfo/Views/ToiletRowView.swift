@@ -58,6 +58,7 @@ struct ToiletRowView: View {
                 Spacer(minLength: 12)
 
                 OpeningTimeComponent(
+                    hasOpeningHours: toilet.placeOpeningHours != nil,
                     isOpen: toilet.isOpen,
                     openTimestamp: toilet.openTimestamp,
                     closeTimestamp: toilet.closeTimestamp

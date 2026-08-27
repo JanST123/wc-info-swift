@@ -1,22 +1,23 @@
 import SwiftUI
 
 struct OpeningTimeComponent: View {
+    let hasOpeningHours: Bool?
     let isOpen: Bool?
     let openTimestamp: Date?
     let closeTimestamp: Date?
 
     var body: some View {
         VStack(alignment: .trailing, spacing: 2) {
-            if let isOpen {
-                Text(isOpen ? "Geöffnet" : "Geschlossen")
+            if hasOpeningHours ?? false {
+                Text(isOpen ?? false ? "Geöffnet" : "Geschlossen")
                     .font(.subheadline.bold())
-                    .foregroundColor(isOpen ? .green : .primary)
+                    .foregroundColor(isOpen ?? false ? .green : .primary)
 
-                if isOpen, let closeTimestamp {
+                if isOpen ?? false, let closeTimestamp {
                     Text(timeUntil(closeTimestamp, prefix: "schließt"))
                         .font(.caption)
                         .foregroundColor(urgencyColor(for: closeTimestamp))
-                } else if !isOpen, let openTimestamp {
+                } else if !(isOpen ?? false), let openTimestamp {
                     Text(timeUntil(openTimestamp, prefix: "öffnet"))
                         .font(.caption)
                         .foregroundColor(.purple)

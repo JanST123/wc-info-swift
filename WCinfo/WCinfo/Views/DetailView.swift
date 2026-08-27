@@ -54,11 +54,7 @@ struct DetailView: View {
                     
                     // Features checklist
                     VStack(alignment: .leading, spacing: 8) {
-                        HStack(alignment: .center, spacing: 8) {
-                            featureStatusIcon(isAvailable: toilet.isUnisex)
-                            Text("Toilette ohne Geschlechtertrennung vorhanden")
-                                .font(.body)
-                        }
+                        
 
                         HStack(alignment: .center, spacing: 8) {
                             featureStatusIcon(isAvailable: toilet.isGenderSeparated)
@@ -75,7 +71,7 @@ struct DetailView: View {
                         if toilet.hasWheelchairAccess || toilet.euroKey != nil {
                             HStack(alignment: .center, spacing: 8) {
                                 euroKeyStatusIcon(toilet.euroKey)
-                                Text("Euroschlüssel erforderlich")
+                                Text("Kann mit Euroschlüssel geöffnet werden")
                                     .font(.body)
 
                                 Button {

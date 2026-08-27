@@ -1,6 +1,6 @@
 import SwiftUI
 
-struct ToiletFilterSettings: Equatable {
+struct ToiletFilterSettings: Equatable, Codable {
     var showClosed: Bool = false
     var showNonPublic: Bool = false
     var showNonWheelchairAccessible: Bool = true
@@ -9,6 +9,7 @@ struct ToiletFilterSettings: Equatable {
     var showWithoutEuroKey: Bool = true
 
     static let `default` = ToiletFilterSettings()
+    private static let userDefaultsKey = "wcinfo.filter_settings"
 
     var isDefault: Bool {
         self == .default
@@ -16,6 +17,20 @@ struct ToiletFilterSettings: Equatable {
 
     mutating func resetToDefaults() {
         self = .default
+    }
+
+    static func load() -> ToiletFilterSettings {
+        guard let data = UserDefaults.standard.data(forKey: userDefaultsKey),
+              let settings = try? JSONDecoder().decode(ToiletFilterSettings.self, from: data) else {
+            return .default
+        }
+        return settings
+    }
+
+    func save() {
+        if let data = try? JSONEncoder().encode(self) {
+            UserDefaults.standard.set(data, forKey: Self.userDefaultsKey)
+        }
     }
 
     var apiFilterQueryString: String? {
@@ -164,6 +179,7 @@ struct FilterBannerView: View {
                             withAnimation {
                                 filterSettings.resetToDefaults()
                             }
+                            filterSettings.save()
                             onFilterChanged()
                         } label: {
                             Text("Standard Filter anwenden")
@@ -205,6 +221,7 @@ struct FilterBannerView: View {
                 get: { isOn.wrappedValue },
                 set: { newValue in
                     isOn.wrappedValue = newValue
+                    filterSettings.save()
                     onFilterChanged()
                 }
             )) {

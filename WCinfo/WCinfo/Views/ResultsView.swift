@@ -13,7 +13,7 @@ struct ResultsView: View {
     @State private var selectedToilet: Toilet?
     @State private var detailToilet: Toilet?
     @State private var isShowingCreateSheet = false
-    @State private var filterSettings = ToiletFilterSettings.default
+    @State private var filterSettings = ToiletFilterSettings.load()
 
     var body: some View {
         GeometryReader { geometry in

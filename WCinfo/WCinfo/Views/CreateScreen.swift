@@ -111,7 +111,7 @@ struct CreateScreen: View {
                 ToolbarItem(placement: .confirmationAction) {
                     Button(createdToiletId != nil ? "Fertig" : "Abbrechen") {
                         if createdToiletId != nil {
-                            onToiletCreated?()
+                            finishWithCelebration()
                         }
                         dismiss()
                     }
@@ -589,19 +589,19 @@ struct CreateScreen: View {
             )
 
             VStack(spacing: 10) {
-                primaryChoiceButton(title: "Keine") {
+                secondaryChoiceButton(title: "Keine") {
                     storageSpace = "none"
                     patchCurrentState()
                     advanceToNextStep()
                 }
 
-                primaryChoiceButton(title: "Wenig") {
+                secondaryChoiceButton(title: "Wenig") {
                     storageSpace = "little"
                     patchCurrentState()
                     advanceToNextStep()
                 }
 
-                primaryChoiceButton(title: "Viel") {
+                secondaryChoiceButton(title: "Viel") {
                     storageSpace = "much"
                     patchCurrentState()
                     advanceToNextStep()

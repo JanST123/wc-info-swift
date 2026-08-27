@@ -142,6 +142,28 @@ struct DetailView: View {
                         }
                     }
 
+                    if let storageSpace = toilet.storageSpace, let title = storageTitle(for: storageSpace) {
+                        VStack(alignment: .leading, spacing: 4) {
+                            Text("Ablagefläche")
+                                .font(.subheadline.bold())
+
+                            HStack(spacing: 8) {
+                                if let iconName = storageIconName(for: storageSpace) {
+                                    Image(iconName)
+                                        .resizable()
+                                        .aspectRatio(contentMode: .fit)
+                                        .frame(width: 24, height: 24)
+                                }
+
+                                Text(title)
+                                    .font(.body)
+                                    .foregroundStyle(.secondary)
+                            }
+                        }
+                        .accessibilityElement(children: .combine)
+                        .accessibilityLabel("Ablagefläche: \(title)")
+                    }
+
                     Spacer(minLength: 40)
                 }
                 .padding()
@@ -169,6 +191,32 @@ struct DetailView: View {
         .onAppear {
             Analytics.shared.trackScreen("Detail")
             Analytics.shared.trackEvent(category: "detail", action: "view", name: toilet.name)
+        }
+    }
+
+    private func storageIconName(for value: String) -> String? {
+        switch value.lowercased() {
+        case "none":
+            return "storage-none"
+        case "little":
+            return "storage-little"
+        case "much":
+            return "storage-much"
+        default:
+            return nil
+        }
+    }
+
+    private func storageTitle(for value: String) -> String? {
+        switch value.lowercased() {
+        case "none":
+            return "Keine"
+        case "little":
+            return "Wenig"
+        case "much":
+            return "Viel"
+        default:
+            return nil
         }
     }
 

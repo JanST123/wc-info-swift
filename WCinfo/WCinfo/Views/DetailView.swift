@@ -92,28 +92,13 @@ struct DetailView: View {
                         }
                     }
 
-                    if let address = toilet.address, !address.isEmpty {
-                        VStack(alignment: .leading, spacing: 4) {
-                            Text("Adresse")
-                                .font(.subheadline.bold())
-                            Text(address)
-                                .font(.body)
-                                .foregroundStyle(.secondary)
-                        }
-                        .accessibilityElement(children: .combine)
-                        .accessibilityLabel("Adresse: \(address)")
-                    }
+                   
 
                     if let periods = toilet.placeOpeningHours, !periods.isEmpty {
                         VStack(alignment: .leading, spacing: 6) {
                             Text("Öffnungszeiten")
                                 .font(.subheadline.bold())
-                            ForEach(periods.indices, id: \.self) { index in
-                                Text(periods[index].formatted)
-                                    .font(.body)
-                                    .foregroundStyle(.secondary)
-                            }
-
+                            
                             OpeningTimeComponent(
                                 hasOpeningHours: true,
                                 isOpen: toilet.isOpen,
@@ -123,6 +108,14 @@ struct DetailView: View {
                                 alignment: .leading
                             )
                             .padding(.top, 4)
+                            
+                            ForEach(periods.indices, id: \.self) { index in
+                                Text(periods[index].formatted)
+                                    .font(.body)
+                                    .foregroundStyle(.secondary)
+                            }
+
+                           
                         }
                         .accessibilityElement(children: .combine)
                         .accessibilityLabel("Öffnungszeiten: \(periods.map(\.formatted).joined(separator: ", "))")
@@ -140,6 +133,18 @@ struct DetailView: View {
                                 alignment: .leading
                             )
                         }
+                    }
+                    
+                    if let address = toilet.address, !address.isEmpty {
+                        VStack(alignment: .leading, spacing: 4) {
+                            Text("Adresse")
+                                .font(.subheadline.bold())
+                            Text(address)
+                                .font(.body)
+                                .foregroundStyle(.secondary)
+                        }
+                        .accessibilityElement(children: .combine)
+                        .accessibilityLabel("Adresse: \(address)")
                     }
 
                     if let storageSpace = toilet.storageSpace, let title = storageTitle(for: storageSpace) {
@@ -166,6 +171,28 @@ struct DetailView: View {
                         .accessibilityElement(children: .combine)
                         .accessibilityLabel("Ablagefläche: \(title)")
                     }
+                    
+                    if let website = toilet.website, !website.isEmpty {
+                        VStack(alignment: .leading, spacing: 4) {
+                            Text(website)
+                                .font(.body)
+                                .foregroundStyle(.secondary)
+                        }
+                        .accessibilityElement(children: .combine)
+                        .accessibilityLabel("Website: \(website)")
+                    }
+                    
+                    /*if let comment = toilet.comment, !comment.isEmpty {
+                        VStack(alignment: .leading, spacing: 4) {
+                            Text("Bemerkung")
+                                .font(.subheadline.bold())
+                            Text(comment)
+                                .font(.body)
+                                .foregroundStyle(.secondary)
+                        }
+                        .accessibilityElement(children: .combine)
+                        .accessibilityLabel("Bemerkung: \(comment)")
+                    }*/
 
                     Spacer(minLength: 40)
                 }

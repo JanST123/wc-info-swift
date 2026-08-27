@@ -11,7 +11,7 @@ struct OpeningTimeComponent: View {
     var body: some View {
         VStack(alignment: alignment, spacing: 2) {
             if hasOpeningHours ?? false {
-                Text(isOpen ?? false ? "Geöffnet" : "Geschlossen")
+                Text(isOpen ?? false ? "Jetzt geöffnet" : "Geschlossen")
                     .font(.subheadline.bold())
                     .foregroundColor(isOpen ?? false ? .green : .primary)
 
@@ -50,7 +50,7 @@ struct OpeningTimeComponent: View {
     private var accessibilityLabel: String {
         var parts = [String]()
         if let isOpen {
-            parts.append(isOpen ? "Geöffnet" : "Geschlossen")
+            parts.append(isOpen ? "Jetzt geöffnet" : "Geschlossen")
             if isOpen, let closeTimestamp {
                 parts.append("schließt \(timeUntil(closeTimestamp, prefix: ""))")
             } else if !isOpen, let openTimestamp {

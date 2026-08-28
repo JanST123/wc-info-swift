@@ -5,6 +5,7 @@ struct ToiletSymbolComponent: View {
     let hasWheelchairAccess: Bool
     let hasChangingTable: Bool
     let isUnisex: Bool
+    var hasEuroKey: Bool = false
 
     var body: some View {
         HStack(spacing: 8) {
@@ -13,6 +14,14 @@ struct ToiletSymbolComponent: View {
             }
             if hasWheelchairAccess {
                 toiletIcon("wheelchair-solid-full", label: "Rollstuhlgerecht")
+            }
+            if hasEuroKey {
+                Image(systemName: "key.fill")
+                    .resizable()
+                    .aspectRatio(contentMode: .fit)
+                    .frame(width: 18, height: 18)
+                    .foregroundColor(.purple)
+                    .accessibilityLabel("Euroschlüssel erforderlich")
             }
             if hasChangingTable {
                 toiletIcon("baby-solid-full", label: "Wickeltisch")

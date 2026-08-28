@@ -127,7 +127,8 @@ struct ToiletRowView: View {
                 isGenderSeparated: toilet.isGenderSeparated,
                 hasWheelchairAccess: toilet.hasWheelchairAccess,
                 hasChangingTable: toilet.hasChangingTable,
-                isUnisex: toilet.isUnisex
+                isUnisex: toilet.isUnisex,
+                hasEuroKey: toilet.euroKey?.lowercased() == "yes" || toilet.euroKey?.lowercased() == "true" || toilet.euroKey == "1"
             )
 
             HStack(alignment: .bottom, spacing: 12) {
@@ -160,6 +161,9 @@ struct ToiletRowView: View {
         }
         if toilet.isQualified { parts.append("Geprüfte Toilette") }
         if toilet.hasWheelchairAccess { parts.append("Rollstuhlgerecht") }
+        if toilet.euroKey?.lowercased() == "yes" || toilet.euroKey?.lowercased() == "true" || toilet.euroKey == "1" {
+            parts.append("Euroschlüssel")
+        }
         if toilet.hasChangingTable { parts.append("Wickeltisch") }
         if toilet.isGenderSeparated { parts.append("Getrennte Toiletten") }
         if toilet.isUnisex { parts.append("Unisex") }

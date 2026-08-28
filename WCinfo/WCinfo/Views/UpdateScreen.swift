@@ -21,6 +21,10 @@ struct UpdateScreen: View {
     @State private var hasChangingTable = false
     @State private var hasWheelchairAccess = false
     @State private var hasEuroKey = false
+    @State private var isPublicAccessible = false
+    @State private var accessibleOutsideOpeningTimes = false
+    @State private var storageSpace: String = "none"
+    @State private var comment = ""
     @State private var showingEuroKeyInfo = false
 
     @State private var website = ""
@@ -29,6 +33,7 @@ struct UpdateScreen: View {
 
     @State private var isSubmitting = false
     @State private var validationError: String?
+    @State private var showingSuccessAlert = false
 
     var body: some View {
         NavigationStack {
@@ -62,9 +67,15 @@ struct UpdateScreen: View {
 
                     propertiesSection
 
-                    websiteSection
+                    storageSpaceSection
+
+                    locationPickerSection
 
                     addressSection
+
+                    websiteSection
+
+                    commentSection
 
                     if let validationError {
                         Text(validationError)
@@ -90,6 +101,18 @@ struct UpdateScreen: View {
             }
             .sheet(isPresented: $showingEuroKeyInfo) {
                 EuroKeyInfoView()
+            }
+            .alert("Änderungen gespeichert", isPresented: $showingSuccessAlert) {
+                Button("OK") {
+                    if toilet != nil {
+                        onToiletUpdated?()
+                    } else {
+                        onToiletCreated?()
+                    }
+                    dismiss()
+                }
+            } message: {
+                Text("Deine Änderungen sind sofort sichtbar, werden aber zusätzlich von unserem Team überprüft.")
             }
             .onChange(of: hasWheelchairAccess) { _, newValue in
                 if !newValue {
@@ -229,6 +252,35 @@ struct UpdateScreen: View {
             }
 
             euroKeyCard
+
+            VStack(alignment: .leading, spacing: 10) {
+                Button {
+                    isPublicAccessible.toggle()
+                } label: {
+                    HStack(spacing: 8) {
+                        checkboxView(isChecked: isPublicAccessible)
+                        Text("Öffentlich zugänglich")
+                            .font(.body)
+                            .foregroundStyle(.primary)
+                    }
+                }
+                .buttonStyle(.plain)
+                .accessibilityLabel("Öffentlich zugänglich: \(isPublicAccessible ? "Ausgewählt" : "Nicht ausgewählt")")
+
+                Button {
+                    accessibleOutsideOpeningTimes.toggle()
+                } label: {
+                    HStack(spacing: 8) {
+                        checkboxView(isChecked: accessibleOutsideOpeningTimes)
+                        Text("Außerhalb der Öffnungszeiten zugänglich")
+                            .font(.body)
+                            .foregroundStyle(.primary)
+                    }
+                }
+                .buttonStyle(.plain)
+                .accessibilityLabel("Außerhalb der Öffnungszeiten zugänglich: \(accessibleOutsideOpeningTimes ? "Ausgewählt" : "Nicht ausgewählt")")
+            }
+            .padding(.top, 4)
         }
     }
 
@@ -341,6 +393,64 @@ struct UpdateScreen: View {
         .accessibilityLabel("Euroschlüssel: \(hasWheelchairAccess ? (hasEuroKey ? "Ausgewählt" : "Nicht ausgewählt") : "Deaktiviert, erfordert barrierefreie Toilette")")
     }
 
+    // MARK: - Storage Space Section
+
+    private var storageSpaceSection: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            Text("Ablagefläche")
+                .font(.subheadline.bold())
+                .foregroundStyle(.primary)
+
+            HStack(spacing: 12) {
+                storageRadioButton(title: "Keine", value: "none")
+                storageRadioButton(title: "Wenig", value: "little")
+                storageRadioButton(title: "Viel", value: "much")
+            }
+        }
+    }
+
+    private func storageRadioButton(title: String, value: String) -> some View {
+        Button {
+            storageSpace = value
+        } label: {
+            HStack(spacing: 6) {
+                Image(systemName: storageSpace == value ? "largecircle.fill.circle" : "circle")
+                    .foregroundColor(storageSpace == value ? .purple : Color(.systemGray3))
+                    .font(.body)
+                Text(title)
+                    .font(.body)
+                    .foregroundColor(.primary)
+            }
+            .padding(.vertical, 6)
+            .padding(.horizontal, 10)
+            .background(storageSpace == value ? Color.purple.opacity(0.1) : Color(uiColor: .secondarySystemBackground))
+            .clipShape(RoundedRectangle(cornerRadius: 8))
+        }
+        .buttonStyle(.plain)
+        .accessibilityLabel("Ablagefläche \(title): \(storageSpace == value ? "Ausgewählt" : "Nicht ausgewählt")")
+    }
+
+    // MARK: - Location Picker Section
+
+    private var locationPickerSection: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            Text("Standort auf der Karte")
+                .font(.subheadline.bold())
+                .foregroundStyle(.primary)
+
+            let centerCoord = placeCoordinates ?? location?.coordinate ?? CLLocationCoordinate2D(latitude: 50.8957, longitude: 7.3556)
+
+            LocationPickerMapView(
+                initialCoordinate: centerCoord,
+                selectedCoordinate: $placeCoordinates
+            ) { confirmedCoord in
+                placeCoordinates = confirmedCoord
+            }
+            .frame(height: 220)
+            .clipShape(RoundedRectangle(cornerRadius: 12))
+        }
+    }
+
     // MARK: - Section 4: Webseite
 
     private var websiteSection: some View {
@@ -387,7 +497,26 @@ struct UpdateScreen: View {
         }
     }
 
-    // MARK: - Section 6: Submit Button
+    // MARK: - Comment Section
+
+    private var commentSection: some View {
+        VStack(alignment: .leading, spacing: 6) {
+            Text("Bemerkung")
+                .font(.subheadline.bold())
+                .foregroundStyle(.primary)
+
+            TextEditor(text: $comment)
+                .frame(minHeight: 80)
+                .padding(6)
+                .background(Color(uiColor: .systemBackground))
+                .clipShape(RoundedRectangle(cornerRadius: 8))
+                .overlay(
+                    RoundedRectangle(cornerRadius: 8)
+                        .stroke(Color(.systemGray4), lineWidth: 1)
+                )
+                .accessibilityLabel("Bemerkung zur Toilette")
+        }
+    }
 
     // MARK: - Section 6: Submit Button
 
@@ -442,6 +571,10 @@ struct UpdateScreen: View {
             hasChangingTable = toilet.hasChangingTable
             hasWheelchairAccess = toilet.hasWheelchairAccess
             hasEuroKey = (toilet.euroKey == "yes" || toilet.euroKey == "true" || toilet.euroKey == "1")
+            isPublicAccessible = toilet.isPublicAccessible
+            accessibleOutsideOpeningTimes = toilet.accessibleOutsideOpeningTimes
+            storageSpace = toilet.storageSpace ?? "none"
+            comment = toilet.comment ?? ""
             website = toilet.website ?? ""
             address = toilet.address ?? (location?.name ?? "")
             placeCoordinates = toilet.coordinate
@@ -521,6 +654,7 @@ struct UpdateScreen: View {
         let trimmedName = toiletName.trimmingCharacters(in: .whitespacesAndNewlines)
         let trimmedAddress = address.trimmingCharacters(in: .whitespacesAndNewlines)
         let trimmedWebsite = website.trimmingCharacters(in: .whitespacesAndNewlines)
+        let trimmedComment = comment.trimmingCharacters(in: .whitespacesAndNewlines)
 
         let ownerName = belongsToPlace ? (selectedPlace?.name) : nil
         let placeID = belongsToPlace ? (selectedPlace?.id) : nil
@@ -537,14 +671,14 @@ struct UpdateScreen: View {
                 isGenderSeparated: isGenderSeparated,
                 hasWheelchairAccess: hasWheelchairAccess,
                 hasChangingTable: hasChangingTable,
-                accessibleOutsideOpeningTimes: toilet.accessibleOutsideOpeningTimes,
-                publicAccessible: toilet.isPublicAccessible,
+                accessibleOutsideOpeningTimes: accessibleOutsideOpeningTimes,
+                publicAccessible: isPublicAccessible,
                 placeOpeningHours: toilet.placeOpeningHours,
                 address: trimmedAddress.isEmpty ? nil : trimmedAddress,
                 website: trimmedWebsite.isEmpty ? nil : trimmedWebsite,
-                comment: toilet.comment,
+                comment: trimmedComment.isEmpty ? nil : trimmedComment,
                 euroKey: (hasWheelchairAccess && hasEuroKey) ? "yes" : "no",
-                storageSpace: toilet.storageSpace,
+                storageSpace: storageSpace,
                 status: "active"
             )
 
@@ -557,8 +691,7 @@ struct UpdateScreen: View {
                     isSubmitting = false
                     if response.success {
                         Analytics.shared.trackEvent(category: "toilet", action: "update_success", name: String(response.id))
-                        onToiletUpdated?()
-                        dismiss()
+                        showingSuccessAlert = true
                     }
                 } catch {
                     isSubmitting = false
@@ -591,10 +724,13 @@ struct UpdateScreen: View {
             isGenderSeparated: isGenderSeparated,
             hasWheelchairAccess: hasWheelchairAccess,
             hasChangingTable: hasChangingTable,
+            accessibleOutsideOpeningTimes: accessibleOutsideOpeningTimes,
+            publicAccessible: isPublicAccessible,
             address: trimmedAddress.isEmpty ? nil : trimmedAddress,
             website: trimmedWebsite.isEmpty ? nil : trimmedWebsite,
-            comment: nil,
+            comment: trimmedComment.isEmpty ? nil : trimmedComment,
             euroKey: (hasWheelchairAccess && hasEuroKey) ? "yes" : nil,
+            storageSpace: storageSpace,
             status: "active"
         )
 
@@ -607,8 +743,7 @@ struct UpdateScreen: View {
                 isSubmitting = false
                 if response.success {
                     Analytics.shared.trackEvent(category: "toilet", action: "create_success", name: String(response.id))
-                    onToiletCreated?()
-                    dismiss()
+                    showingSuccessAlert = true
                 }
             } catch {
                 isSubmitting = false

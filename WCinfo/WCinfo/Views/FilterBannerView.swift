@@ -167,7 +167,7 @@ struct FilterBannerView: View {
                     )
 
                     toggleRow(
-                        title: "Toiletten die nicht mit Euroschlüssel zu öffnen sind anzeigen",
+                        title: "Toiletten ohne Euroschlüssel anzeigen",
                         isOn: $filterSettings.showWithoutEuroKey,
                         infoAction: { showingEuroKeyInfo = true }
                     )

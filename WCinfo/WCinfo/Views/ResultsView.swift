@@ -12,6 +12,7 @@ struct ResultsView: View {
     @State private var isDraggingSplit = false
     @State private var selectedToilet: Toilet?
     @State private var detailToilet: Toilet?
+    @State private var toiletToUpdate: Toilet? = nil
     @State private var isShowingCreateSheet = false
     @State private var createSheetCoordinate: CLLocationCoordinate2D? = nil
     @State private var filterSettings = ToiletFilterSettings.load()
@@ -39,11 +40,33 @@ struct ResultsView: View {
             Analytics.shared.trackScreen("Results")
         }
         .sheet(item: $detailToilet) { toilet in
-            DetailView(toilet: toilet, onPhotosUpdated: {
-                Task {
-                    await loadToilets(isPullToRefresh: true)
+            DetailView(
+                toilet: toilet,
+                onPhotosUpdated: {
+                    Task {
+                        await loadToilets(isPullToRefresh: true)
+                    }
+                },
+                onRequestEdit: { toiletToEdit in
+                    detailToilet = nil
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.15) {
+                        toiletToUpdate = toiletToEdit
+                    }
                 }
-            })
+            )
+            .presentationDetents([.medium, .large])
+            .presentationDragIndicator(.visible)
+        }
+        .sheet(item: $toiletToUpdate) { toilet in
+            UpdateScreen(
+                location: SearchedLocation(name: toilet.name, coordinate: toilet.coordinate),
+                toilet: toilet,
+                onToiletUpdated: {
+                    Task {
+                        await loadToilets(isPullToRefresh: true)
+                    }
+                }
+            )
             .presentationDetents([.medium, .large])
             .presentationDragIndicator(.visible)
         }

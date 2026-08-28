@@ -4,7 +4,9 @@ import CoreLocation
 struct UpdateScreen: View {
     @Environment(\.dismiss) private var dismiss
     let location: SearchedLocation?
+    var toilet: Toilet? = nil
     var onToiletCreated: (() -> Void)? = nil
+    var onToiletUpdated: (() -> Void)? = nil
 
     @StateObject private var placesService = PlacesService()
 
@@ -76,7 +78,7 @@ struct UpdateScreen: View {
                 .padding(.horizontal, 16)
                 .padding(.vertical, 16)
             }
-            .navigationTitle("Toilette hinzufügen")
+            .navigationTitle(toilet != nil ? "Änderungen vorschlagen" : "Toilette hinzufügen")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
@@ -98,7 +100,7 @@ struct UpdateScreen: View {
                 await loadInitialData()
             }
             .onAppear {
-                Analytics.shared.trackScreen("CreateToilet")
+                Analytics.shared.trackScreen(toilet != nil ? "UpdateToilet" : "CreateToilet")
             }
         }
     }
@@ -387,6 +389,8 @@ struct UpdateScreen: View {
 
     // MARK: - Section 6: Submit Button
 
+    // MARK: - Section 6: Submit Button
+
     private var submitButton: some View {
         Button(action: submitToilet) {
             HStack(spacing: 8) {
@@ -394,7 +398,7 @@ struct UpdateScreen: View {
                     ProgressView()
                         .tint(.white)
                 }
-                Text(isSubmitting ? "Wird gespeichert..." : "Toilette hinzufügen")
+                Text(isSubmitting ? "Wird gespeichert..." : (toilet != nil ? "Änderungen speichern" : "Toilette hinzufügen"))
                     .font(.headline)
                     .foregroundColor(.white)
             }
@@ -405,8 +409,8 @@ struct UpdateScreen: View {
         }
         .disabled(isSubmitting)
         .padding(.top, 8)
-        .accessibilityLabel("Toilette hinzufügen")
-        .accessibilityHint("Speichert die neue Toilette im System.")
+        .accessibilityLabel(toilet != nil ? "Änderungen speichern" : "Toilette hinzufügen")
+        .accessibilityHint("Speichert die Angaben im System.")
     }
 
     // MARK: - Checkbox Helper View
@@ -432,24 +436,40 @@ struct UpdateScreen: View {
     // MARK: - Logic & Actions
 
     private func loadInitialData() async {
-        guard let location else { return }
+        if let toilet = toilet {
+            toiletName = toilet.name
+            isGenderSeparated = toilet.isGenderSeparated
+            hasChangingTable = toilet.hasChangingTable
+            hasWheelchairAccess = toilet.hasWheelchairAccess
+            hasEuroKey = (toilet.euroKey == "yes" || toilet.euroKey == "true" || toilet.euroKey == "1")
+            website = toilet.website ?? ""
+            address = toilet.address ?? (location?.name ?? "")
+            placeCoordinates = toilet.coordinate
+            belongsToPlace = (toilet.placeId != nil || !toilet.owner.isEmpty)
+            if let placeId = toilet.placeId {
+                selectedPlace = NearbyPlaceOption(id: placeId, name: toilet.owner, secondaryText: nil)
+            }
+        } else if let location = location {
+            if address.isEmpty {
+                address = location.name
+            }
+            placeCoordinates = location.coordinate
+        }
+
+        let coord = placeCoordinates ?? location?.coordinate
+        guard let coordinate = coord else { return }
+
         isLoadingPlaces = true
         placesError = nil
         defer { isLoadingPlaces = false }
 
-        if address.isEmpty {
-            address = location.name
-        }
-        placeCoordinates = location.coordinate
-
         do {
             let places = try await placesService.fetchNearbyPlaces(
-                coordinate: location.coordinate,
-                radius: 40.0,
-            
+                coordinate: coordinate,
+                radius: 40.0
             )
             nearbyPlaces = places
-            if let first = places.first {
+            if selectedPlace == nil, let first = places.first {
                 selectPlace(first)
             }
         } catch {
@@ -459,8 +479,8 @@ struct UpdateScreen: View {
                 error,
                 context: [
                     "action": "fetchNearbyPlaces",
-                    "lat": location.coordinate.latitude,
-                    "lon": location.coordinate.longitude
+                    "lat": coordinate.latitude,
+                    "lon": coordinate.longitude
                 ],
                 showToUser: false // shown inline in the sheet instead
             )
@@ -504,6 +524,62 @@ struct UpdateScreen: View {
 
         let ownerName = belongsToPlace ? (selectedPlace?.name) : nil
         let placeID = belongsToPlace ? (selectedPlace?.id) : nil
+
+        if let toilet = toilet {
+            let updatePayload = UpdateToiletPayload(
+                name: trimmedName.isEmpty ? nil : trimmedName,
+                owner: ownerName,
+                lat: lat,
+                lon: lon,
+                placeId: placeID,
+                isQualified: nil,
+                isUnisex: !isGenderSeparated,
+                isGenderSeparated: isGenderSeparated,
+                hasWheelchairAccess: hasWheelchairAccess,
+                hasChangingTable: hasChangingTable,
+                accessibleOutsideOpeningTimes: toilet.accessibleOutsideOpeningTimes,
+                publicAccessible: toilet.isPublicAccessible,
+                placeOpeningHours: toilet.placeOpeningHours,
+                address: trimmedAddress.isEmpty ? nil : trimmedAddress,
+                website: trimmedWebsite.isEmpty ? nil : trimmedWebsite,
+                comment: toilet.comment,
+                euroKey: (hasWheelchairAccess && hasEuroKey) ? "yes" : "no",
+                storageSpace: toilet.storageSpace,
+                status: "active"
+            )
+
+            isSubmitting = true
+            Analytics.shared.trackEvent(category: "toilet", action: "update_submit", name: ownerName ?? trimmedName)
+
+            Task {
+                do {
+                    let response = try await WCInfoAPIService.shared.updateToilet(id: toilet.id, payload: updatePayload)
+                    isSubmitting = false
+                    if response.success {
+                        Analytics.shared.trackEvent(category: "toilet", action: "update_success", name: String(response.id))
+                        onToiletUpdated?()
+                        dismiss()
+                    }
+                } catch {
+                    isSubmitting = false
+                    var context: [String: Any] = [
+                        "action": "updateToilet",
+                        "toiletId": toilet.id,
+                        "lat": lat,
+                        "lon": lon
+                    ]
+                    if let apiError = error as? WCInfoAPIError {
+                        context.merge(apiError.diagnosticContext) { _, new in new }
+                        validationError = apiError.message
+                    } else {
+                        validationError = error.localizedDescription
+                    }
+                    ErrorManager.shared.report(error, context: context)
+                    Analytics.shared.trackEvent(category: "toilet", action: "update_error")
+                }
+            }
+            return
+        }
 
         let payload = AddToiletPayload(
             name: trimmedName.isEmpty ? nil : trimmedName,

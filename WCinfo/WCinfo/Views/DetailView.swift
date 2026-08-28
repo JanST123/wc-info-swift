@@ -5,6 +5,7 @@ struct DetailView: View {
     @Environment(\.dismiss) private var dismiss
     let toilet: Toilet
     var onPhotosUpdated: (() -> Void)? = nil
+    var onRequestEdit: ((Toilet) -> Void)? = nil
     @State private var selectedPhotoIndex: Int? = nil
     @State private var isShowingPhotoUploadSheet = false
     @State private var isShowingEuroKeyInfoSheet = false
@@ -13,6 +14,23 @@ struct DetailView: View {
         NavigationStack {
             ScrollView {
                 VStack(alignment: .leading, spacing: 16) {
+                    HStack {
+                        Spacer()
+                        Button {
+                            dismiss()
+                            onRequestEdit?(toilet)
+                        } label: {
+                            HStack(spacing: 4) {
+                                Image(systemName: "pencil")
+                                    .font(.caption)
+                                Text("Änderungen vorschlagen")
+                                    .font(.subheadline)
+                            }
+                            .foregroundColor(.purple)
+                        }
+                        .accessibilityLabel("Änderungen für diese Toilette vorschlagen")
+                    }
+
                     HStack(alignment: .firstTextBaseline, spacing: 8) {
                         Text(toilet.name)
                             .font(.title.bold())

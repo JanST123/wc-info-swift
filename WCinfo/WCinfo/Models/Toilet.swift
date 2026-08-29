@@ -213,10 +213,22 @@ private extension KeyedDecodingContainer {
 struct ToiletPhoto: Codable, Hashable {
     let url: String
     let urlThumb: String
+    var filename: String? = nil
 
     enum CodingKeys: String, CodingKey {
         case url
         case urlThumb = "url_thumb"
+        case filename
+    }
+
+    var resolvedFilename: String {
+        if let filename, !filename.isEmpty {
+            return filename
+        }
+        if let urlObj = URL(string: url) {
+            return urlObj.lastPathComponent
+        }
+        return ""
     }
 }
 

@@ -339,7 +339,14 @@ struct DetailView: View {
                 set: { if !$0 { selectedPhotoIndex = nil } }
             )) {
                 if let index = selectedPhotoIndex {
-                    PhotoLightboxView(photos: toilet.photos, selectedIndex: index)
+                    PhotoLightboxView(
+                        toiletId: toilet.id,
+                        photos: toilet.photos,
+                        selectedIndex: index,
+                        onPhotoDeleted: {
+                            onPhotosUpdated?()
+                        }
+                    )
                 }
             }
             .sheet(isPresented: $isShowingPhotoUploadSheet) {

@@ -156,10 +156,10 @@ struct PhotoUpload: View {
         if case .success(_, let tId, let fn) = item.status {
             Task {
                 do {
-                    _ = try await WCInfoAPIService.shared.deletePhoto(toiletId: tId, filename: fn)
+                    _ = try await WCInfoAPIService.shared.deletePhoto(toiletId: tId, filename: fn, soft: 0)
                     Analytics.shared.trackEvent(category: "photo", action: "delete_success", name: fn)
                 } catch {
-                    ErrorManager.shared.report(error, context: ["action": "deletePhoto", "toiletId": tId, "filename": fn])
+                    ErrorManager.shared.report(error, context: ["action": "deletePhoto", "toiletId": tId, "filename": fn, "soft": 0])
                 }
             }
         }
@@ -218,7 +218,8 @@ struct PhotoUpload: View {
                 if Task.isCancelled {
                     _ = try? await WCInfoAPIService.shared.deletePhoto(
                         toiletId: response.toiletId,
-                        filename: response.filename
+                        filename: response.filename,
+                        soft: 0
                     )
                     return
                 }

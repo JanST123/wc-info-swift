@@ -193,8 +193,12 @@ actor WCInfoAPIService {
         }
     }
 
-    func deletePhoto(toiletId: Int, filename: String) async throws -> DeletePhotoResponse {
-        guard let url = URL(string: "\(baseURL)/deletePhoto/\(toiletId)/\(filename)") else {
+    func deletePhoto(toiletId: Int, filename: String, soft: Int? = nil) async throws -> DeletePhotoResponse {
+        var urlString = "\(baseURL)/deletePhoto/\(toiletId)/\(filename)"
+        if let soft = soft {
+            urlString += "?soft=\(soft)"
+        }
+        guard let url = URL(string: urlString) else {
             throw WCInfoAPIError.invalidURL
         }
         let data = try await performRequest(url: url, method: "DELETE")

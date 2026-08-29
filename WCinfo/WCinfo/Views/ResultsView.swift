@@ -114,7 +114,12 @@ struct ResultsView: View {
                         userLocation: location.coordinate,
                         isActive: toilet.id == selectedToilet?.id,
                         onShowDetails: { openDetails(for: toilet, source: "list") },
-                        onNavigate: { openNavigation(to: toilet) }
+                        onNavigate: { openNavigation(to: toilet) },
+                        onPhotosUpdated: {
+                            Task {
+                                await loadToilets(isPullToRefresh: true)
+                            }
+                        }
                     )
                     .listRowBackground(toilet.id == selectedToilet?.id ? Color.purple.opacity(0.1) : Color.clear)
                     .contentShape(Rectangle())

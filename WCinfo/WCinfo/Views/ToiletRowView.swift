@@ -7,6 +7,7 @@ struct ToiletRowView: View {
     var isActive: Bool = false
     var onShowDetails: () -> Void = {}
     var onNavigate: () -> Void = {}
+    var onPhotosUpdated: (() -> Void)? = nil
 
     @State private var selectedPhotoIndex: Int? = nil
 
@@ -48,7 +49,14 @@ struct ToiletRowView: View {
             set: { if !$0 { selectedPhotoIndex = nil } }
         )) {
             if let index = selectedPhotoIndex {
-                PhotoLightboxView(photos: toilet.photos, selectedIndex: index)
+                PhotoLightboxView(
+                    toiletId: toilet.id,
+                    photos: toilet.photos,
+                    selectedIndex: index,
+                    onPhotoDeleted: {
+                        onPhotosUpdated?()
+                    }
+                )
             }
         }
     }

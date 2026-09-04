@@ -186,10 +186,11 @@ struct DetailView: View {
 
                             OpeningTimeComponent(
                                 hasOpeningHours: true,
-                                isOpen: toilet.isOpen,
-                                openTimestamp: toilet.openTimestamp,
-                                closeTimestamp: toilet.closeTimestamp,
+                                isOpen: toilet.isOpen24HoursEveryDay ? true : toilet.isOpen,
+                                openTimestamp: toilet.isOpen24HoursEveryDay ? nil : toilet.openTimestamp,
+                                closeTimestamp: toilet.isOpen24HoursEveryDay ? nil : toilet.closeTimestamp,
                                 accessibleOutsideOpeningTimes: toilet.accessibleOutsideOpeningTimes,
+                                isOpen24Hours: toilet.isOpen24HoursEveryDay,
                                 alignment: .leading
                             )
                             .padding(12)
@@ -197,14 +198,20 @@ struct DetailView: View {
                             .background(Color(uiColor: .secondarySystemBackground))
                             .clipShape(RoundedRectangle(cornerRadius: 10))
 
-                            ForEach(periods.indices, id: \.self) { index in
-                                Text(periods[index].formatted)
+                            if toilet.isOpen24HoursEveryDay {
+                                Text("Täglich 24 Stunden geöffnet")
                                     .font(.caption)
                                     .foregroundStyle(.secondary)
+                            } else {
+                                ForEach(periods.indices, id: \.self) { index in
+                                    Text(periods[index].formatted)
+                                        .font(.caption)
+                                        .foregroundStyle(.secondary)
+                                }
                             }
                         }
                         .accessibilityElement(children: .combine)
-                        .accessibilityLabel("Öffnungszeiten: \(periods.map(\.formatted).joined(separator: ", "))")
+                        .accessibilityLabel(toilet.isOpen24HoursEveryDay ? "Öffnungszeiten: Täglich 24 Stunden geöffnet" : "Öffnungszeiten: \(periods.map(\.formatted).joined(separator: ", "))")
                         
                         Spacer(minLength: 4)
                         

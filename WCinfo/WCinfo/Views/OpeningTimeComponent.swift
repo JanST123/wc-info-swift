@@ -6,11 +6,20 @@ struct OpeningTimeComponent: View {
     let openTimestamp: Date?
     let closeTimestamp: Date?
     var accessibleOutsideOpeningTimes: Bool = false
+    var isOpen24Hours: Bool = false
     var alignment: HorizontalAlignment = .trailing
 
     var body: some View {
         VStack(alignment: alignment, spacing: 2) {
-            if hasOpeningHours ?? false {
+            if isOpen24Hours {
+                Text("Jetzt geöffnet")
+                    .font(.subheadline.bold())
+                    .foregroundColor(.green)
+
+                Text("24 Stunden geöffnet")
+                    .font(.caption)
+                    .foregroundColor(.secondary)
+            } else if hasOpeningHours ?? false {
                 Text(isOpen ?? false ? "Jetzt geöffnet" : "Geschlossen")
                     .font(.subheadline.bold())
                     .foregroundColor(isOpen ?? false ? .green : .primary)
@@ -49,6 +58,11 @@ struct OpeningTimeComponent: View {
 
     private var accessibilityLabel: String {
         var parts = [String]()
+        if isOpen24Hours {
+            parts.append("Jetzt geöffnet")
+            parts.append("24 Stunden geöffnet")
+            return parts.joined(separator: ", ")
+        }
         if let isOpen {
             parts.append(isOpen ? "Jetzt geöffnet" : "Geschlossen")
             if isOpen, let closeTimestamp {

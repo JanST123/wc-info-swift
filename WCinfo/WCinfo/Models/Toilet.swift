@@ -34,6 +34,10 @@ struct Toilet: Identifiable, Codable, Hashable {
         CLLocationCoordinate2D(latitude: lat, longitude: lon)
     }
 
+    var isOpen24HoursEveryDay: Bool {
+        placeOpeningHours?.isOpen24HoursEveryDay ?? false
+    }
+
     enum CodingKeys: String, CodingKey {
         case id, name, owner, lat, lon
         case placeId = "place_id"
@@ -311,8 +315,20 @@ public struct GooglePlacesPeriod: Codable, Hashable, Equatable {
         self.close = close
     }
 
+    public var is24Hours: Bool {
+        guard open.hour == 0, open.minute == 0 else { return false }
+        if let close = close {
+            return (close.hour == 0 && close.minute == 0) ||
+                   (close.hour == 24 && close.minute == 0) ||
+                   (close.hour == 23 && close.minute >= 59)
+        }
+        return true
+    }
+
     public var formatted: String {
-        if let close {
+        if is24Hours {
+            return "\(open.formattedDay) 24 Stunden geöffnet"
+        } else if let close {
             if open.day == close.day {
                 return "\(open.formattedDay) \(open.formattedTime) – \(close.formattedTime)"
             } else {
@@ -321,6 +337,25 @@ public struct GooglePlacesPeriod: Codable, Hashable, Equatable {
         } else {
             return "\(open.formattedDay) ab \(open.formattedTime)"
         }
+    }
+}
+
+extension Collection where Element == GooglePlacesPeriod {
+    public var isOpen24HoursEveryDay: Bool {
+        guard !isEmpty else { return false }
+
+        // Google Places API: a single period with no close event indicates open 24/7
+        if count == 1, let first = first, first.is24Hours {
+            return true
+        }
+
+        // Check if all 7 days (0..6) are present and each day is open 24 hours
+        let days = Set(map { $0.open.day })
+        if days == Set(0...6) && allSatisfy({ $0.is24Hours }) {
+            return true
+        }
+
+        return false
     }
 }
 

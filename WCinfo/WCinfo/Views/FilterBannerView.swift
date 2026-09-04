@@ -2,7 +2,7 @@ import SwiftUI
 
 struct ToiletFilterSettings: Equatable, Codable {
     var showClosed: Bool = false
-    var showNonPublic: Bool = false
+    var showNonPublic: Bool = true
     var showNonWheelchairAccessible: Bool = true
     var showWithoutChangingTable: Bool = true
     var showWithoutGenderSeparation: Bool = true

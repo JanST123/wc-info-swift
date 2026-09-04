@@ -10,6 +10,7 @@ struct ToiletRowView: View {
     var onPhotosUpdated: (() -> Void)? = nil
 
     @State private var selectedPhotoIndex: Int? = nil
+    @State private var showingNonPublicInfo = false
 
     var body: some View {
         VStack(alignment: .leading, spacing: 6) {
@@ -44,6 +45,11 @@ struct ToiletRowView: View {
             }
         }
         .padding(.vertical, 4)
+        .alert("Nicht-öffentliche Toilette", isPresented: $showingNonPublicInfo) {
+            Button("Verstanden", role: .cancel) { }
+        } message: {
+            Text("Diese Toilette ist nicht öffentlich zugänglich. Sie befindet sich beispielsweise in einem Restaurant, Geschäft oder einer privaten Einrichtung und ist oft Kunden oder Gästen vorbehalten.")
+        }
         .fullScreenCover(isPresented: Binding(
             get: { selectedPhotoIndex != nil },
             set: { if !$0 { selectedPhotoIndex = nil } }
@@ -81,13 +87,42 @@ struct ToiletRowView: View {
 
                 Spacer(minLength: 12)
 
-                OpeningTimeComponent(
-                    hasOpeningHours: toilet.placeOpeningHours != nil,
-                    isOpen: toilet.isOpen,
-                    openTimestamp: toilet.openTimestamp,
-                    closeTimestamp: toilet.closeTimestamp,
-                    accessibleOutsideOpeningTimes: toilet.accessibleOutsideOpeningTimes
-                )
+                VStack(alignment: .trailing, spacing: 4) {
+                    OpeningTimeComponent(
+                        hasOpeningHours: toilet.placeOpeningHours != nil,
+                        isOpen: toilet.isOpen24HoursEveryDay ? true : toilet.isOpen,
+                        openTimestamp: toilet.isOpen24HoursEveryDay ? nil : toilet.openTimestamp,
+                        closeTimestamp: toilet.isOpen24HoursEveryDay ? nil : toilet.closeTimestamp,
+                        accessibleOutsideOpeningTimes: toilet.accessibleOutsideOpeningTimes,
+                        isOpen24Hours: toilet.isOpen24HoursEveryDay
+                    )
+
+                    if !toilet.isPublicAccessible {
+                        HStack(spacing: 3) {
+                            Image(systemName: "exclamationmark.triangle.fill")
+                                .font(.caption2)
+                                .foregroundColor(.orange)
+
+                            Text("Nicht öffentlich")
+                                .font(.caption2)
+                                .foregroundColor(.secondary)
+
+                            Button {
+                                showingNonPublicInfo = true
+                            } label: {
+                                Image(systemName: "info.circle")
+                                    .font(.caption2)
+                                    .foregroundColor(.purple)
+                            }
+                            .buttonStyle(.plain)
+                            .accessibilityLabel("Informationen zu nicht-öffentlichen Toiletten")
+                        }
+                        .contentShape(Rectangle())
+                        .onTapGesture {
+                            showingNonPublicInfo = true
+                        }
+                    }
+                }
             }
 
             if !toilet.photos.isEmpty {
@@ -161,6 +196,9 @@ struct ToiletRowView: View {
 
     private var accessibilityLabel: String {
         var parts = [toilet.owner, toilet.name]
+        if !toilet.isPublicAccessible {
+            parts.append("Nicht öffentlich zugänglich")
+        }
         if let address = toilet.address, !address.isEmpty {
             parts.append(address)
         }

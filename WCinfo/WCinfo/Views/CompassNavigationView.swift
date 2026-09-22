@@ -43,7 +43,7 @@ struct CompassNavigationView: View {
             }
             .onAppear {
                 Analytics.shared.trackScreen("CompassNavigation")
-                Analytics.shared.trackEvent(category: "compass_navigation", action: "start", name: toilet.name)
+                Analytics.shared.trackEvent(category: "compass_navigation", action: "start", name: toilet.displayName)
                 compass.start()
             }
             .onDisappear {
@@ -57,7 +57,7 @@ struct CompassNavigationView: View {
     private var toiletInfoCard: some View {
         VStack(alignment: .leading, spacing: 6) {
             HStack(alignment: .firstTextBaseline) {
-                Text(toilet.name)
+                Text(toilet.displayName)
                     .font(.headline)
                     .lineLimit(2)
 
@@ -68,7 +68,7 @@ struct CompassNavigationView: View {
                 Spacer()
             }
 
-            if !toilet.owner.isEmpty && toilet.owner != toilet.name {
+            if !toilet.owner.isEmpty && toilet.owner != toilet.displayName && toilet.owner != toilet.name {
                 Text(toilet.owner)
                     .font(.subheadline)
                     .foregroundStyle(.secondary)
@@ -85,7 +85,7 @@ struct CompassNavigationView: View {
         .background(Color(uiColor: .secondarySystemBackground))
         .clipShape(RoundedRectangle(cornerRadius: 14))
         .accessibilityElement(children: .combine)
-        .accessibilityLabel(Text("Ziel: \(toilet.name), \(toilet.owner)"))
+        .accessibilityLabel(Text("Ziel: \(toilet.displayName), \(toilet.owner)"))
     }
 
     // MARK: - Compass Dial & Needle
@@ -225,11 +225,11 @@ struct CompassNavigationView: View {
     }
 
     private func openExternalMaps() {
-        Analytics.shared.trackEvent(category: "compass_navigation", action: "open_external_maps", name: toilet.name)
+        Analytics.shared.trackEvent(category: "compass_navigation", action: "open_external_maps", name: toilet.displayName)
         let coordinate = CLLocationCoordinate2D(latitude: toilet.lat, longitude: toilet.lon)
         let placemark = MKPlacemark(coordinate: coordinate)
         let mapItem = MKMapItem(placemark: placemark)
-        mapItem.name = toilet.name
+        mapItem.name = toilet.displayName
         MKMapItem.openMaps(with: [mapItem], launchOptions: [
             MKLaunchOptionsDirectionsModeKey: MKLaunchOptionsDirectionsModeWalking,
             MKLaunchOptionsShowsTrafficKey: false

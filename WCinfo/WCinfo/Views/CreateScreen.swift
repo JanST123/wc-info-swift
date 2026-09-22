@@ -115,15 +115,20 @@ struct CreateScreen: View {
                 }
 
                 ToolbarItem(placement: .confirmationAction) {
-                    Button(createdToiletId != nil ? "Fertig" : "Abbrechen") {
+                    Group {
                         if createdToiletId != nil {
-                            finishWithCelebration()
+                            Button("Fertig") {
+                                finishWithCelebration()
+                            }
+                            .accessibilityLabel(Text("Fertigstellen"))
                         } else {
-                            dismiss()
+                            Button("Abbrechen") {
+                                dismiss()
+                            }
+                            .accessibilityLabel(Text("Abbrechen"))
                         }
                     }
                     .disabled(showHeartAnimation)
-                    .accessibilityLabel(createdToiletId != nil ? "Fertigstellen" : "Abbrechen")
                 }
             }
             .sheet(isPresented: $showingEuroKeyInfo) {

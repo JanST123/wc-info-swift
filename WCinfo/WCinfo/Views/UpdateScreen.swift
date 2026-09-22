@@ -86,7 +86,7 @@ struct UpdateScreen: View {
                         Text(validationError)
                             .font(.caption)
                             .foregroundColor(.red)
-                            .accessibilityLabel("Fehler: \(validationError)")
+                            .accessibilityLabel(Text("Fehler: \(validationError)"))
                     }
 
                     submitButton
@@ -94,14 +94,14 @@ struct UpdateScreen: View {
                 .padding(.horizontal, 16)
                 .padding(.vertical, 16)
             }
-            .navigationTitle(toilet != nil ? "Änderungen vorschlagen" : "Toilette hinzufügen")
+            .navigationTitle(toilet != nil ? Text("Änderungen vorschlagen") : Text("Toilette hinzufügen"))
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
                     Button("Abbrechen") {
                         dismiss()
                     }
-                    .accessibilityLabel("Abbrechen")
+                    .accessibilityLabel(Text("Abbrechen"))
                 }
             }
             .sheet(isPresented: $showingEuroKeyInfo) {
@@ -153,8 +153,8 @@ struct UpdateScreen: View {
                 }
             }
             .buttonStyle(.plain)
-            .accessibilityLabel("Toilette gehört zum Ort: \(belongsToPlace ? "Ausgewählt" : "Nicht ausgewählt")")
-            .accessibilityHint("Umschalten, ob die Toilette zu einer bestimmten Einrichtung gehört.")
+            .accessibilityLabel(Text(belongsToPlace ? "Toilette gehört zum Ort: Ausgewählt" : "Toilette gehört zum Ort: Nicht ausgewählt"))
+            .accessibilityHint(Text("Umschalten, ob die Toilette zu einer bestimmten Einrichtung gehört."))
 
             Spacer()
 
@@ -185,12 +185,28 @@ struct UpdateScreen: View {
             }
         } label: {
             HStack(spacing: 6) {
-                Text(selectedPlace?.name ?? (isLoadingPlaces ? "Laden..." : "Ort wählen"))
-                    .font(.subheadline)
-                    .foregroundStyle(.primary)
-                    .lineLimit(1)
-                    .truncationMode(.tail)
-                    .frame(maxWidth: 160, alignment: .leading)
+                if let name = selectedPlace?.name {
+                    Text(verbatim: name)
+                        .font(.subheadline)
+                        .foregroundStyle(.primary)
+                        .lineLimit(1)
+                        .truncationMode(.tail)
+                        .frame(maxWidth: 160, alignment: .leading)
+                } else if isLoadingPlaces {
+                    Text("Laden...")
+                        .font(.subheadline)
+                        .foregroundStyle(.primary)
+                        .lineLimit(1)
+                        .truncationMode(.tail)
+                        .frame(maxWidth: 160, alignment: .leading)
+                } else {
+                    Text("Ort wählen")
+                        .font(.subheadline)
+                        .foregroundStyle(.primary)
+                        .lineLimit(1)
+                        .truncationMode(.tail)
+                        .frame(maxWidth: 160, alignment: .leading)
+                }
 
                 Image(systemName: "chevron.down")
                     .font(.caption.bold())
@@ -204,7 +220,7 @@ struct UpdateScreen: View {
                     .stroke(Color.purple, lineWidth: 1.5)
             )
         }
-        .accessibilityLabel("Ort auswählen. Aktuell ausgewählt: \(selectedPlace?.name ?? "Keiner")")
+        .accessibilityLabel(Text(selectedPlace?.name != nil ? "Ort auswählen: \(selectedPlace!.name)" : "Ort auswählen"))
     }
 
     // MARK: - Section 2: Name der Toilette (optional)
@@ -215,7 +231,7 @@ struct UpdateScreen: View {
                 .font(.subheadline.bold())
                 .foregroundStyle(.primary)
 
-            TextField("z.B. \"Hauptgebäude\" falls es mehrere Toiletten gibt", text: $toiletName)
+            TextField("z.B. \"Hauptgebäude\" falls es mehrere Toiletten gibt", text: $toiletName, prompt: Text("z.B. \"Hauptgebäude\" falls es mehrere Toiletten gibt"))
                 .textFieldStyle(.plain)
                 .padding(.horizontal, 12)
                 .padding(.vertical, 10)
@@ -224,7 +240,7 @@ struct UpdateScreen: View {
                     RoundedRectangle(cornerRadius: 6)
                         .stroke(Color(.systemGray4), lineWidth: 1)
                 )
-                .accessibilityLabel("Name der Toilette")
+                .accessibilityLabel(Text("Name der Toilette"))
         }
     }
 
@@ -270,7 +286,7 @@ struct UpdateScreen: View {
                     }
                 }
                 .buttonStyle(.plain)
-                .accessibilityLabel("Öffentlich zugänglich: \(isPublicAccessible ? "Ausgewählt" : "Nicht ausgewählt")")
+                .accessibilityLabel(Text(isPublicAccessible ? "Öffentlich zugänglich: Ausgewählt" : "Öffentlich zugänglich: Nicht ausgewählt"))
 
                 Button {
                     accessibleOutsideOpeningTimes.toggle()
@@ -283,13 +299,13 @@ struct UpdateScreen: View {
                     }
                 }
                 .buttonStyle(.plain)
-                .accessibilityLabel("Außerhalb der Öffnungszeiten zugänglich: \(accessibleOutsideOpeningTimes ? "Ausgewählt" : "Nicht ausgewählt")")
+                .accessibilityLabel(Text(accessibleOutsideOpeningTimes ? "Außerhalb der Öffnungszeiten zugänglich: Ausgewählt" : "Außerhalb der Öffnungszeiten zugänglich: Nicht ausgewählt"))
             }
             .padding(.top, 4)
         }
     }
 
-    private func propertyCard(iconName: String, title: String, isChecked: Binding<Bool>) -> some View {
+    private func propertyCard(iconName: String, title: LocalizedStringKey, isChecked: Binding<Bool>) -> some View {
         Button {
             isChecked.wrappedValue.toggle()
         } label: {
@@ -326,8 +342,8 @@ struct UpdateScreen: View {
         }
         .buttonStyle(.plain)
         .accessibilityElement(children: .combine)
-        .accessibilityLabel("\(title): \(isChecked.wrappedValue ? "Ausgewählt" : "Nicht ausgewählt")")
-        .accessibilityHint("Doppeltippen, um diese Eigenschaft umzuschalten.")
+        .accessibilityLabel(Text(title))
+        .accessibilityHint(Text("Doppeltippen, um diese Eigenschaft umzuschalten."))
         .accessibilityAddTraits(.isButton)
     }
 
@@ -360,7 +376,7 @@ struct UpdateScreen: View {
                     .foregroundColor(hasWheelchairAccess ? .purple : Color(.systemGray3))
             }
             .buttonStyle(.plain)
-            .accessibilityLabel("Informationen zum Euroschlüssel anzeigen")
+            .accessibilityLabel(Text("Informationen zum Euroschlüssel"))
 
             Spacer()
 
@@ -395,7 +411,7 @@ struct UpdateScreen: View {
         )
         .clipShape(RoundedRectangle(cornerRadius: 8))
         .accessibilityElement(children: .contain)
-        .accessibilityLabel("Euroschlüssel: \(hasWheelchairAccess ? (hasEuroKey ? "Ausgewählt" : "Nicht ausgewählt") : "Deaktiviert, erfordert barrierefreie Toilette")")
+        .accessibilityLabel(Text(hasWheelchairAccess ? (hasEuroKey ? "Euroschlüssel: Ausgewählt" : "Euroschlüssel: Nicht ausgewählt") : "Euroschlüssel: Deaktiviert, erfordert barrierefreie Toilette"))
     }
 
     // MARK: - Storage Space Section
@@ -414,7 +430,7 @@ struct UpdateScreen: View {
         }
     }
 
-    private func storageRadioButton(title: String, value: String) -> some View {
+    private func storageRadioButton(title: LocalizedStringKey, value: String) -> some View {
         Button {
             storageSpace = value
         } label: {
@@ -432,7 +448,7 @@ struct UpdateScreen: View {
             .clipShape(RoundedRectangle(cornerRadius: 8))
         }
         .buttonStyle(.plain)
-        .accessibilityLabel("Ablagefläche \(title): \(storageSpace == value ? "Ausgewählt" : "Nicht ausgewählt")")
+        .accessibilityLabel(Text(title))
     }
 
     // MARK: - Section: Öffnungszeiten
@@ -455,8 +471,8 @@ struct UpdateScreen: View {
                 }
             }
             .buttonStyle(.plain)
-            .accessibilityLabel("Öffnungszeiten angeben: \(hasOpeningTimes ? "Ausgewählt" : "Nicht ausgewählt")")
-            .accessibilityHint("Umschalten, um Öffnungszeiten für diese Toilette anzugeben oder zu bearbeiten.")
+            .accessibilityLabel(Text(hasOpeningTimes ? "Öffnungszeiten angeben: Ausgewählt" : "Öffnungszeiten angeben: Nicht ausgewählt"))
+            .accessibilityHint(Text("Umschalten, um Öffnungszeiten für diese Toilette anzugeben oder zu bearbeiten."))
 
             if hasOpeningTimes {
                 OpeningTimesInput(periods: $placeOpeningHours)
@@ -494,7 +510,7 @@ struct UpdateScreen: View {
                 .font(.subheadline.bold())
                 .foregroundStyle(.primary)
 
-            TextField("http://www.beispiel.de", text: $website)
+            TextField("http://www.beispiel.de", text: $website, prompt: Text("http://www.beispiel.de"))
                 .textFieldStyle(.plain)
                 .keyboardType(.URL)
                 .textInputAutocapitalization(.never)
@@ -506,7 +522,7 @@ struct UpdateScreen: View {
                     RoundedRectangle(cornerRadius: 6)
                         .stroke(Color(.systemGray4), lineWidth: 1)
                 )
-                .accessibilityLabel("Webseite der Toilette oder Einrichtung")
+                .accessibilityLabel(Text("Webseite"))
         }
     }
 
@@ -518,7 +534,7 @@ struct UpdateScreen: View {
                 .font(.subheadline.bold())
                 .foregroundStyle(.primary)
 
-            TextField("Adresse eingeben", text: $address, axis: .vertical)
+            TextField("Adresse eingeben", text: $address, prompt: Text("Adresse eingeben"), axis: .vertical)
                 .lineLimit(2...4)
                 .textFieldStyle(.plain)
                 .padding(.horizontal, 12)
@@ -528,7 +544,7 @@ struct UpdateScreen: View {
                     RoundedRectangle(cornerRadius: 6)
                         .stroke(Color(.systemGray4), lineWidth: 1)
                 )
-                .accessibilityLabel("Adresse der Toilette")
+                .accessibilityLabel(Text("Adresse"))
         }
     }
 
@@ -549,7 +565,7 @@ struct UpdateScreen: View {
                     RoundedRectangle(cornerRadius: 8)
                         .stroke(Color(.systemGray4), lineWidth: 1)
                 )
-                .accessibilityLabel("Bemerkung zur Toilette")
+                .accessibilityLabel(Text("Bemerkung"))
         }
     }
 
@@ -561,10 +577,18 @@ struct UpdateScreen: View {
                 if isSubmitting {
                     ProgressView()
                         .tint(.white)
+                    Text("Wird gespeichert...")
+                        .font(.headline)
+                        .foregroundColor(.white)
+                } else if toilet != nil {
+                    Text("Änderungen speichern")
+                        .font(.headline)
+                        .foregroundColor(.white)
+                } else {
+                    Text("Toilette hinzufügen")
+                        .font(.headline)
+                        .foregroundColor(.white)
                 }
-                Text(isSubmitting ? "Wird gespeichert..." : (toilet != nil ? "Änderungen speichern" : "Toilette hinzufügen"))
-                    .font(.headline)
-                    .foregroundColor(.white)
             }
             .frame(maxWidth: .infinity)
             .frame(height: 50)
@@ -573,8 +597,8 @@ struct UpdateScreen: View {
         }
         .disabled(isSubmitting)
         .padding(.top, 8)
-        .accessibilityLabel(toilet != nil ? "Änderungen speichern" : "Toilette hinzufügen")
-        .accessibilityHint("Speichert die Angaben im System.")
+        .accessibilityLabel(toilet != nil ? Text("Änderungen speichern") : Text("Toilette hinzufügen"))
+        .accessibilityHint(Text("Speichert die Angaben im System."))
     }
 
     // MARK: - Checkbox Helper View
@@ -690,7 +714,7 @@ struct UpdateScreen: View {
         let finalLon = placeCoordinates?.longitude ?? location?.coordinate.longitude
 
         guard let lat = finalLat, let lon = finalLon else {
-            validationError = "Keine Standortkoordinaten gefunden. Bitte wähle einen Ort aus."
+            validationError = String(localized: "Keine Standortkoordinaten gefunden. Bitte wähle einen Ort aus.")
             return
         }
 
@@ -850,40 +874,28 @@ struct EuroKeyInfoView: View {
                         Button {
                             openURL(url)
                         } label: {
-                            HStack(spacing: 8) {
-                                Image(systemName: "arrow.up.right.square")
+                            HStack {
+                                Image(systemName: "safari")
                                 Text("Webseite öffnen (cbf-da.de)")
-                                    .fontWeight(.semibold)
                             }
-                            .frame(maxWidth: .infinity)
-                            .frame(height: 48)
-                            .background(Color.purple)
-                            .foregroundColor(.white)
-                            .clipShape(RoundedRectangle(cornerRadius: 10))
+                            .font(.subheadline.bold())
+                            .foregroundColor(.purple)
                         }
-                        .padding(.top, 12)
+                        .padding(.top, 4)
                     }
                 }
                 .padding(20)
             }
-            .navigationTitle("Information zum Euroschlüssel")
+            .navigationTitle("Euroschlüssel")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .confirmationAction) {
-                    Button("Schließen") {
+                    Button("Fertig") {
                         dismiss()
                     }
+                    .accessibilityLabel(Text("Fertig"))
                 }
             }
         }
     }
-}
-
-#Preview {
-    UpdateScreen(
-        location: .init(
-            name: "Much-Niederheimbach",
-            coordinate: .init(latitude: 50.895725646813936, longitude: 7.355648585165031)
-        )
-    )
 }

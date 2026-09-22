@@ -313,7 +313,11 @@ private extension UIFont {
 
 extension Toilet {
     var displayName: String {
-        name.isEmpty ? String(localized: "WC #\(id)") : name
+        let trimmed = name.trimmingCharacters(in: .whitespacesAndNewlines)
+        if trimmed.isEmpty || trimmed.lowercased() == "toilette" {
+            return String(localized: "Toilette")
+        }
+        return name
     }
 
     var accessibilitySnippet: String {

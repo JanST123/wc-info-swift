@@ -69,7 +69,7 @@ struct ToiletFeedbackView: View {
 
     private var toiletInfoCard: some View {
         VStack(alignment: .leading, spacing: 4) {
-            Text(toilet.name)
+            Text(toilet.displayName)
                 .font(.headline)
                 .foregroundStyle(.primary)
 
@@ -124,7 +124,7 @@ struct ToiletFeedbackView: View {
                 }
             }
 
-            TextField("Betreff eingeben oder auswählen...", text: $subject)
+            TextField("Betreff eingeben oder auswählen...", text: $subject, prompt: Text("Betreff eingeben oder auswählen..."))
                 .padding(12)
                 .background(Color(uiColor: .secondarySystemBackground))
                 .clipShape(RoundedRectangle(cornerRadius: 10))
@@ -142,7 +142,7 @@ struct ToiletFeedbackView: View {
                     .foregroundStyle(.secondary)
             }
 
-            TextField("Beschreibe das Problem oder die gewünschten Änderungen...", text: $message, axis: .vertical)
+            TextField("Beschreibe das Problem oder die gewünschten Änderungen...", text: $message, prompt: Text("Beschreibe das Problem oder die gewünschten Änderungen..."), axis: .vertical)
                 .lineLimit(4...8)
                 .padding(12)
                 .background(Color(uiColor: .secondarySystemBackground))

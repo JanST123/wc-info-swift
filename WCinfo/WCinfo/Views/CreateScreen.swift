@@ -298,7 +298,7 @@ struct CreateScreen: View {
             } else {
                 VStack(spacing: 12) {
                     ForEach(nearbyPlaces.prefix(3)) { place in
-                        primaryChoiceButton(title: place.name, subtitle: place.secondaryText) {
+                        primaryChoiceButton(verbatimTitle: place.name, verbatimSubtitle: place.secondaryText) {
                             selectPlaceOption(place)
                         }
                     }
@@ -347,7 +347,7 @@ struct CreateScreen: View {
                 subtitle: "Gib eine kurze Ortsangabe oder Bezeichnung an:"
             )
 
-            TextField("z.B. 1. Stock bei den Umkleiden", text: $toiletName)
+            TextField("z.B. 1. Stock bei den Umkleiden", text: $toiletName, prompt: Text("z.B. 1. Stock bei den Umkleiden"))
                 .textFieldStyle(.plain)
                 .padding(14)
                 .background(Color(uiColor: .systemBackground))
@@ -555,7 +555,7 @@ struct CreateScreen: View {
                 title: "Möchtest du eine Adresse angeben?"
             )
 
-            TextField("Adresse eingeben", text: $addressInput, axis: .vertical)
+            TextField("Adresse eingeben", text: $addressInput, prompt: Text("Adresse eingeben"), axis: .vertical)
                 .lineLimit(3...6)
                 .textFieldStyle(.plain)
                 .padding(14)
@@ -588,7 +588,7 @@ struct CreateScreen: View {
                 title: "Möchtest du eine Webseite angeben?"
             )
 
-            TextField("http://www.beispiel.de", text: $websiteInput)
+            TextField("http://www.beispiel.de", text: $websiteInput, prompt: Text("http://www.beispiel.de"))
                 .textFieldStyle(.plain)
                 .keyboardType(.URL)
                 .textInputAutocapitalization(.never)
@@ -747,7 +747,7 @@ struct CreateScreen: View {
     }
 
     private func storageChoiceButton(
-        title: String,
+        title: LocalizedStringKey,
         imageAsset: String? = nil,
         systemImage: String? = nil,
         isPrimary: Bool,
@@ -812,7 +812,7 @@ struct CreateScreen: View {
                 title: "Möchtest du sonst noch etwas zu dieser Toilette schreiben?"
             )
 
-            TextField("Kommentar oder Hinweise eingeben...", text: $commentInput, axis: .vertical)
+            TextField("Kommentar oder Hinweise eingeben...", text: $commentInput, prompt: Text("Kommentar oder Hinweise eingeben..."), axis: .vertical)
                 .lineLimit(4...8)
                 .textFieldStyle(.plain)
                 .padding(14)
@@ -846,7 +846,7 @@ struct CreateScreen: View {
 
     // MARK: - Reusable UI Elements
 
-    private func questionHeader(iconName: String? = nil, iconAsset: String? = nil, title: String, subtitle: String? = nil) -> some View {
+    private func questionHeader(iconName: String? = nil, iconAsset: String? = nil, title: LocalizedStringKey, subtitle: LocalizedStringKey? = nil) -> some View {
         VStack(spacing: 10) {
             if let iconAsset {
                 Image(iconAsset)
@@ -876,7 +876,7 @@ struct CreateScreen: View {
         .padding(.bottom, 8)
     }
 
-    private func primaryChoiceButton(title: String, subtitle: String? = nil, action: @escaping () -> Void) -> some View {
+    private func primaryChoiceButton(title: LocalizedStringKey, subtitle: LocalizedStringKey? = nil, action: @escaping () -> Void) -> some View {
         Button(action: action) {
             VStack(spacing: 3) {
                 Text(title)
@@ -898,10 +898,35 @@ struct CreateScreen: View {
             .clipShape(RoundedRectangle(cornerRadius: 12))
             .shadow(color: .purple.opacity(0.2), radius: 4, x: 0, y: 2)
         }
-        .accessibilityLabel(title)
+        .accessibilityLabel(Text(title))
     }
 
-    private func secondaryChoiceButton(title: String, action: @escaping () -> Void) -> some View {
+    private func primaryChoiceButton(verbatimTitle: String, verbatimSubtitle: String? = nil, action: @escaping () -> Void) -> some View {
+        Button(action: action) {
+            VStack(spacing: 3) {
+                Text(verbatim: verbatimTitle)
+                    .font(.headline)
+                    .foregroundColor(.white)
+                    .multilineTextAlignment(.center)
+
+                if let verbatimSubtitle {
+                    Text(verbatim: verbatimSubtitle)
+                        .font(.caption)
+                        .foregroundColor(.white.opacity(0.85))
+                        .lineLimit(1)
+                }
+            }
+            .frame(maxWidth: .infinity)
+            .padding(.vertical, 14)
+            .padding(.horizontal, 16)
+            .background(Color.purple)
+            .clipShape(RoundedRectangle(cornerRadius: 12))
+            .shadow(color: .purple.opacity(0.2), radius: 4, x: 0, y: 2)
+        }
+        .accessibilityLabel(Text(verbatim: verbatimTitle))
+    }
+
+    private func secondaryChoiceButton(title: LocalizedStringKey, action: @escaping () -> Void) -> some View {
         Button(action: action) {
             Text(title)
                 .font(.headline)
@@ -913,7 +938,7 @@ struct CreateScreen: View {
                 .clipShape(RoundedRectangle(cornerRadius: 12))
                 .overlay(RoundedRectangle(cornerRadius: 12).stroke(Color.purple.opacity(0.5), lineWidth: 1.5))
         }
-        .accessibilityLabel(title)
+        .accessibilityLabel(Text(title))
     }
 
     // MARK: - Flow & Step Transitions

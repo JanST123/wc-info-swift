@@ -38,6 +38,7 @@ struct CreateScreen: View {
     @State private var errorMessage: String? = nil
     @State private var showHeartAnimation = false
     @State private var showAddToiletByPhotoSheet = false
+    @State private var showCompanyInfoAlert = false
 
     // MARK: - Places Data
     @State private var nearbyPlaces: [NearbyPlaceOption] = []
@@ -74,6 +75,8 @@ struct CreateScreen: View {
                     .ignoresSafeArea()
 
                 VStack(spacing: 0) {
+                    companyBanner
+
                     progressBar
 
                     ScrollView {
@@ -133,6 +136,16 @@ struct CreateScreen: View {
                     }
                 }
             }
+            .alert("Firma oder Kommune?", isPresented: $showCompanyInfoAlert) {
+                Button("E-Mail senden") {
+                    if let url = URL(string: "mailto:hi@wc-info.org?subject=Toiletten-Import") {
+                        UIApplication.shared.open(url)
+                    }
+                }
+                Button("Schließen", role: .cancel) { }
+            } message: {
+                Text("Möchtest du als Unternehmen, Kommune oder Betreiber mehrerer Toiletten eine größere Anzahl an Toiletten hinzufügen?\n\nKontaktiere uns gerne per E-Mail an hi@wc-info.org und sende uns deine Toilettendaten in einem beliebigen Format (z. B. als CSV, Excel- oder Textliste). Wir importieren diese Toiletten sehr gerne für dich!")
+            }
             .task {
                 await loadPlaces()
             }
@@ -140,6 +153,33 @@ struct CreateScreen: View {
                 Analytics.shared.trackScreen("CreateToiletWizard")
             }
         }
+    }
+
+    // MARK: - Company / Municipality Banner
+
+    private var companyBanner: some View {
+        Button {
+            showCompanyInfoAlert = true
+            Analytics.shared.trackEvent(category: "create_wizard", action: "click_company_link")
+        } label: {
+            HStack(spacing: 6) {
+                Image(systemName: "building.2")
+                    .font(.caption)
+                    .foregroundColor(.purple)
+
+                Text("Firma oder Kommune? – Bitte hier entlang")
+                    .font(.caption.weight(.medium))
+                    .foregroundColor(.purple)
+                    .underline()
+            }
+            .frame(maxWidth: .infinity)
+            .padding(.vertical, 8)
+            .padding(.horizontal, 16)
+            .background(Color.purple.opacity(0.08))
+        }
+        .buttonStyle(.plain)
+        .accessibilityLabel("Firma oder Kommune? Bitte hier entlang")
+        .accessibilityHint("Öffnet Informationen zum Import mehrerer Toiletten.")
     }
 
     // MARK: - GPS Coordinate Helper

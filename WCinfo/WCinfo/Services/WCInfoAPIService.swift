@@ -232,6 +232,10 @@ actor WCInfoAPIService {
         request.httpMethod = method
         request.setValue("application/json", forHTTPHeaderField: "Accept")
 
+        if let apiKey = Config.apiKey {
+            request.setValue("Bearer \(apiKey)", forHTTPHeaderField: "Authorization")
+        }
+
         if let body {
             request.httpBody = body
             request.setValue(customContentType ?? "application/json", forHTTPHeaderField: "Content-Type")
@@ -276,7 +280,11 @@ actor WCInfoAPIService {
 
         // Handle Laravel 419 CSRF mismatch by refreshing session once
         if httpResponse.statusCode == 419 && !isRetryAfterCSRF, let healthURL = URL(string: "\(baseURL)/health") {
-            _ = try? await URLSession.shared.data(from: healthURL)
+            var healthRequest = URLRequest(url: healthURL)
+            if let apiKey = Config.apiKey {
+                healthRequest.setValue("Bearer \(apiKey)", forHTTPHeaderField: "Authorization")
+            }
+            _ = try? await URLSession.shared.data(for: healthRequest)
             return try await performRequest(url: url, method: method, body: body, isRetryAfterCSRF: true)
         }
 

@@ -63,6 +63,13 @@ enum Config {
         return key
     }
 
+    static var apiKey: String? {
+        guard let key = plist?["APIKey"] as? String, !key.isEmpty else {
+            return nil
+        }
+        return key
+    }
+
     static var apiBaseURL: String? {
         plist?["APIBaseURL"] as? String
     }

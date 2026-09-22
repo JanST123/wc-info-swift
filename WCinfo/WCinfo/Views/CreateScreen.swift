@@ -698,92 +698,84 @@ struct CreateScreen: View {
                 title: "Gibt es Ablageflächen, Kleiderhaken usw.?"
             )
 
-            LazyVGrid(
-                columns: [
-                    GridItem(.flexible(), spacing: 12),
-                    GridItem(.flexible(), spacing: 12)
-                ],
-                spacing: 12
-            ) {
-                storageChoiceButton(
+            VStack(spacing: 12) {
+                storageRadioButton(
                     title: "Keine",
-                    imageAsset: "storage-none",
-                    isPrimary: true
-                ) {
-                    storageSpace = "none"
-                    patchCurrentState()
-                    advanceToNextStep()
-                }
+                    value: "none",
+                    imageAsset: "storage-none"
+                )
 
-                storageChoiceButton(
+                storageRadioButton(
                     title: "Wenig",
-                    imageAsset: "storage-little",
-                    isPrimary: true
-                ) {
-                    storageSpace = "little"
-                    patchCurrentState()
-                    advanceToNextStep()
-                }
+                    value: "little",
+                    imageAsset: "storage-little"
+                )
 
-                storageChoiceButton(
+                storageRadioButton(
                     title: "Viel",
-                    imageAsset: "storage-much",
-                    isPrimary: true
-                ) {
-                    storageSpace = "much"
-                    patchCurrentState()
-                    advanceToNextStep()
-                }
+                    value: "much",
+                    imageAsset: "storage-much"
+                )
 
-                storageChoiceButton(
+                storageRadioButton(
                     title: "Keine Angabe",
-                    systemImage: "questionmark.circle",
-                    isPrimary: false
-                ) {
-                    advanceToNextStep()
-                }
+                    value: nil,
+                    systemImage: "questionmark.circle"
+                )
+            }
+
+            primaryChoiceButton(title: "Weiter") {
+                patchCurrentState()
+                advanceToNextStep()
             }
         }
     }
 
-    private func storageChoiceButton(
+    private func storageRadioButton(
         title: LocalizedStringKey,
+        value: String?,
         imageAsset: String? = nil,
-        systemImage: String? = nil,
-        isPrimary: Bool,
-        action: @escaping () -> Void
+        systemImage: String? = nil
     ) -> some View {
-        Button(action: action) {
-            VStack(spacing: 8) {
+        let isSelected = (storageSpace == value)
+        return Button {
+            storageSpace = value
+        } label: {
+            HStack(spacing: 12) {
+                Image(systemName: isSelected ? "largecircle.fill.circle" : "circle")
+                    .font(.title3)
+                    .foregroundColor(isSelected ? .purple : Color(.systemGray3))
+
                 if let imageAsset {
                     Image(imageAsset)
                         .renderingMode(.template)
                         .resizable()
                         .aspectRatio(contentMode: .fit)
-                        .frame(width: 32, height: 32)
-                        .foregroundColor(isPrimary ? .white : .primary)
+                        .frame(width: 24, height: 24)
+                        .foregroundColor(isSelected ? .purple : .primary)
                 } else if let systemImage {
                     Image(systemName: systemImage)
-                        .font(.system(size: 28))
-                        .foregroundColor(isPrimary ? .white : .secondary)
+                        .font(.system(size: 22))
+                        .foregroundColor(isSelected ? .purple : .secondary)
                 }
 
                 Text(title)
                     .font(.headline)
-                    .foregroundColor(isPrimary ? .white : .primary)
-                    .multilineTextAlignment(.center)
+                    .foregroundColor(.primary)
+
+                Spacer()
             }
-            .frame(maxWidth: .infinity)
-            .frame(height: 94)
-            .background(isPrimary ? Color.purple : Color(uiColor: .secondarySystemBackground))
+            .padding(.vertical, 14)
+            .padding(.horizontal, 16)
+            .background(isSelected ? Color.purple.opacity(0.1) : Color(uiColor: .systemBackground))
             .clipShape(RoundedRectangle(cornerRadius: 12))
             .overlay(
                 RoundedRectangle(cornerRadius: 12)
-                    .stroke(isPrimary ? Color.clear : Color(.systemGray4), lineWidth: 1)
+                    .stroke(isSelected ? Color.purple : Color(.systemGray4), lineWidth: isSelected ? 1.5 : 1)
             )
-            .shadow(color: isPrimary ? Color.purple.opacity(0.25) : Color.clear, radius: 4, x: 0, y: 2)
         }
         .buttonStyle(.plain)
+        .accessibilityLabel(Text(title))
     }
 
     // MARK: - Question 15: Photos

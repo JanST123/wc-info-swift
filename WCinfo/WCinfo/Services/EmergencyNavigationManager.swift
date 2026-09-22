@@ -9,7 +9,7 @@ enum EmergencyNavigationError: LocalizedError {
     var errorDescription: String? {
         switch self {
         case .noToiletsFound:
-            return String(localized: "Keine passende Toilette in deiner Nähe gefunden.")
+            return String(localized: "Keine passende Toilette im Umkreis von 10 km gefunden.")
         case .locationUnavailable:
             return String(localized: "Dein aktueller Standort konnte nicht ermittelt werden.")
         }
@@ -26,6 +26,7 @@ final class EmergencyNavigationManager: ObservableObject {
     @Published var errorMessage: String? = nil
 
     private let locationManager = LocationManager()
+    private let maxSearchDistanceKm = 10
 
     func handleURL(_ url: URL) {
         guard url.scheme == "wcinfo",
@@ -59,7 +60,7 @@ final class EmergencyNavigationManager: ObservableObject {
                 let toilets = try await WCInfoAPIService.shared.fetchToiletsNearby(
                     latitude: location.coordinate.latitude,
                     longitude: location.coordinate.longitude,
-                    distance: 25,
+                    distance: maxSearchDistanceKm,
                     filter: initialFilterQuery
                 )
 
@@ -74,8 +75,8 @@ final class EmergencyNavigationManager: ObservableObject {
 
                 // Non-public fallback check:
                 // If public-only was selected, fallback is enabled, and the closest public toilet
-                // is further away than maxPublicDistanceMeters (or none was found), search for closer
-                // opened non-public toilets.
+                // is further away than maxPublicDistanceMeters (or none was found within 10km),
+                // search for closer opened non-public toilets within 10km.
                 if !filterSettings.showNonPublic && filterSettings.allowNonPublicFallback {
                     let publicDistance = selectedToilet.map {
                         userLocation.distance(from: CLLocation(latitude: $0.lat, longitude: $0.lon))
@@ -91,7 +92,7 @@ final class EmergencyNavigationManager: ObservableObject {
                         let fallbackToilets = try await WCInfoAPIService.shared.fetchToiletsNearby(
                             latitude: location.coordinate.latitude,
                             longitude: location.coordinate.longitude,
-                            distance: 25,
+                            distance: maxSearchDistanceKm,
                             filter: fallbackSettings.apiFilterQueryString
                         )
 

@@ -62,9 +62,10 @@ actor WCInfoAPIService {
         #endif
     }
 
-    func fetchToiletsNearby(latitude: Double, longitude: Double, distance: Int = 25, filter: String? = nil) async throws -> [Toilet] {
+    func fetchToiletsNearby(latitude: Double, longitude: Double, distance: Int = 10, filter: String? = nil) async throws -> [Toilet] {
+        let clampedDistance = min(max(distance, 1), 10)
         var urlComponents = URLComponents(string: "\(baseURL)/toilets/nearby/\(latitude)/\(longitude)")
-        var queryItems = [URLQueryItem(name: "distance", value: String(distance))]
+        var queryItems = [URLQueryItem(name: "distance", value: String(clampedDistance))]
         if let filter = filter, !filter.isEmpty {
             queryItems.append(URLQueryItem(name: "filter", value: filter))
         }

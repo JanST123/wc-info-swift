@@ -130,6 +130,21 @@ actor WCInfoAPIService {
         }
     }
 
+    func sendToiletFeedback(toiletId: Int, payload: SendToiletFeedbackRequest) async throws -> SendToiletFeedbackResponse {
+        guard let url = URL(string: "\(baseURL)/toilet/feedback/\(toiletId)") else {
+            throw WCInfoAPIError.invalidURL
+        }
+        let encoder = JSONEncoder()
+        let bodyData = try encoder.encode(payload)
+        let data = try await performRequest(url: url, method: "POST", body: bodyData)
+        do {
+            return try decoder.decode(SendToiletFeedbackResponse.self, from: data)
+        } catch {
+            let rawBody = String(data: data, encoding: .utf8)
+            throw WCInfoAPIError.decodingError(underlying: error, responseBody: rawBody)
+        }
+    }
+
     func addToiletProperties(toiletId: Int, properties: [ToiletPropertyItem]) async throws -> AddToiletPropertiesResponse {
         guard let url = URL(string: "\(baseURL)/toilet/add-properties/\(toiletId)") else {
             throw WCInfoAPIError.invalidURL

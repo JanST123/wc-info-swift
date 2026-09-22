@@ -537,6 +537,26 @@ struct UpdateToiletResponse: Codable {
     //let diff: String?
 }
 
+public struct SendToiletFeedbackRequest: Codable {
+    public let subject: String
+    public let message: String
+
+    public init(subject: String, message: String) {
+        self.subject = subject
+        self.message = message
+    }
+}
+
+public struct SendToiletFeedbackResponse: Codable {
+    public let status: String
+    public let message: String
+
+    public init(status: String, message: String) {
+        self.status = status
+        self.message = message
+    }
+}
+
 struct NearbyPlaceOption: Identifiable, Hashable {
     let id: String // placeID
     let name: String

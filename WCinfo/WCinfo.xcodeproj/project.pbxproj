@@ -22,6 +22,8 @@
 		2D76DBE2CAD33D906699F446 /* PhotoLightboxView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4034CA2D98426248D8BA6677 /* PhotoLightboxView.swift */; };
 		3530D800C9089F27660DA170 /* HomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49C7B4EAF1737DA3F6D21CC6 /* HomeView.swift */; };
 		3C079EE9DB9D63316DD5FFA9 /* PhotoUpload.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9C926ADB1FD8DBA1688B185A /* PhotoUpload.swift */; };
+		3D14FCB43063C03B001F5F79 /* CompassManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D14FCB33063C03B001F5F79 /* CompassManager.swift */; };
+		3D14FCB63063C046001F5F79 /* CompassNavigationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D14FCB53063C046001F5F79 /* CompassNavigationView.swift */; };
 		41971C017127FD081AC3DCA0 /* lavendel.webp in Resources */ = {isa = PBXBuildFile; fileRef = 45ABED18316429508872959F /* lavendel.webp */; };
 		44FCF2006384CA06AF06B219 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 785017DA774C5F6FACF2DEA8 /* Assets.xcassets */; };
 		53B5ADA9717EB304257E985D /* GooglePlaces in Frameworks */ = {isa = PBXBuildFile; productRef = 6DADB02E48D49CCBDF450B83 /* GooglePlaces */; };
@@ -54,10 +56,12 @@
 		24FE9E0F164661C96A583E1F /* PlacesService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlacesService.swift; sourceTree = "<group>"; };
 		291356F8CD1C1B4094AFA3BA /* ResizableSplit.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResizableSplit.swift; sourceTree = "<group>"; };
 		3551150A061077271C2DBBF1 /* Config.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Config.plist; sourceTree = "<group>"; };
+		3D14FCB33063C03B001F5F79 /* CompassManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CompassManager.swift; sourceTree = "<group>"; };
+		3D14FCB53063C046001F5F79 /* CompassNavigationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CompassNavigationView.swift; sourceTree = "<group>"; };
 		4034CA2D98426248D8BA6677 /* PhotoLightboxView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoLightboxView.swift; sourceTree = "<group>"; };
 		40B98EAAE3DDD2D2813555C1 /* DetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetailView.swift; sourceTree = "<group>"; };
 		440843A00BC7F792DD4ED1DA /* OpeningTimeComponent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OpeningTimeComponent.swift; sourceTree = "<group>"; };
-		45ABED18316429508872959F /* lavendel.webp */ = {isa = PBXFileReference; path = lavendel.webp; sourceTree = "<group>"; };
+		45ABED18316429508872959F /* lavendel.webp */ = {isa = PBXFileReference; lastKnownFileType = file; path = lavendel.webp; sourceTree = "<group>"; };
 		49C7B4EAF1737DA3F6D21CC6 /* HomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeView.swift; sourceTree = "<group>"; };
 		54EAD5A8713A39D5023CEFF9 /* ResultsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResultsView.swift; sourceTree = "<group>"; };
 		5C8E292F362F3D863914E9A1 /* logo.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = logo.png; sourceTree = "<group>"; };
@@ -70,9 +74,9 @@
 		864669E1DB2A8D0EB3226197 /* Toilet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Toilet.swift; sourceTree = "<group>"; };
 		8813967B53E2B15594374841 /* Analytics.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Analytics.swift; sourceTree = "<group>"; };
 		925DEEFD3CE16497190BF220 /* WCinfoApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WCinfoApp.swift; sourceTree = "<group>"; };
-		98206EC1B58637F02429F106 /* logo.svg */ = {isa = PBXFileReference; path = logo.svg; sourceTree = "<group>"; };
+		98206EC1B58637F02429F106 /* logo.svg */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = logo.svg; sourceTree = "<group>"; };
 		9C926ADB1FD8DBA1688B185A /* PhotoUpload.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoUpload.swift; sourceTree = "<group>"; };
-		A787E4597E149070DF6A1DA9 /* Config.plist.template */ = {isa = PBXFileReference; path = Config.plist.template; sourceTree = "<group>"; };
+		A787E4597E149070DF6A1DA9 /* Config.plist.template */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = Config.plist.template; sourceTree = "<group>"; };
 		AD15A702EDED596300914B49 /* MapView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapView.swift; sourceTree = "<group>"; };
 		CF7C971ECE106A8C4D81E879 /* LocationPickerMapView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationPickerMapView.swift; sourceTree = "<group>"; };
 		D8E85F55F07F815B9237F54D /* PhotoUploadLegalNoticeSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoUploadLegalNoticeSheet.swift; sourceTree = "<group>"; };
@@ -121,6 +125,7 @@
 				1F26E9CA4889FD50D1DFD152 /* ToiletRowView.swift */,
 				76E12E960C37DF0A25ED81CE /* ToiletSymbolComponent.swift */,
 				EE1DEC3A217CD0ADCD9C63D8 /* UpdateScreen.swift */,
+				3D14FCB53063C046001F5F79 /* CompassNavigationView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -176,6 +181,7 @@
 				741A6F3C66231D4657FACB0D /* LocationManager.swift */,
 				24FE9E0F164661C96A583E1F /* PlacesService.swift */,
 				0B9E1A59C7B37C57F6BAEEBE /* WCInfoAPIService.swift */,
+				3D14FCB33063C03B001F5F79 /* CompassManager.swift */,
 			);
 			path = Services;
 			sourceTree = "<group>";
@@ -222,8 +228,6 @@
 			attributes = {
 				BuildIndependentTargetsInParallel = YES;
 				LastUpgradeCheck = 1430;
-				TargetAttributes = {
-				};
 			};
 			buildConfigurationList = CA1DF3C2A23A7E17B1907AD1 /* Build configuration list for PBXProject "WCinfo" */;
 			developmentRegion = en;
@@ -279,6 +283,7 @@
 				A678300D3E8290C73D892652 /* ErrorManager.swift in Sources */,
 				1773BC379D73E05576BAC7E3 /* FilterBannerView.swift in Sources */,
 				3530D800C9089F27660DA170 /* HomeView.swift in Sources */,
+				3D14FCB63063C046001F5F79 /* CompassNavigationView.swift in Sources */,
 				0CDD01A1104F0B0AD58FC906 /* LocationManager.swift in Sources */,
 				F61EB100D45A5D6BBA55EE46 /* LocationPickerMapView.swift in Sources */,
 				02AC307F0CA95959ED5C080F /* MapView.swift in Sources */,
@@ -296,6 +301,7 @@
 				122B967E687BE9E819A028A7 /* ToiletRowView.swift in Sources */,
 				B3A2A3B1040446D1A12AD8A0 /* ToiletSymbolComponent.swift in Sources */,
 				8FE5479A0A6788D60D5F20FD /* UpdateScreen.swift in Sources */,
+				3D14FCB43063C03B001F5F79 /* CompassManager.swift in Sources */,
 				0780964FC556E1DECF7B5E12 /* WCInfoAPIService.swift in Sources */,
 				18F4A9DE47C1F1897B9C9D69 /* WCinfoApp.swift in Sources */,
 			);

@@ -11,6 +11,8 @@ struct DetailView: View {
     @State private var isShowingEuroKeyInfoSheet = false
     @State private var isShowingEditOptions = false
     @State private var isShowingFeedbackSheet = false
+    @State private var isShowingNavigationOptions = false
+    @State private var isShowingCompassNavigation = false
 
     var body: some View {
         NavigationStack {
@@ -57,9 +59,29 @@ struct DetailView: View {
             } message: {
                 Text("Möchtest du eine kurze Rückmeldung als Text senden oder die Angaben im Formular anpassen?")
             }
+            .confirmationDialog(
+                "Navigation starten",
+                isPresented: $isShowingNavigationOptions,
+                titleVisibility: .visible
+            ) {
+                Button("Kompass") {
+                    isShowingCompassNavigation = true
+                }
+                Button("Karten-App") {
+                    navigateToToilet()
+                }
+                Button("Abbrechen", role: .cancel) { }
+            } message: {
+                Text("Wähle zwischen der internen Kompass-Navigation und der externen Karten-App.")
+            }
             .sheet(isPresented: $isShowingFeedbackSheet) {
                 ToiletFeedbackView(toilet: toilet)
                     .presentationDetents([.medium, .large])
+                    .presentationDragIndicator(.visible)
+            }
+            .sheet(isPresented: $isShowingCompassNavigation) {
+                CompassNavigationView(toilet: toilet)
+                    .presentationDetents([.large])
                     .presentationDragIndicator(.visible)
             }
             .fullScreenCover(isPresented: Binding(
@@ -140,7 +162,9 @@ struct DetailView: View {
     }
 
     private var navigationButton: some View {
-        Button(action: navigateToToilet) {
+        Button(action: {
+            isShowingNavigationOptions = true
+        }) {
             HStack {
                 Image(systemName: "arrow.turn.up.right")
                 Text("Navigieren")
@@ -153,7 +177,7 @@ struct DetailView: View {
             .clipShape(RoundedRectangle(cornerRadius: 12))
         }
         .accessibilityLabel("Navigieren zu \(toilet.name)")
-        .accessibilityHint("Öffnet die Karten-App mit der Route zur Toilette.")
+        .accessibilityHint("Wähle zwischen Kompass- und Karten-Navigation.")
     }
 
     private var featuresSection: some View {
@@ -513,7 +537,7 @@ struct DetailView: View {
     }
 
     private func navigateToToilet() {
-        Analytics.shared.trackEvent(category: "detail", action: "navigate", name: toilet.name)
+        Analytics.shared.trackEvent(category: "detail", action: "navigate_maps", name: toilet.name)
         let coordinate = CLLocationCoordinate2D(latitude: toilet.lat, longitude: toilet.lon)
         let placemark = MKPlacemark(coordinate: coordinate)
         let mapItem = MKMapItem(placemark: placemark)

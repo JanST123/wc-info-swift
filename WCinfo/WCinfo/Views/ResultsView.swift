@@ -14,6 +14,8 @@ struct ResultsView: View {
     @State private var selectedToilet: Toilet?
     @State private var detailToilet: Toilet?
     @State private var toiletToUpdate: Toilet? = nil
+    @State private var toiletToNavigate: Toilet? = nil
+    @State private var compassToilet: Toilet? = nil
     @State private var isShowingCreateSheet = false
     @State private var createSheetCoordinate: CLLocationCoordinate2D? = nil
     @State private var filterSettings = ToiletFilterSettings.load()
@@ -72,6 +74,11 @@ struct ResultsView: View {
             .presentationDetents([.medium, .large])
             .presentationDragIndicator(.visible)
         }
+        .sheet(item: $compassToilet) { toilet in
+            CompassNavigationView(toilet: toilet)
+                .presentationDetents([.large])
+                .presentationDragIndicator(.visible)
+        }
         .sheet(isPresented: $isShowingCreateSheet) {
             CreateScreen(
                 location: location,
@@ -83,6 +90,30 @@ struct ResultsView: View {
             }
             .presentationDetents([.medium, .large])
             .presentationDragIndicator(.visible)
+        }
+        .confirmationDialog(
+            "Navigation starten",
+            isPresented: Binding(
+                get: { toiletToNavigate != nil },
+                set: { if !$0 { toiletToNavigate = nil } }
+            ),
+            titleVisibility: .visible
+        ) {
+            if let toilet = toiletToNavigate {
+                Button("Kompass") {
+                    compassToilet = toilet
+                    toiletToNavigate = nil
+                }
+                Button("Karten-App") {
+                    openExternalMaps(to: toilet)
+                    toiletToNavigate = nil
+                }
+                Button("Abbrechen", role: .cancel) {
+                    toiletToNavigate = nil
+                }
+            }
+        } message: {
+            Text("Wähle zwischen der internen Kompass-Navigation und der externen Karten-App.")
         }
     }
 
@@ -261,7 +292,11 @@ struct ResultsView: View {
     }
 
     private func openNavigation(to toilet: Toilet) {
-        Analytics.shared.trackEvent(category: "results", action: "navigate", name: String(toilet.id))
+        toiletToNavigate = toilet
+    }
+
+    private func openExternalMaps(to toilet: Toilet) {
+        Analytics.shared.trackEvent(category: "results", action: "navigate_maps", name: String(toilet.id))
         let item = MKMapItem(placemark: MKPlacemark(coordinate: toilet.coordinate))
         item.name = toilet.displayName
         item.openInMaps(launchOptions: [MKLaunchOptionsDirectionsModeKey: MKLaunchOptionsDirectionsModeWalking])

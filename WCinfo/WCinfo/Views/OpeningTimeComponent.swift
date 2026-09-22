@@ -7,11 +7,22 @@ struct OpeningTimeComponent: View {
     let closeTimestamp: Date?
     var accessibleOutsideOpeningTimes: Bool = false
     var isOpen24Hours: Bool = false
+    var isTemporaryClosed: Bool = false
     var alignment: HorizontalAlignment = .trailing
 
     var body: some View {
         VStack(alignment: alignment, spacing: 2) {
-            if isOpen24Hours {
+            if isTemporaryClosed {
+                HStack(spacing: 4) {
+                    Image(systemName: "exclamationmark.triangle.fill")
+                        .font(.subheadline.bold())
+                        .foregroundColor(.orange)
+
+                    Text("Temporary closed")
+                        .font(.subheadline.bold())
+                        .foregroundColor(.orange)
+                }
+            } else if isOpen24Hours {
                 Text("Jetzt geöffnet")
                     .font(.subheadline.bold())
                     .foregroundColor(.green)
@@ -57,6 +68,9 @@ struct OpeningTimeComponent: View {
     }
 
     private var accessibilityLabel: String {
+        if isTemporaryClosed {
+            return String(localized: "Temporary closed")
+        }
         var parts = [String]()
         if isOpen24Hours {
             parts.append(String(localized: "Jetzt geöffnet"))

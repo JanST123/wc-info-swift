@@ -94,7 +94,8 @@ struct ToiletRowView: View {
                         openTimestamp: toilet.isOpen24HoursEveryDay ? nil : toilet.openTimestamp,
                         closeTimestamp: toilet.isOpen24HoursEveryDay ? nil : toilet.closeTimestamp,
                         accessibleOutsideOpeningTimes: toilet.accessibleOutsideOpeningTimes,
-                        isOpen24Hours: toilet.isOpen24HoursEveryDay
+                        isOpen24Hours: toilet.isOpen24HoursEveryDay,
+                        isTemporaryClosed: toilet.temporaryClosed
                     )
 
                     if !toilet.isPublicAccessible {
@@ -211,6 +212,9 @@ struct ToiletRowView: View {
 
     private var accessibilityLabel: String {
         var parts = [toilet.owner, toilet.name]
+        if toilet.temporaryClosed {
+            parts.append(String(localized: "Temporary closed"))
+        }
         if !toilet.isPublicAccessible {
             parts.append(String(localized: "Nicht öffentlich zugänglich"))
         }

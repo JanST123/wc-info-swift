@@ -22,6 +22,7 @@ struct Toilet: Identifiable, Codable, Hashable {
     let storageSpace: String?
     let accessibleOutsideOpeningTimes: Bool
     let isPublicAccessible: Bool
+    let temporaryClosed: Bool
     let isOpen: Bool?
     let distance: Double?
     let photos: [ToiletPhoto]
@@ -52,6 +53,7 @@ struct Toilet: Identifiable, Codable, Hashable {
         case storageSpace = "storage_space"
         case accessibleOutsideOpeningTimes = "accessible_outside_opening_times"
         case isPublicAccessible = "public_accessible"
+        case temporaryClosed = "temporary_closed"
         case isOpen = "is_open"
         case distance, photos
         case openTimestamp = "open_timestamp"
@@ -100,6 +102,7 @@ struct Toilet: Identifiable, Codable, Hashable {
         hasChangingTable = container.decodeFlexibleBool(forKey: .hasChangingTable)
         accessibleOutsideOpeningTimes = container.decodeFlexibleBool(forKey: .accessibleOutsideOpeningTimes)
         isPublicAccessible = container.decodeFlexibleBool(forKey: .isPublicAccessible)
+        temporaryClosed = container.decodeFlexibleBool(forKey: .temporaryClosed)
 
         source = try container.decodeIfPresent(String.self, forKey: .source)
         address = try container.decodeIfPresent(String.self, forKey: .address)
@@ -413,6 +416,7 @@ public enum ToiletPropertyType: String, Codable {
     case storageSpace = "storage_space"
     case accessibleOutsideOpeningTimes = "accessible_outside_opening_times"
     case publicAccessible = "public_accessible"
+    case temporaryClosed = "temporary_closed"
     case comment
     case isUnisex = "is_unisex"
     case isGenderSeparated = "is_gender_separated"
@@ -459,6 +463,7 @@ struct AddToiletPayload: Codable {
     var hasChangingTable: Bool?
     var accessibleOutsideOpeningTimes: Bool?
     var publicAccessible: Bool?
+    var temporaryClosed: Bool?
     var placeOpeningHours: [GooglePlacesPeriod]?
     var address: String?
     var website: String?
@@ -476,6 +481,7 @@ struct AddToiletPayload: Codable {
         case hasChangingTable = "has_changing_table"
         case accessibleOutsideOpeningTimes = "accessible_outside_opening_times"
         case publicAccessible = "public_accessible"
+        case temporaryClosed = "temporary_closed"
         case placeOpeningHours = "place_opening_hours"
         case address, website, comment
         case euroKey = "euro_key"
@@ -502,6 +508,7 @@ struct UpdateToiletPayload: Codable {
     var hasChangingTable: Bool?
     var accessibleOutsideOpeningTimes: Bool?
     var publicAccessible: Bool?
+    var temporaryClosed: Bool?
     var placeOpeningHours: [GooglePlacesPeriod]?
     var address: String?
     var website: String?
@@ -520,6 +527,7 @@ struct UpdateToiletPayload: Codable {
         case hasChangingTable = "has_changing_table"
         case accessibleOutsideOpeningTimes = "accessible_outside_opening_times"
         case publicAccessible = "public_accessible"
+        case temporaryClosed = "temporary_closed"
         case placeOpeningHours = "place_opening_hours"
         case address, website, comment
         case euroKey = "euro_key"

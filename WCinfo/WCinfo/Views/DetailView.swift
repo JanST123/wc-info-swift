@@ -299,6 +299,7 @@ struct DetailView: View {
                     closeTimestamp: toilet.isOpen24HoursEveryDay ? nil : toilet.closeTimestamp,
                     accessibleOutsideOpeningTimes: toilet.accessibleOutsideOpeningTimes,
                     isOpen24Hours: toilet.isOpen24HoursEveryDay,
+                    isTemporaryClosed: toilet.temporaryClosed,
                     alignment: .leading
                 )
                 .padding(12)
@@ -334,6 +335,7 @@ struct DetailView: View {
                     openTimestamp: toilet.openTimestamp,
                     closeTimestamp: toilet.closeTimestamp,
                     accessibleOutsideOpeningTimes: toilet.accessibleOutsideOpeningTimes,
+                    isTemporaryClosed: toilet.temporaryClosed,
                     alignment: .leading
                 )
                 .padding(12)

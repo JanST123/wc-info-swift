@@ -1,6 +1,7 @@
 import SwiftUI
 import GoogleMaps
 import CoreLocation
+import CoreImage
 
 struct MapView: UIViewRepresentable {
     @Environment(\.colorScheme) private var colorScheme
@@ -64,7 +65,7 @@ struct MapView: UIViewRepresentable {
             let marker = GMSMarker(position: toilet.coordinate)
             marker.title = toilet.displayName
             marker.snippet = toilet.accessibilitySnippet
-            marker.icon = UIImage(named: toilet.markerIconName)
+            marker.icon = toilet.markerIcon
             marker.userData = toilet.id
             marker.map = mapView
             if toilet.id == selectedToiletID {
@@ -322,6 +323,7 @@ extension Toilet {
 
     var accessibilitySnippet: String {
         var parts = [String]()
+        if temporaryClosed { parts.append(String(localized: "Temporary closed")) }
         if hasWheelchairAccess { parts.append(String(localized: "Rollstuhlgerecht")) }
         if isGenderSeparated { parts.append(String(localized: "Getrennte Toiletten")) } else { parts.append(String(localized: "Unisex")) }
         if hasChangingTable { parts.append(String(localized: "Wickeltisch")) }
@@ -337,5 +339,48 @@ extension Toilet {
         } else {
             return "toiletUnisex"
         }
+    }
+
+    var markerIcon: UIImage? {
+        MarkerImageCache.markerIcon(for: self)
+    }
+}
+
+private enum MarkerImageCache {
+    private static let ciContext = CIContext(options: nil)
+    private static var cache = [String: UIImage]()
+
+    static func markerIcon(for toilet: Toilet) -> UIImage? {
+        let iconName = toilet.markerIconName
+        let key = toilet.temporaryClosed ? "\(iconName)_gray" : iconName
+        if let cached = cache[key] {
+            return cached
+        }
+
+        guard let originalImage = UIImage(named: iconName) else {
+            return nil
+        }
+
+        if toilet.temporaryClosed {
+            if let grayImage = makeGray(image: originalImage) {
+                cache[key] = grayImage
+                return grayImage
+            }
+        }
+
+        cache[key] = originalImage
+        return originalImage
+    }
+
+    private static func makeGray(image: UIImage) -> UIImage? {
+        guard let ciImage = CIImage(image: image) else { return nil }
+        let filter = CIFilter(name: "CIColorControls")
+        filter?.setValue(ciImage, forKey: kCIInputImageKey)
+        filter?.setValue(0.0, forKey: kCIInputSaturationKey)
+        guard let outputImage = filter?.outputImage,
+              let cgImage = ciContext.createCGImage(outputImage, from: outputImage.extent) else {
+            return nil
+        }
+        return UIImage(cgImage: cgImage, scale: image.scale, orientation: image.imageOrientation)
     }
 }

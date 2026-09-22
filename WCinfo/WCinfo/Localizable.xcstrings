@@ -4549,6 +4549,22 @@
         }
       }
     },
+    "Temporary closed": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Vorübergehend geschlossen"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Temporary closed"
+          }
+        }
+      }
+    },
     "Täglich 24 Stunden geöffnet": {
       "localizations": {
         "de": {

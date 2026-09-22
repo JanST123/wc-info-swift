@@ -6,6 +6,8 @@ import MatomoTracker
 
 @main
 struct WCinfoApp: App {
+    @StateObject private var emergencyManager = EmergencyNavigationManager.shared
+
     init() {
         let key = Config.googleAPIKey
         GMSServices.provideAPIKey(key)
@@ -31,6 +33,15 @@ struct WCinfoApp: App {
         WindowGroup {
             HomeView()
                 .overlay(ErrorBannerView())
+                .overlay(EmergencyLoadingOverlayView())
+                .sheet(item: $emergencyManager.compassToilet) { toilet in
+                    CompassNavigationView(toilet: toilet)
+                        .presentationDetents([.large])
+                        .presentationDragIndicator(.visible)
+                }
+                .onOpenURL { url in
+                    emergencyManager.handleURL(url)
+                }
         }
     }
 }

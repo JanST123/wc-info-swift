@@ -38,6 +38,7 @@
 		CE40F6737C5B811B9DAFFB88 /* ToiletFeedbackView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB00906FF8A5B4AA87900C09 /* ToiletFeedbackView.swift */; };
 		D3AA8A57B6B8A5E03CBFF522 /* OpeningTimesInput.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7BB26BE83DF5FC2B720C4BB7 /* OpeningTimesInput.swift */; };
 		D9A9E19F2524F9D4D733FE0A /* logo.png in Resources */ = {isa = PBXBuildFile; fileRef = 5C8E292F362F3D863914E9A1 /* logo.png */; };
+		E0F365632A13E745DBE45774 /* PhotoUploadLegalNoticeSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8E85F55F07F815B9237F54D /* PhotoUploadLegalNoticeSheet.swift */; };
 		E2F1526B262145BDEEC79EFF /* AddToiletByPhotoSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = E7AEBBBDAB9AA71F8A302F94 /* AddToiletByPhotoSheet.swift */; };
 		E48051D751C1814E2FD08D4F /* Toilet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 864669E1DB2A8D0EB3226197 /* Toilet.swift */; };
 		E61A3B8C6537331E0FCA1865 /* PlacesService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 24FE9E0F164661C96A583E1F /* PlacesService.swift */; };
@@ -74,6 +75,7 @@
 		A787E4597E149070DF6A1DA9 /* Config.plist.template */ = {isa = PBXFileReference; path = Config.plist.template; sourceTree = "<group>"; };
 		AD15A702EDED596300914B49 /* MapView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapView.swift; sourceTree = "<group>"; };
 		CF7C971ECE106A8C4D81E879 /* LocationPickerMapView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationPickerMapView.swift; sourceTree = "<group>"; };
+		D8E85F55F07F815B9237F54D /* PhotoUploadLegalNoticeSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoUploadLegalNoticeSheet.swift; sourceTree = "<group>"; };
 		DB00906FF8A5B4AA87900C09 /* ToiletFeedbackView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ToiletFeedbackView.swift; sourceTree = "<group>"; };
 		E3DE4CC45EE50019278FC83D /* FilterBannerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FilterBannerView.swift; sourceTree = "<group>"; };
 		E44E24B4A1CB41771AAD8444 /* WCinfo.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = WCinfo.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -111,6 +113,7 @@
 				7BB26BE83DF5FC2B720C4BB7 /* OpeningTimesInput.swift */,
 				4034CA2D98426248D8BA6677 /* PhotoLightboxView.swift */,
 				9C926ADB1FD8DBA1688B185A /* PhotoUpload.swift */,
+				D8E85F55F07F815B9237F54D /* PhotoUploadLegalNoticeSheet.swift */,
 				F80BDCF81EA3BD63C6A675E1 /* QualifiedBadgeView.swift */,
 				291356F8CD1C1B4094AFA3BA /* ResizableSplit.swift */,
 				54EAD5A8713A39D5023CEFF9 /* ResultsView.swift */,
@@ -283,6 +286,7 @@
 				D3AA8A57B6B8A5E03CBFF522 /* OpeningTimesInput.swift in Sources */,
 				2D76DBE2CAD33D906699F446 /* PhotoLightboxView.swift in Sources */,
 				3C079EE9DB9D63316DD5FFA9 /* PhotoUpload.swift in Sources */,
+				E0F365632A13E745DBE45774 /* PhotoUploadLegalNoticeSheet.swift in Sources */,
 				E61A3B8C6537331E0FCA1865 /* PlacesService.swift in Sources */,
 				90D895F108546ACD20940349 /* QualifiedBadgeView.swift in Sources */,
 				7DDBBDAA606D5208430B9BA8 /* ResizableSplit.swift in Sources */,

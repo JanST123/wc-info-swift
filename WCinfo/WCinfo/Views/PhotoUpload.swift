@@ -8,6 +8,9 @@ struct PhotoUpload: View {
     var onPhotoUploaded: ((UploadPhotoResponse) -> Void)? = nil
     var onPhotosChanged: (([UploadedPhotoItem]) -> Void)? = nil
 
+    @AppStorage("hasConfirmedPhotoUploadLegalNotice") private var hasConfirmedLegalNotice = false
+    @State private var showingLegalNotice = false
+    @State private var pendingPickerItems: [PhotosPickerItem] = []
     @State private var selectedPickerItems: [PhotosPickerItem] = []
     @State private var photoItems: [UploadedPhotoItem] = []
     @State private var uploadTasks: [UUID: Task<Void, Never>] = [:]
@@ -50,8 +53,14 @@ struct PhotoUpload: View {
             }
             .buttonStyle(.plain)
             .onChange(of: selectedPickerItems) { _, newItems in
-                Task {
-                    await handlePickedPhotos(newItems)
+                guard !newItems.isEmpty else { return }
+                if !hasConfirmedLegalNotice {
+                    pendingPickerItems = newItems
+                    showingLegalNotice = true
+                } else {
+                    Task {
+                        await handlePickedPhotos(newItems)
+                    }
                 }
             }
 
@@ -69,6 +78,24 @@ struct PhotoUpload: View {
         .frame(maxWidth: .infinity, alignment: .leading)
         .background(Color(uiColor: .secondarySystemBackground))
         .clipShape(RoundedRectangle(cornerRadius: 14))
+        .sheet(isPresented: $showingLegalNotice) {
+            PhotoUploadLegalNoticeSheet(
+                onConfirm: {
+                    hasConfirmedLegalNotice = true
+                    let items = pendingPickerItems
+                    pendingPickerItems = []
+                    Task {
+                        await handlePickedPhotos(items)
+                    }
+                },
+                onCancel: {
+                    pendingPickerItems = []
+                    selectedPickerItems = []
+                }
+            )
+            .presentationDetents([.large])
+            .presentationDragIndicator(.visible)
+        }
         .onDisappear {
             for task in uploadTasks.values {
                 task.cancel()

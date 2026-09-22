@@ -174,6 +174,21 @@ struct ToiletRowView: View {
                 hasEuroKey: toilet.euroKey?.lowercased() == "yes" || toilet.euroKey?.lowercased() == "true" || toilet.euroKey == "1"
             )
 
+            if let comment = toilet.comment, !comment.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+                HStack(alignment: .top, spacing: 6) {
+                    Image(systemName: "text.bubble")
+                        .font(.caption)
+                        .foregroundColor(.secondary)
+
+                    Text(comment.trimmingCharacters(in: .whitespacesAndNewlines))
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                        .lineLimit(2)
+                        .multilineTextAlignment(.leading)
+                }
+                .padding(.vertical, 1)
+            }
+
             HStack(alignment: .bottom, spacing: 12) {
                 if let address = toilet.address, !address.isEmpty {
                     Text(address)
@@ -201,6 +216,9 @@ struct ToiletRowView: View {
         }
         if let address = toilet.address, !address.isEmpty {
             parts.append(address)
+        }
+        if let comment = toilet.comment, !comment.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+            parts.append("Bemerkung: \(comment.trimmingCharacters(in: .whitespacesAndNewlines))")
         }
         if let distance = formattedDistance {
             parts.append("Entfernung \(distance)")

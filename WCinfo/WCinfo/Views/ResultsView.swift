@@ -193,8 +193,11 @@ struct ResultsView: View {
                 onCameraIdle: { south, west, north, east in
                     currentBounds = (south, west, north, east)
                     boundsFetchTask?.cancel()
+                    let isInitialLoad = toilets.isEmpty
                     boundsFetchTask = Task {
-                        try? await Task.sleep(nanoseconds: 200_000_000)
+                        if !isInitialLoad {
+                            try? await Task.sleep(nanoseconds: 1_000_000_000)
+                        }
                         guard !Task.isCancelled else { return }
                         await loadToiletsForBounds(south: south, west: west, north: north, east: east)
                     }

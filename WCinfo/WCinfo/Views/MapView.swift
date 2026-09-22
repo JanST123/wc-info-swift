@@ -10,6 +10,7 @@ struct MapView: UIViewRepresentable {
     var mapType: GMSMapViewType = .normal
     var onShowDetails: (Toilet) -> Void = { _ in }
     var onAddToiletAtCoordinate: ((CLLocationCoordinate2D) -> Void)? = nil
+    var onCameraWillMove: ((_ gesture: Bool) -> Void)? = nil
     var onCameraIdle: ((_ south: Double, _ west: Double, _ north: Double, _ east: Double) -> Void)? = nil
 
     func makeUIView(context: Context) -> GMSMapView {
@@ -31,6 +32,7 @@ struct MapView: UIViewRepresentable {
         context.coordinator.toilets = toilets
         context.coordinator.onShowDetails = onShowDetails
         context.coordinator.onAddToiletAtCoordinate = onAddToiletAtCoordinate
+        context.coordinator.onCameraWillMove = onCameraWillMove
         context.coordinator.onCameraIdle = onCameraIdle
 
         if mapView.mapType != mapType {
@@ -105,6 +107,7 @@ struct MapView: UIViewRepresentable {
         var toilets: [Toilet] = []
         var onShowDetails: (Toilet) -> Void = { _ in }
         var onAddToiletAtCoordinate: ((CLLocationCoordinate2D) -> Void)? = nil
+        var onCameraWillMove: ((_ gesture: Bool) -> Void)? = nil
         var onCameraIdle: ((_ south: Double, _ west: Double, _ north: Double, _ east: Double) -> Void)? = nil
         var addMarker: GMSMarker?
 
@@ -133,6 +136,10 @@ struct MapView: UIViewRepresentable {
                 return true
             }
             return false
+        }
+
+        func mapView(_ mapView: GMSMapView, willMove gesture: Bool) {
+            onCameraWillMove?(gesture)
         }
 
         func mapView(_ mapView: GMSMapView, idleAt position: GMSCameraPosition) {

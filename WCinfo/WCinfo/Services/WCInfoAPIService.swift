@@ -251,8 +251,15 @@ actor WCInfoAPIService {
         do {
             (data, response) = try await URLSession.shared.data(for: request)
         } catch {
+            if Task.isCancelled || (error as? URLError)?.code == .cancelled || error is CancellationError {
+                throw CancellationError()
+            }
             addBreadcrumb(category: "api", message: "Network error: \(error.localizedDescription)", level: .error)
             throw WCInfoAPIError.networkError(underlying: error)
+        }
+
+        if Task.isCancelled {
+            throw CancellationError()
         }
 
         guard let httpResponse = response as? HTTPURLResponse else {

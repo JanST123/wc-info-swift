@@ -7,6 +7,7 @@ struct ResultsView: View {
 
     @State private var toilets: [Toilet] = []
     @State private var isLoading = true
+    @State private var isFetchingBounds = false
     @State private var portraitRatio: CGFloat = 0.66
     @State private var landscapeRatio: CGFloat = 0.5
     @State private var isDraggingSplit = false
@@ -167,7 +168,7 @@ struct ResultsView: View {
     }
 
     private var mapContent: some View {
-        ZStack(alignment: .topTrailing) {
+        ZStack(alignment: .top) {
             MapView(
                 center: location.coordinate,
                 toilets: toilets,
@@ -180,11 +181,20 @@ struct ResultsView: View {
                     createSheetCoordinate = coordinate
                     isShowingCreateSheet = true
                 },
+                onCameraWillMove: { gesture in
+                    if gesture {
+                        boundsFetchTask?.cancel()
+                        boundsFetchTask = nil
+                        withAnimation(.easeInOut(duration: 0.15)) {
+                            isFetchingBounds = false
+                        }
+                    }
+                },
                 onCameraIdle: { south, west, north, east in
                     currentBounds = (south, west, north, east)
                     boundsFetchTask?.cancel()
                     boundsFetchTask = Task {
-                        try? await Task.sleep(nanoseconds: 300_000_000)
+                        try? await Task.sleep(nanoseconds: 200_000_000)
                         guard !Task.isCancelled else { return }
                         await loadToiletsForBounds(south: south, west: west, north: north, east: east)
                     }
@@ -192,29 +202,52 @@ struct ResultsView: View {
             )
             .ignoresSafeArea(edges: [.bottom, .leading, .trailing])
 
-            // Floating Satellite / Map Type toggle button
-            Button {
-                withAnimation(.easeInOut(duration: 0.2)) {
-                    isSatellite.toggle()
+            // Overlay controls (Loading indicator & Satellite button)
+            HStack(alignment: .top) {
+                if isFetchingBounds {
+                    HStack(spacing: 6) {
+                        ProgressView()
+                            .controlSize(.small)
+                            .tint(.purple)
+                        Text("Laden...")
+                            .font(.caption2.bold())
+                            .foregroundColor(.secondary)
+                    }
+                    .padding(.horizontal, 10)
+                    .padding(.vertical, 6)
+                    .background(.ultraThinMaterial)
+                    .clipShape(Capsule())
+                    .shadow(color: .black.opacity(0.12), radius: 4, x: 0, y: 2)
+                    .accessibilityLabel("Toiletten im Kartenausschnitt werden geladen")
+                    .transition(.opacity.combined(with: .scale(scale: 0.85)))
                 }
-                Analytics.shared.trackEvent(
-                    category: "results_map",
-                    action: "toggle_satellite",
-                    name: isSatellite ? "satellite_on" : "satellite_off"
-                )
-            } label: {
-                Image(systemName: isSatellite ? "globe.europe.africa.fill" : "square.2.layers.3d")
-                    .font(.system(size: 18, weight: .semibold))
-                    .foregroundColor(isSatellite ? .white : .primary)
-                    .frame(width: 44, height: 44)
-                    .background(isSatellite ? Color.purple : Color(uiColor: .secondarySystemGroupedBackground))
-                    .clipShape(Circle())
-                    .shadow(color: .black.opacity(0.18), radius: 4, x: 0, y: 2)
+
+                Spacer()
+
+                // Floating Satellite / Map Type toggle button
+                Button {
+                    withAnimation(.easeInOut(duration: 0.2)) {
+                        isSatellite.toggle()
+                    }
+                    Analytics.shared.trackEvent(
+                        category: "results_map",
+                        action: "toggle_satellite",
+                        name: isSatellite ? "satellite_on" : "satellite_off"
+                    )
+                } label: {
+                    Image(systemName: isSatellite ? "globe.europe.africa.fill" : "square.2.layers.3d")
+                        .font(.system(size: 18, weight: .semibold))
+                        .foregroundColor(isSatellite ? .white : .primary)
+                        .frame(width: 44, height: 44)
+                        .background(isSatellite ? Color.purple : Color(uiColor: .secondarySystemGroupedBackground))
+                        .clipShape(Circle())
+                        .shadow(color: .black.opacity(0.18), radius: 4, x: 0, y: 2)
+                }
+                .accessibilityLabel(isSatellite ? "Zu Standardkarte wechseln" : "Zu Satellitenansicht wechseln")
+                .accessibilityHint("Schaltet zwischen Standard- und Satellitenansicht der Karte um.")
             }
             .padding(.top, 12)
-            .padding(.trailing, 12)
-            .accessibilityLabel(isSatellite ? "Zu Standardkarte wechseln" : "Zu Satellitenansicht wechseln")
-            .accessibilityHint("Schaltet zwischen Standard- und Satellitenansicht der Karte um.")
+            .padding(.horizontal, 12)
         }
     }
 
@@ -233,21 +266,37 @@ struct ResultsView: View {
 
     private func loadToilets(isPullToRefresh: Bool = false) async {
         if let bounds = currentBounds {
-            await loadToiletsForBounds(
-                south: bounds.south,
-                west: bounds.west,
-                north: bounds.north,
-                east: bounds.east,
-                isPullToRefresh: isPullToRefresh
-            )
+            boundsFetchTask?.cancel()
+            boundsFetchTask = Task {
+                await loadToiletsForBounds(
+                    south: bounds.south,
+                    west: bounds.west,
+                    north: bounds.north,
+                    east: bounds.east,
+                    isPullToRefresh: isPullToRefresh
+                )
+            }
+            await boundsFetchTask?.value
         }
     }
 
     private func loadToiletsForBounds(south: Double, west: Double, north: Double, east: Double, isPullToRefresh: Bool = false) async {
+        guard !Task.isCancelled else { return }
+
+        withAnimation(.easeInOut(duration: 0.2)) {
+            isFetchingBounds = true
+        }
         if !isPullToRefresh && toilets.isEmpty {
             isLoading = true
         }
-        defer { isLoading = false }
+
+        defer {
+            withAnimation(.easeInOut(duration: 0.2)) {
+                isFetchingBounds = false
+            }
+            isLoading = false
+        }
+
         do {
             let fetched = try await WCInfoAPIService.shared.fetchToiletsInBounds(
                 south: south,
@@ -271,6 +320,10 @@ struct ResultsView: View {
             Analytics.shared.trackEvent(category: "results", action: isPullToRefresh ? "refresh_bounds" : "loaded_bounds", name: location.name, value: Float(toilets.count))
         } catch {
             guard !Task.isCancelled else { return }
+            if (error as? URLError)?.code == .cancelled || error is CancellationError {
+                return
+            }
+
             var context: [String: Any] = [
                 "action": "fetchToiletsInBounds",
                 "south": south,

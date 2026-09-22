@@ -7,6 +7,7 @@ struct MapView: UIViewRepresentable {
     let center: CLLocationCoordinate2D
     let toilets: [Toilet]
     let selectedToiletID: Int?
+    var mapType: GMSMapViewType = .normal
     var onShowDetails: (Toilet) -> Void = { _ in }
     var onAddToiletAtCoordinate: ((CLLocationCoordinate2D) -> Void)? = nil
     var onCameraIdle: ((_ south: Double, _ west: Double, _ north: Double, _ east: Double) -> Void)? = nil
@@ -14,6 +15,7 @@ struct MapView: UIViewRepresentable {
     func makeUIView(context: Context) -> GMSMapView {
         let camera = GMSCameraPosition.camera(withLatitude: center.latitude, longitude: center.longitude, zoom: 14)
         let mapView = GMSMapView(frame: .zero, camera: camera)
+        mapView.mapType = mapType
         mapView.isMyLocationEnabled = true
         mapView.settings.myLocationButton = true
         mapView.delegate = context.coordinator
@@ -30,6 +32,10 @@ struct MapView: UIViewRepresentable {
         context.coordinator.onShowDetails = onShowDetails
         context.coordinator.onAddToiletAtCoordinate = onAddToiletAtCoordinate
         context.coordinator.onCameraIdle = onCameraIdle
+
+        if mapView.mapType != mapType {
+            mapView.mapType = mapType
+        }
 
         if !mapView.isMyLocationEnabled {
             mapView.isMyLocationEnabled = true

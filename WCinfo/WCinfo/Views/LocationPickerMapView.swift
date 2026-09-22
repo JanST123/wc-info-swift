@@ -9,6 +9,7 @@ struct LocationPickerMapView: View {
     var onConfirmCoordinate: ((CLLocationCoordinate2D) -> Void)? = nil
 
     @State private var currentMarkerCoordinate: CLLocationCoordinate2D
+    @State private var isSatellite = false
 
     init(
         initialCoordinate: CLLocationCoordinate2D,
@@ -23,55 +24,76 @@ struct LocationPickerMapView: View {
 
     var body: some View {
         VStack(spacing: 0) {
-            ZStack(alignment: .bottom) {
-                LocationPickerGMSView(
-                    center: initialCoordinate,
-                    selectedCoordinate: $currentMarkerCoordinate,
-                    colorScheme: colorScheme
-                )
-                .clipShape(RoundedRectangle(cornerRadius: 12))
+            ZStack(alignment: .topTrailing) {
+                ZStack(alignment: .bottom) {
+                    LocationPickerGMSView(
+                        center: initialCoordinate,
+                        selectedCoordinate: $currentMarkerCoordinate,
+                        colorScheme: colorScheme,
+                        mapType: isSatellite ? .hybrid : .normal
+                    )
+                    .clipShape(RoundedRectangle(cornerRadius: 12))
 
-                // Bottom selection bar
-                VStack(spacing: 8) {
-                    HStack {
-                        Image(systemName: "mappin.circle.fill")
-                            .foregroundColor(.purple)
-                            .font(.title3)
-
-                        VStack(alignment: .leading, spacing: 2) {
-                            Text("Ausgewählte Position")
-                                .font(.caption.bold())
-                                .foregroundColor(.secondary)
-                            Text(String(format: "Lat: %.5f, Lon: %.5f", currentMarkerCoordinate.latitude, currentMarkerCoordinate.longitude))
-                                .font(.system(size: 13, weight: .medium, design: .monospaced))
-                                .foregroundColor(.primary)
-                        }
-
-                        Spacer()
-                    }
-
-                    Button {
-                        selectedCoordinate = currentMarkerCoordinate
-                        onConfirmCoordinate?(currentMarkerCoordinate)
-                    } label: {
+                    // Bottom selection bar
+                    VStack(spacing: 8) {
                         HStack {
-                            Image(systemName: "checkmark.circle.fill")
-                            Text("Diese Position wählen")
-                                .font(.headline)
+                            Image(systemName: "mappin.circle.fill")
+                                .foregroundColor(.purple)
+                                .font(.title3)
+
+                            VStack(alignment: .leading, spacing: 2) {
+                                Text("Ausgewählte Position")
+                                    .font(.caption.bold())
+                                    .foregroundColor(.secondary)
+                                Text(String(format: "Lat: %.5f, Lon: %.5f", currentMarkerCoordinate.latitude, currentMarkerCoordinate.longitude))
+                                    .font(.system(size: 13, weight: .medium, design: .monospaced))
+                                    .foregroundColor(.primary)
+                            }
+
+                            Spacer()
                         }
-                        .frame(maxWidth: .infinity)
-                        .frame(height: 44)
-                        .background(Color.purple)
-                        .foregroundColor(.white)
-                        .clipShape(RoundedRectangle(cornerRadius: 8))
+
+                        Button {
+                            selectedCoordinate = currentMarkerCoordinate
+                            onConfirmCoordinate?(currentMarkerCoordinate)
+                        } label: {
+                            HStack {
+                                Image(systemName: "checkmark.circle.fill")
+                                Text("Diese Position wählen")
+                                    .font(.headline)
+                            }
+                            .frame(maxWidth: .infinity)
+                            .frame(height: 44)
+                            .background(Color.purple)
+                            .foregroundColor(.white)
+                            .clipShape(RoundedRectangle(cornerRadius: 8))
+                        }
+                        .accessibilityLabel("Diese Position wählen")
                     }
-                    .accessibilityLabel("Diese Position wählen")
+                    .padding(12)
+                    .background(.ultraThinMaterial)
+                    .clipShape(RoundedRectangle(cornerRadius: 12))
+                    .padding(12)
+                    .shadow(color: .black.opacity(0.15), radius: 8, x: 0, y: 4)
+                }
+
+                // Satellite toggle button
+                Button {
+                    withAnimation(.easeInOut(duration: 0.2)) {
+                        isSatellite.toggle()
+                    }
+                } label: {
+                    Image(systemName: isSatellite ? "globe.europe.africa.fill" : "square.2.layers.3d")
+                        .font(.system(size: 16, weight: .semibold))
+                        .foregroundColor(isSatellite ? .white : .primary)
+                        .frame(width: 40, height: 40)
+                        .background(isSatellite ? Color.purple : Color(uiColor: .secondarySystemGroupedBackground))
+                        .clipShape(Circle())
+                        .shadow(color: .black.opacity(0.18), radius: 4, x: 0, y: 2)
                 }
                 .padding(12)
-                .background(.ultraThinMaterial)
-                .clipShape(RoundedRectangle(cornerRadius: 12))
-                .padding(12)
-                .shadow(color: .black.opacity(0.15), radius: 8, x: 0, y: 4)
+                .accessibilityLabel(isSatellite ? "Zu Standardkarte wechseln" : "Zu Satellitenansicht wechseln")
+                .accessibilityHint("Schaltet zwischen Standard- und Satellitenansicht der Karte um.")
             }
         }
     }
@@ -81,6 +103,7 @@ private struct LocationPickerGMSView: UIViewRepresentable {
     let center: CLLocationCoordinate2D
     @Binding var selectedCoordinate: CLLocationCoordinate2D
     let colorScheme: ColorScheme
+    var mapType: GMSMapViewType = .normal
 
     func makeUIView(context: Context) -> GMSMapView {
         let camera = GMSCameraPosition.camera(
@@ -89,6 +112,7 @@ private struct LocationPickerGMSView: UIViewRepresentable {
             zoom: 16
         )
         let mapView = GMSMapView(frame: .zero, camera: camera)
+        mapView.mapType = mapType
         mapView.isMyLocationEnabled = true
         mapView.settings.myLocationButton = true
         mapView.settings.compassButton = true
@@ -106,6 +130,10 @@ private struct LocationPickerGMSView: UIViewRepresentable {
     }
 
     func updateUIView(_ mapView: GMSMapView, context: Context) {
+        if mapView.mapType != mapType {
+            mapView.mapType = mapType
+        }
+
         let targetStyle: UIUserInterfaceStyle = colorScheme == .dark ? .dark : .light
         if mapView.overrideUserInterfaceStyle != targetStyle {
             mapView.overrideUserInterfaceStyle = targetStyle

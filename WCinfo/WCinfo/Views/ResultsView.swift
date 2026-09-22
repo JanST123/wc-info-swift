@@ -18,6 +18,7 @@ struct ResultsView: View {
     @State private var filterSettings = ToiletFilterSettings.load()
     @State private var currentBounds: (south: Double, west: Double, north: Double, east: Double)? = nil
     @State private var boundsFetchTask: Task<Void, Never>? = nil
+    @State private var isSatellite = false
 
     var body: some View {
         GeometryReader { geometry in
@@ -166,28 +167,55 @@ struct ResultsView: View {
     }
 
     private var mapContent: some View {
-        MapView(
-            center: location.coordinate,
-            toilets: toilets,
-            selectedToiletID: selectedToilet?.id,
-            onShowDetails: { toilet in
-                openDetails(for: toilet, source: "marker")
-            },
-            onAddToiletAtCoordinate: { coordinate in
-                createSheetCoordinate = coordinate
-                isShowingCreateSheet = true
-            },
-            onCameraIdle: { south, west, north, east in
-                currentBounds = (south, west, north, east)
-                boundsFetchTask?.cancel()
-                boundsFetchTask = Task {
-                    try? await Task.sleep(nanoseconds: 300_000_000)
-                    guard !Task.isCancelled else { return }
-                    await loadToiletsForBounds(south: south, west: west, north: north, east: east)
+        ZStack(alignment: .topTrailing) {
+            MapView(
+                center: location.coordinate,
+                toilets: toilets,
+                selectedToiletID: selectedToilet?.id,
+                mapType: isSatellite ? .hybrid : .normal,
+                onShowDetails: { toilet in
+                    openDetails(for: toilet, source: "marker")
+                },
+                onAddToiletAtCoordinate: { coordinate in
+                    createSheetCoordinate = coordinate
+                    isShowingCreateSheet = true
+                },
+                onCameraIdle: { south, west, north, east in
+                    currentBounds = (south, west, north, east)
+                    boundsFetchTask?.cancel()
+                    boundsFetchTask = Task {
+                        try? await Task.sleep(nanoseconds: 300_000_000)
+                        guard !Task.isCancelled else { return }
+                        await loadToiletsForBounds(south: south, west: west, north: north, east: east)
+                    }
                 }
+            )
+            .ignoresSafeArea(edges: [.bottom, .leading, .trailing])
+
+            // Floating Satellite / Map Type toggle button
+            Button {
+                withAnimation(.easeInOut(duration: 0.2)) {
+                    isSatellite.toggle()
+                }
+                Analytics.shared.trackEvent(
+                    category: "results_map",
+                    action: "toggle_satellite",
+                    name: isSatellite ? "satellite_on" : "satellite_off"
+                )
+            } label: {
+                Image(systemName: isSatellite ? "globe.europe.africa.fill" : "square.2.layers.3d")
+                    .font(.system(size: 18, weight: .semibold))
+                    .foregroundColor(isSatellite ? .white : .primary)
+                    .frame(width: 44, height: 44)
+                    .background(isSatellite ? Color.purple : Color(uiColor: .secondarySystemGroupedBackground))
+                    .clipShape(Circle())
+                    .shadow(color: .black.opacity(0.18), radius: 4, x: 0, y: 2)
             }
-        )
-        .ignoresSafeArea(edges: [.bottom, .leading, .trailing])
+            .padding(.top, 12)
+            .padding(.trailing, 12)
+            .accessibilityLabel(isSatellite ? "Zu Standardkarte wechseln" : "Zu Satellitenansicht wechseln")
+            .accessibilityHint("Schaltet zwischen Standard- und Satellitenansicht der Karte um.")
+        }
     }
 
     private func openDetails(for toilet: Toilet, source: String) {

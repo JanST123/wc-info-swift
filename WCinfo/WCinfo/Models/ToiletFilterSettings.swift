@@ -4,6 +4,8 @@ import SwiftUI
 struct ToiletFilterSettings: Equatable, Codable {
     var showClosed: Bool = false
     var showNonPublic: Bool = true
+    var allowNonPublicFallback: Bool = true
+    var maxPublicDistanceMeters: Int = 500
     var showNonWheelchairAccessible: Bool = true
     var showWithoutChangingTable: Bool = true
     var showWithoutGenderSeparation: Bool = true
@@ -37,6 +39,8 @@ struct ToiletFilterSettings: Equatable, Codable {
     init(
         showClosed: Bool = false,
         showNonPublic: Bool = true,
+        allowNonPublicFallback: Bool = true,
+        maxPublicDistanceMeters: Int = 500,
         showNonWheelchairAccessible: Bool = true,
         showWithoutChangingTable: Bool = true,
         showWithoutGenderSeparation: Bool = true,
@@ -44,6 +48,8 @@ struct ToiletFilterSettings: Equatable, Codable {
     ) {
         self.showClosed = showClosed
         self.showNonPublic = showNonPublic
+        self.allowNonPublicFallback = allowNonPublicFallback
+        self.maxPublicDistanceMeters = maxPublicDistanceMeters
         self.showNonWheelchairAccessible = showNonWheelchairAccessible
         self.showWithoutChangingTable = showWithoutChangingTable
         self.showWithoutGenderSeparation = showWithoutGenderSeparation
@@ -62,6 +68,10 @@ struct ToiletFilterSettings: Equatable, Codable {
                 if let val = item.value, let b = Bool(val) { showClosed = b }
             case "showNonPublic":
                 if let val = item.value, let b = Bool(val) { showNonPublic = b }
+            case "allowNonPublicFallback":
+                if let val = item.value, let b = Bool(val) { allowNonPublicFallback = b }
+            case "maxPublicDistanceMeters":
+                if let val = item.value, let i = Int(val) { maxPublicDistanceMeters = i }
             case "showNonWheelchairAccessible":
                 if let val = item.value, let b = Bool(val) { showNonWheelchairAccessible = b }
             case "showWithoutChangingTable":
@@ -83,6 +93,8 @@ struct ToiletFilterSettings: Equatable, Codable {
         components.queryItems = [
             URLQueryItem(name: "showClosed", value: String(showClosed)),
             URLQueryItem(name: "showNonPublic", value: String(showNonPublic)),
+            URLQueryItem(name: "allowNonPublicFallback", value: String(allowNonPublicFallback)),
+            URLQueryItem(name: "maxPublicDistanceMeters", value: String(maxPublicDistanceMeters)),
             URLQueryItem(name: "showNonWheelchairAccessible", value: String(showNonWheelchairAccessible)),
             URLQueryItem(name: "showWithoutChangingTable", value: String(showWithoutChangingTable)),
             URLQueryItem(name: "showWithoutGenderSeparation", value: String(showWithoutGenderSeparation)),

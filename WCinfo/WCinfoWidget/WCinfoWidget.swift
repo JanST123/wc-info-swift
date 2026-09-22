@@ -260,7 +260,11 @@ struct WCinfoWidgetEntryView: View {
             tags.append("Geöffnet")
         }
         if !entry.configuration.showNonPublic {
-            tags.append("Öffentlich")
+            if entry.configuration.allowNonPublicFallback {
+                tags.append("Öffentlich (>\(entry.configuration.maxPublicDistanceMeters)m Ausweich)")
+            } else {
+                tags.append("Nur Öffentlich")
+            }
         }
         if !entry.configuration.showNonWheelchairAccessible {
             tags.append("Rollstuhlgerecht")

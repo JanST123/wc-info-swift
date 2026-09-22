@@ -31,7 +31,7 @@ struct FilterBannerView: View {
                         .clipShape(RoundedRectangle(cornerRadius: 8))
                 }
                 .buttonStyle(.plain)
-                .accessibilityLabel(isExpanded ? "Filter einklappen" : "Filter ausklappen")
+                .accessibilityLabel(isExpanded ? Text("Filter einklappen") : Text("Filter ausklappen"))
             }
             .padding(.horizontal, 14)
             .padding(.vertical, 10)
@@ -48,7 +48,7 @@ struct FilterBannerView: View {
                     )
 
                     toggleRow(
-                        title: "Nicht öffentliche Toiletten anzeigen",
+                        title: "Nicht-öffentliche Toiletten anzeigen",
                         isOn: $filterSettings.showNonPublic,
                         infoAction: { showingNonPublicInfo = true }
                     )
@@ -117,7 +117,7 @@ struct FilterBannerView: View {
         }
     }
 
-    private func toggleRow(title: String, isOn: Binding<Bool>, infoAction: (() -> Void)? = nil) -> some View {
+    private func toggleRow(title: LocalizedStringKey, isOn: Binding<Bool>, infoAction: (() -> Void)? = nil) -> some View {
         HStack(spacing: 8) {
             Toggle(isOn: Binding(
                 get: { isOn.wrappedValue },
@@ -140,7 +140,7 @@ struct FilterBannerView: View {
                                 .foregroundColor(.purple)
                         }
                         .buttonStyle(.plain)
-                        .accessibilityLabel("Informationen zu \(title)")
+                        .accessibilityLabel(Text("Informationen anzeigen"))
                     }
                 }
             }

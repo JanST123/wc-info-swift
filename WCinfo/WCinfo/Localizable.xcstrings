@@ -1,0 +1,3905 @@
+{
+  "sourceLanguage" : "en",
+  "strings" : {
+    "(optional)" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "(optional)"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "(optional)"
+          }
+        }
+      }
+    },
+    "%@ / %@" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$@ / %2$@"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$@ / %2$@"
+          }
+        }
+      }
+    },
+    "%@ 24 Stunden geöffnet" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ 24 Stunden geöffnet"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ open 24 hours"
+          }
+        }
+      }
+    },
+    "%@ ab %@" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$@ ab %2$@"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$@ from %2$@"
+          }
+        }
+      }
+    },
+    "%@ Fotos" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ Fotos"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ photos"
+          }
+        }
+      }
+    },
+    "%lld Meter Entfernung, Richtung: %@" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$lld Meter Entfernung, Richtung: %2$@"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$lld meters away, heading: %2$@"
+          }
+        }
+      }
+    },
+    "• das Merkzeichen: aG, B, H, oder BL" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "• das Merkzeichen: aG, B, H, oder BL"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "• disability mark: aG, B, H, or BL"
+          }
+        }
+      }
+    },
+    "• oder das Merkzeichen G und der GdB ab 70 und aufwärts enthalten ist." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "• oder das Merkzeichen G und der GdB ab 70 und aufwärts enthalten ist."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "• or disability mark G with degree of disability (GdB) 70 and above."
+          }
+        }
+      }
+    },
+    "✓ Toilette gespeichert" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "✓ Toilette gespeichert"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "✓ Toilet saved"
+          }
+        }
+      }
+    },
+    "❤️" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "❤️"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "❤️"
+          }
+        }
+      }
+    },
+    "1 Foto" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "1 Foto"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "1 photo"
+          }
+        }
+      }
+    },
+    "24 Stunden geöffnet" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "24 Stunden geöffnet"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Open 24 hours"
+          }
+        }
+      }
+    },
+    "Abbrechen" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Abbrechen"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cancel"
+          }
+        }
+      }
+    },
+    "Ablagefläche" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ablagefläche"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Storage shelf"
+          }
+        }
+      }
+    },
+    "Ablagefläche: %@" : {
+      "comment" : "A label that describes the storage space of a toilet. The argument is the title of the storage space.",
+      "isCommentAutoGenerated" : true,
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ablagefläche: %@"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Storage shelf: %@"
+          }
+        }
+      }
+    },
+    "Adresse" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Adresse"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Address"
+          }
+        }
+      }
+    },
+    "Adresse: %@" : {
+      "comment" : "A label that reads \"Adresse: [address]\".",
+      "isCommentAutoGenerated" : true,
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Adresse: %@"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Address: %@"
+          }
+        }
+      }
+    },
+    "Aktueller Standort" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aktueller Standort"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Current Location"
+          }
+        }
+      }
+    },
+    "Aktueller Standort: %@" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aktueller Standort: %@"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Current location: %@"
+          }
+        }
+      }
+    },
+    "Alle Toiletten in der Umgebung" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Alle Toiletten in der Umgebung"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "All toilets in the area"
+          }
+        }
+      }
+    },
+    "Änderungen für diese Toilette vorschlagen" : {
+      "comment" : "A label for a button that allows the user to suggest changes to a toilet.",
+      "isCommentAutoGenerated" : true,
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Änderungen für diese Toilette vorschlagen"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Suggest changes for this toilet"
+          }
+        }
+      }
+    },
+    "Änderungen vorschlagen" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Änderungen vorschlagen"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Suggest changes"
+          }
+        }
+      }
+    },
+    "Auch außerhalb der Öffnungszeiten zugänglich" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Auch außerhalb der Öffnungszeiten zugänglich"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Also accessible outside opening hours"
+          }
+        }
+      }
+    },
+    "Ausgewählte Position" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ausgewählte Position"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Selected location"
+          }
+        }
+      }
+    },
+    "Außerhalb der Öffnungszeiten zugänglich" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Außerhalb der Öffnungszeiten zugänglich"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Accessible outside opening hours"
+          }
+        }
+      }
+    },
+    "barrierefreie" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "barrierefreie"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "wheelchair accessible"
+          }
+        }
+      }
+    },
+    "Barrierefreie Toilette vorhanden" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Barrierefreie Toilette vorhanden"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wheelchair accessible toilet available"
+          }
+        }
+      }
+    },
+    "Bemerkung" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bemerkung"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Note"
+          }
+        }
+      }
+    },
+    "Bemerkung: %@" : {
+      "comment" : "A label at the top of the toilet detail view that describes the comment section.",
+      "isCommentAutoGenerated" : true,
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bemerkung: %@"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Note: %@"
+          }
+        }
+      }
+    },
+    "Betreff" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Betreff"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Subject"
+          }
+        }
+      }
+    },
+    "Betreff Eingabefeld" : {
+      "comment" : "A label for a text field where the user can enter a subject.",
+      "isCommentAutoGenerated" : true,
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Betreff Eingabefeld"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Subject input field"
+          }
+        }
+      }
+    },
+    "Betreiber: %@" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Betreiber: %@"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Operator: %@"
+          }
+        }
+      }
+    },
+    "Bevor du dein erstes Foto hochlädst" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bevor du dein erstes Foto hochlädst"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Before uploading your first photo"
+          }
+        }
+      }
+    },
+    "Bilder von Toiletten sollten nach Möglichkeit keine Personen beinhalten. Wenn du doch Bilder von anderen Menschen hochlädst, greifst du evtl. in deren Persönlichkeitsrecht ein. Bitte vergewissere dich daher, dass die Menschen, die auf den Fotos zu sehen sind, damit einverstanden sind, dass du die Bilder hier veröffentlichst." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bilder von Toiletten sollten nach Möglichkeit keine Personen beinhalten. Wenn du doch Bilder von anderen Menschen hochlädst, greifst du evtl. in deren Persönlichkeitsrecht ein. Bitte vergewissere dich daher, dass die Menschen, die auf den Fotos zu sehen sind, damit einverstanden sind, dass du die Bilder hier veröffentlichst."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Photos of toilets should ideally not include people. If you do upload photos of other people, you may infringe on their personal rights. Please ensure that anyone visible in the photos has consented to publication."
+          }
+        }
+      }
+    },
+    "Bitte gib einen Ort ein, um danach zu suchen." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bitte gib einen Ort ein, um danach zu suchen."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Please enter a location to search for."
+          }
+        }
+      }
+    },
+    "Bitte halte dich zudem an geltendes Recht. Dies bedeutet u.A.:" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bitte halte dich zudem an geltendes Recht. Dies bedeutet u.A.:"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Please also comply with applicable laws. This includes:"
+          }
+        }
+      }
+    },
+    "Danke für dein Feedback! Wir kümmern uns so schnell es geht." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Danke für dein Feedback! Wir kümmern uns so schnell es geht."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Thank you for your feedback! We will take care of it as soon as possible."
+          }
+        }
+      }
+    },
+    "Deine Änderungen sind sofort sichtbar, werden aber zusätzlich von unserem Team überprüft." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Deine Änderungen sind sofort sichtbar, werden aber zusätzlich von unserem Team überprüft."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Your changes are visible immediately and will also be reviewed by our team."
+          }
+        }
+      }
+    },
+    "Deine Angaben wurden gespeichert." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Deine Angaben wurden gespeichert."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Your details have been saved."
+          }
+        }
+      }
+    },
+    "Der deutsche Schwerbehindertenausweis gilt als Berechtigung, wenn" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Der deutsche Schwerbehindertenausweis gilt als Berechtigung, wenn"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The German severely disabled person's pass qualifies if"
+          }
+        }
+      }
+    },
+    "Der Euroschlüssel ist ein 1986 vom CBF Darmstadt – Club Behinderter und ihrer Freunde in Darmstadt und Umgebung e. V. – eingeführtes, inzwischen über die Landesgrenzen hinaus genutztes Schließsystem, das es körperlich beeinträchtigten Menschen ermöglicht, mit einem Einheitsschlüssel selbständig Zugang zu behindertengerechten sanitären Anlagen und Einrichtungen zu erhalten, z. B. an teilnehmenden Autobahn- und Bahnhofstoiletten, aber auch für öffentliche Toiletten in Fußgängerzonen, Museen oder Behörden." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Der Euroschlüssel ist ein 1986 vom CBF Darmstadt – Club Behinderter und ihrer Freunde in Darmstadt und Umgebung e. V. – eingeführtes, inzwischen über die Landesgrenzen hinaus genutztes Schließsystem, das es körperlich beeinträchtigten Menschen ermöglicht, mit einem Einheitsschlüssel selbständig Zugang zu behindertengerechten sanitären Anlagen und Einrichtungen zu erhalten, z. B. an teilnehmenden Autobahn- und Bahnhofstoiletten, aber auch für öffentliche Toiletten in Fußgängerzonen, Museen oder Behörden."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The Euro key is a locking system introduced in 1986 by CBF Darmstadt (Club of Disabled People and their Friends in Darmstadt and Surroundings), now used internationally, that enables people with physical disabilities to independently access accessible sanitary facilities and establishments with a standardized key, e.g. at participating motorway and train station toilets, as well as public toilets in pedestrian zones, museums, or public authorities."
+          }
+        }
+      }
+    },
+    "Der Schlüssel wird ausschließlich an Menschen ausgehändigt, die auf behindertengerechte Toiletten angewiesen sind." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Der Schlüssel wird ausschließlich an Menschen ausgehändigt, die auf behindertengerechte Toiletten angewiesen sind."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The key is issued exclusively to people who rely on wheelchair-accessible toilets."
+          }
+        }
+      }
+    },
+    "Der Zeitpunkt und deine IP werden im Zusammenhang mit den hochgeladenen Fotos bei uns gespeichert. Weitere Informationen findest du auch in unserer [Datenschutzerklärung](https://wc-info.de/Law/Privacy)." : {
+      "comment" : "A note that informs the user that the date and their IP address will be stored with the uploaded photos.",
+      "isCommentAutoGenerated" : true,
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Der Zeitpunkt und deine IP werden im Zusammenhang mit den hochgeladenen Fotos bei uns gespeichert. Weitere Informationen findest du auch in unserer [Datenschutzerklärung](https://wc-info.de/Law/Privacy)."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The timestamp and your IP address are stored with uploaded photos. Further information can be found in our [Privacy Policy](https://wc-info.de/Law/Privacy)."
+          }
+        }
+      }
+    },
+    "Details ansehen ›" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Details ansehen ›"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "View details ›"
+          }
+        }
+      }
+    },
+    "Details schließen" : {
+      "comment" : "A label for the toolbar button that closes the details view.",
+      "isCommentAutoGenerated" : true,
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Details schließen"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Close details"
+          }
+        }
+      }
+    },
+    "Die Server-Antwort konnte nicht verarbeitet werden." : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Die Server-Antwort konnte nicht verarbeitet werden."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The server response could not be processed."
+          }
+        }
+      }
+    },
+    "Diese Information ist oft in der Nähe des Schlosses zu lesen." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Diese Information ist oft in der Nähe des Schlosses zu lesen."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "This information can often be read near the lock."
+          }
+        }
+      }
+    },
+    "Diese Position wählen" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Diese Position wählen"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Choose this location"
+          }
+        }
+      }
+    },
+    "Diese Toilette ist nicht öffentlich zugänglich. Sie befindet sich beispielsweise in einem Restaurant, Geschäft oder einer privaten Einrichtung und ist oft Kunden oder Gästen vorbehalten." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Diese Toilette ist nicht öffentlich zugänglich. Sie befindet sich beispielsweise in einem Restaurant, Geschäft oder einer privaten Einrichtung und ist oft Kunden oder Gästen vorbehalten."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "This toilet is not publicly accessible. It is located in a restaurant, shop, or private facility and is often reserved for customers or guests."
+          }
+        }
+      }
+    },
+    "Doppeltippen, um Details zu öffnen." : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Doppeltippen, um Details zu öffnen."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Double-tap to open details."
+          }
+        }
+      }
+    },
+    "Doppeltippen, um die Toilettenerfassung zu starten." : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Doppeltippen, um die Toilettenerfassung zu starten."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Double-tap to start recording a toilet."
+          }
+        }
+      }
+    },
+    "Du hast das Ziel erreicht!" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Du hast das Ziel erreicht!"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "You have reached your destination!"
+          }
+        }
+      }
+    },
+    "Eigenschaften:" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Eigenschaften:"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Features:"
+          }
+        }
+      }
+    },
+    "Eingang & Türen" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Eingang & Türen"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Entrance & doors"
+          }
+        }
+      }
+    },
+    "Entfernung %@" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Entfernung %@"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Distance %@"
+          }
+        }
+      }
+    },
+    "Erneut versuchen" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Erneut versuchen"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Try again"
+          }
+        }
+      }
+    },
+    "Euroschlüssel" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Euroschlüssel"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Euro key"
+          }
+        }
+      }
+    },
+    "Feedback abbrechen" : {
+      "comment" : "A label for the \"Cancel\" button in the navigation bar.",
+      "isCommentAutoGenerated" : true,
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Feedback abbrechen"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cancel feedback"
+          }
+        }
+      }
+    },
+    "Feedback senden" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Feedback senden"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Send feedback"
+          }
+        }
+      }
+    },
+    "Fehler: %@" : {
+      "comment" : "A label that displays an error message. The argument is the error message to display.",
+      "isCommentAutoGenerated" : true,
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fehler: %@"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Error: %@"
+          }
+        }
+      }
+    },
+    "Fehlt eine Toilette?" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fehlt eine Toilette?"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Missing a toilet?"
+          }
+        }
+      }
+    },
+    "Fertig" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fertig"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Done"
+          }
+        }
+      }
+    },
+    "Fertigstellen (%@)" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fertigstellen (%@)"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Finish (%@)"
+          }
+        }
+      }
+    },
+    "Filter ausklappen" : {
+      "comment" : "A label for the button that hides the filter.",
+      "isCommentAutoGenerated" : true,
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Filter ausklappen"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Expand filter"
+          }
+        }
+      }
+    },
+    "Filter einklappen" : {
+      "comment" : "A label for the button that expands the filter.",
+      "isCommentAutoGenerated" : true,
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Filter einklappen"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Collapse filter"
+          }
+        }
+      }
+    },
+    "Firma oder Kommune? – Bitte hier entlang" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Firma oder Kommune? – Bitte hier entlang"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Business or municipality? – This way"
+          }
+        }
+      }
+    },
+    "Foto entfernen" : {
+      "comment" : "A button that removes a photo.",
+      "isCommentAutoGenerated" : true,
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Foto entfernen"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Remove photo"
+          }
+        }
+      }
+    },
+    "Foto hinzufügen" : {
+      "comment" : "A label for the button that allows the user to add a photo.",
+      "isCommentAutoGenerated" : true,
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Foto hinzufügen"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Add photo"
+          }
+        }
+      }
+    },
+    "Foto konnte nicht geladen werden" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Foto konnte nicht geladen werden"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Photo could not be loaded"
+          }
+        }
+      }
+    },
+    "Foto löschen?" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Foto löschen?"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Delete photo?"
+          }
+        }
+      }
+    },
+    "Fotos" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fotos"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Photos"
+          }
+        }
+      }
+    },
+    "Fotos auswählen" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fotos auswählen"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Select photos"
+          }
+        }
+      }
+    },
+    "Fotos hochladen" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fotos hochladen"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Upload photos"
+          }
+        }
+      }
+    },
+    "Frage %@ von %@" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Frage %1$@ von %2$@"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Question %1$@ of %2$@"
+          }
+        }
+      }
+    },
+    "Geprüfte Angaben" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Geprüfte Angaben"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Verified information"
+          }
+        }
+      }
+    },
+    "Geprüfte Toilette" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Geprüfte Toilette"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Verified toilet"
+          }
+        }
+      }
+    },
+    "Geradeaus" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Geradeaus"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Straight ahead"
+          }
+        }
+      }
+    },
+    "Geschlossen" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Geschlossen"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Closed"
+          }
+        }
+      }
+    },
+    "Geschlossene Toiletten anzeigen" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Geschlossene Toiletten anzeigen"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Show closed toilets"
+          }
+        }
+      }
+    },
+    "Getrennte Toiletten" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Getrennte Toiletten"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Separated toilets"
+          }
+        }
+      }
+    },
+    "Halb links" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Halb links"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Slightly left"
+          }
+        }
+      }
+    },
+    "Halb rechts" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Halb rechts"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Slightly right"
+          }
+        }
+      }
+    },
+    "Hilfreiche Fotos:" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hilfreiche Fotos:"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Helpful photos:"
+          }
+        }
+      }
+    },
+    "Hinweise zum Foto-Upload" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hinweise zum Foto-Upload"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Photo Upload Information"
+          }
+        }
+      }
+    },
+    "In Apple Maps oder Google Maps öffnen" : {
+      "comment" : "A label for a button that opens the user's maps app.",
+      "isCommentAutoGenerated" : true,
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "In Apple Maps oder Google Maps öffnen"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Open in Apple Maps or Google Maps"
+          }
+        }
+      }
+    },
+    "In der Nähe" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "In der Nähe"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nearby"
+          }
+        }
+      }
+    },
+    "In Karten-App öffnen" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "In Karten-App öffnen"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Open in Maps app"
+          }
+        }
+      }
+    },
+    "Informationen anzeigen" : {
+      "comment" : "A label for a button that shows more information.",
+      "isCommentAutoGenerated" : true,
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Informationen anzeigen"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Show information"
+          }
+        }
+      }
+    },
+    "Informationen zu nicht-öffentlichen Toiletten" : {
+      "comment" : "A button that opens a modal with information about non-public toilets.",
+      "isCommentAutoGenerated" : true,
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Informationen zu nicht-öffentlichen Toiletten"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Information about non-public toilets"
+          }
+        }
+      }
+    },
+    "Informationen zum Euroschlüssel" : {
+      "comment" : "A label for a button that shows more information about the EuroKey.",
+      "isCommentAutoGenerated" : true,
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Informationen zum Euroschlüssel"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Information about the Euro key"
+          }
+        }
+      }
+    },
+    "Ist dies ein unpassendes Foto oder hast du persönliche Gründe dieses Foto zu löschen? Wählst du 'Löschen' wird das Foto sofort gelöscht und das Foto im Nachgang durch uns geprüft. Wir behalten uns vor das Foto nachträglich wiederherzustellen sollte es doch passend sein und unserer Meinung kein Persönlichkeitsrecht verletzen" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ist dies ein unpassendes Foto oder hast du persönliche Gründe dieses Foto zu löschen? Wählst du 'Löschen' wird das Foto sofort gelöscht und das Foto im Nachgang durch uns geprüft. Wir behalten uns vor das Foto nachträglich wiederherzustellen sollte es doch passend sein und unserer Meinung kein Persönlichkeitsrecht verletzen"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Is this an inappropriate photo or do you have personal reasons to delete it? If you select 'Delete', the photo will be deleted immediately and reviewed by us afterwards. We reserve the right to restore the photo if it is deemed appropriate and does not violate personal rights."
+          }
+        }
+      }
+    },
+    "Jetzt geöffnet" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Jetzt geöffnet"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Open now"
+          }
+        }
+      }
+    },
+    "jetzt geöffnete" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "jetzt geöffnete"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "currently open"
+          }
+        }
+      }
+    },
+    "Kann die Türe mit Euro-Schlüssel geöffnet werden?" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kann die Türe mit Euro-Schlüssel geöffnet werden?"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Can the door be opened with a Euro key?"
+          }
+        }
+      }
+    },
+    "Kann mit Euroschlüssel geöffnet werden" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kann mit Euroschlüssel geöffnet werden"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Can be opened with Euro key"
+          }
+        }
+      }
+    },
+    "Karte mit %lld Toiletten in der Nähe" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Karte mit %lld Toiletten in der Nähe"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Map with %lld toilets nearby"
+          }
+        }
+      }
+    },
+    "Keine" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Keine"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "None"
+          }
+        }
+      }
+    },
+    "Keine Darstellung von Alkohol- oder Drogenmissbrauch" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Keine Darstellung von Alkohol- oder Drogenmissbrauch"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No depiction of alcohol or drug abuse"
+          }
+        }
+      }
+    },
+    "Keine Fotos vorhanden" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Keine Fotos vorhanden"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No photos available"
+          }
+        }
+      }
+    },
+    "Keine illegalen, rassistischen, diskriminierenden oder gegen die Menschenwürde verstossenden Inhalte" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Keine illegalen, rassistischen, diskriminierenden oder gegen die Menschenwürde verstossenden Inhalte"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No illegal, racist, discriminatory, or dignity-violating content"
+          }
+        }
+      }
+    },
+    "Keine Öffnungszeiten" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Keine Öffnungszeiten"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No opening hours"
+          }
+        }
+      }
+    },
+    "Keine Orte in der Nähe gefunden" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Keine Orte in der Nähe gefunden"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No places found nearby"
+          }
+        }
+      }
+    },
+    "Keine passende geöffnete Toilette in der Nähe gefunden." : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Keine passende geöffnete Toilette in der Nähe gefunden."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No suitable open toilet found nearby."
+          }
+        }
+      }
+    },
+    "Keine Schadsoftware / Viren" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Keine Schadsoftware / Viren"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No malware / viruses"
+          }
+        }
+      }
+    },
+    "Keine sexuellen, pornografischen oder jugendgefährdenden Inhalte" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Keine sexuellen, pornografischen oder jugendgefährdenden Inhalte"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No sexual, pornographic, or harmful content for minors"
+          }
+        }
+      }
+    },
+    "Keine Toiletten gefunden für \"%@\"" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Keine Toiletten gefunden für \"%@\""
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No toilets found for \"%@\""
+          }
+        }
+      }
+    },
+    "Keine Verstöße gegen Marken- oder Urheberrecht, keine Verletzung fremden geistigen Eigentums" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Keine Verstöße gegen Marken- oder Urheberrecht, keine Verletzung fremden geistigen Eigentums"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No trademark or copyright violations, no infringement of third-party intellectual property"
+          }
+        }
+      }
+    },
+    "Kennzeichnungen für Geschlechtertrennung, Euro-Schlüssel oder barrierefreien Zugang." : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kennzeichnungen für Geschlechtertrennung, Euro-Schlüssel oder barrierefreien Zugang."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Signs for gender separation, Euro key, or wheelchair accessibility."
+          }
+        }
+      }
+    },
+    "Klicke hier um eine Toilette hinzuzufügen - wir freuen uns!" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Klicke hier um eine Toilette hinzuzufügen - wir freuen uns!"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Click here to add a toilet - we appreciate it!"
+          }
+        }
+      }
+    },
+    "Kompass-Navigation" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kompass-Navigation"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Compass Navigation"
+          }
+        }
+      }
+    },
+    "Kompass-Navigation schließen" : {
+      "comment" : "The label for the button that dismisses the CompassNavigation view.",
+      "isCommentAutoGenerated" : true,
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kompass-Navigation schließen"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Close compass navigation"
+          }
+        }
+      }
+    },
+    "Kompassnadel zeigt in Richtung Toilette" : {
+      "comment" : "A description of the accessibility label for the compass needle.",
+      "isCommentAutoGenerated" : true,
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kompassnadel zeigt in Richtung Toilette"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Compass needle points towards the toilet"
+          }
+        }
+      }
+    },
+    "Lade einfach ein oder mehrere Fotos der Toilette hoch – wir erledigen den Rest für dich!" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lade einfach ein oder mehrere Fotos der Toilette hoch – wir erledigen den Rest für dich!"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Simply upload one or more photos of the toilet – we'll take care of the rest for you!"
+          }
+        }
+      }
+    },
+    "Laden..." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Laden..."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Loading..."
+          }
+        }
+      }
+    },
+    "Links" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Links"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Left"
+          }
+        }
+      }
+    },
+    "Löschen" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Löschen"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Delete"
+          }
+        }
+      }
+    },
+    "m" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "m"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "m"
+          }
+        }
+      }
+    },
+    "mit Euroschlüssel" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "mit Euroschlüssel"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "with Euro key"
+          }
+        }
+      }
+    },
+    "mit Wickelraum" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "mit Wickelraum"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "with baby changing facility"
+          }
+        }
+      }
+    },
+    "Mo–Fr" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mo–Fr"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mon–Fri"
+          }
+        }
+      }
+    },
+    "Möchtest du als Unternehmen, Kommune oder Betreiber mehrerer Toiletten eine größere Anzahl an Toiletten hinzufügen?\n\nKontaktiere uns gerne per E-Mail an hi@wc-info.org und sende uns deine Toilettendaten in einem beliebigen Format (z. B. als CSV, Excel- oder Textliste). Wir importieren diese Toiletten sehr gerne für dich!" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Möchtest du als Unternehmen, Kommune oder Betreiber mehrerer Toiletten eine größere Anzahl an Toiletten hinzufügen?\n\nKontaktiere uns gerne per E-Mail an hi@wc-info.org und sende uns deine Toilettendaten in einem beliebigen Format (z. B. als CSV, Excel- oder Textliste). Wir importieren diese Toiletten sehr gerne für dich!"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Would you like to add a large number of toilets as a business, municipality, or multi-facility operator?\n\nFeel free to contact us via email at hi@wc-info.org and send us your toilet data in any format (e.g. CSV, Excel, or text list). We will gladly import them for you!"
+          }
+        }
+      }
+    },
+    "Möchtest du eine kurze Rückmeldung als Text senden oder die Angaben im Formular anpassen?" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Möchtest du eine kurze Rückmeldung als Text senden oder die Angaben im Formular anpassen?"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Would you like to send quick feedback as text or adjust the details in the form?"
+          }
+        }
+      }
+    },
+    "N" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "N"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "N"
+          }
+        }
+      }
+    },
+    "nach Geschlecht getrennte" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "nach Geschlecht getrennte"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "gender-separated"
+          }
+        }
+      }
+    },
+    "Nach Geschlecht getrennte Toiletten vorhanden" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nach Geschlecht getrennte Toiletten vorhanden"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Gender-separated toilets available"
+          }
+        }
+      }
+    },
+    "Nachricht" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nachricht"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Message"
+          }
+        }
+      }
+    },
+    "Nächste geöffnete, passende Toilette wird gesucht..." : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nächste geöffnete, passende Toilette wird gesucht..."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Searching for the nearest open, suitable toilet..."
+          }
+        }
+      }
+    },
+    "Name der Toilette (optional)" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Name der Toilette (optional)"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Name of toilet (optional)"
+          }
+        }
+      }
+    },
+    "Name: %@" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Name: %@"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Name: %@"
+          }
+        }
+      }
+    },
+    "Navigieren" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Navigieren"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Navigate"
+          }
+        }
+      }
+    },
+    "Navigieren zu %@" : {
+      "comment" : "A button that opens a map app to navigate to a given location. The argument is the name of the location to navigate to.",
+      "isCommentAutoGenerated" : true,
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Navigieren zu %@"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Navigate to %@"
+          }
+        }
+      }
+    },
+    "Neue Toilette an diesem Ort hinzufügen" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Neue Toilette an diesem Ort hinzufügen"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Add new toilet at this location"
+          }
+        }
+      }
+    },
+    "Neue Toilette hinzufügen" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Neue Toilette hinzufügen"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Add new toilet"
+          }
+        }
+      }
+    },
+    "Nicht öffentlich" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nicht öffentlich"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Non-public"
+          }
+        }
+      }
+    },
+    "Nicht-barrierefreie Toiletten anzeigen" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nicht-barrierefreie Toiletten anzeigen"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Show non-wheelchair-accessible toilets"
+          }
+        }
+      }
+    },
+    "Nicht-öffentliche Toilette" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nicht-öffentliche Toilette"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Non-public toilet"
+          }
+        }
+      }
+    },
+    "Nicht-öffentliche Toiletten" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nicht-öffentliche Toiletten"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Non-public toilets"
+          }
+        }
+      }
+    },
+    "Nicht-öffentliche Toiletten anzeigen" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nicht-öffentliche Toiletten anzeigen"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Show non-public toilets"
+          }
+        }
+      }
+    },
+    "Nicht-öffentliche Toiletten befinden sich beispielsweise in Restaurants, Geschäften oder privaten Einrichtungen und sind oft Kunden oder Gästen vorbehalten." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nicht-öffentliche Toiletten befinden sich beispielsweise in Restaurants, Geschäften oder privaten Einrichtungen und sind oft Kunden oder Gästen vorbehalten."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Non-public toilets are located in restaurants, shops, or private establishments and are often reserved for customers or guests."
+          }
+        }
+      }
+    },
+    "Notfall-Navigation" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Notfall-Navigation"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Emergency Navigation"
+          }
+        }
+      }
+    },
+    "Nur Toiletten" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nur Toiletten"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Only toilets"
+          }
+        }
+      }
+    },
+    "O" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "O"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "E"
+          }
+        }
+      }
+    },
+    "Öffentlich zugänglich" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Öffentlich zugänglich"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Publicly accessible"
+          }
+        }
+      }
+    },
+    "Öffentlich zugängliche Toilette" : {
+      "comment" : "A label describing a toilet that is accessible to the public.",
+      "isCommentAutoGenerated" : true,
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Öffentlich zugängliche Toilette"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Publicly accessible toilet"
+          }
+        }
+      }
+    },
+    "öffentliche" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "öffentliche"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "public"
+          }
+        }
+      }
+    },
+    "öffnet bald" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "öffnet bald"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "opens soon"
+          }
+        }
+      }
+    },
+    "Öffnet die Detailansicht." : {
+      "comment" : "A label for a button that opens the toilet details.",
+      "isCommentAutoGenerated" : true,
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Öffnet die Detailansicht."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Opens detail view."
+          }
+        }
+      }
+    },
+    "öffnet in %lld Min." : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "öffnet in %lld Min."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "opens in %lld min."
+          }
+        }
+      }
+    },
+    "öffnet in %lld Std." : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "öffnet in %lld Std."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "opens in %lld hrs."
+          }
+        }
+      }
+    },
+    "öffnet in %lld Std. %lld Min." : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "öffnet in %1$lld Std. %2$lld Min."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "opens in %1$lld hrs. %2$lld min."
+          }
+        }
+      }
+    },
+    "Öffnet um" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Öffnet um"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Opens at"
+          }
+        }
+      }
+    },
+    "Öffnungszeiten" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Öffnungszeiten"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Opening hours"
+          }
+        }
+      }
+    },
+    "Öffnungszeiten angeben" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Öffnungszeiten angeben"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Specify opening hours"
+          }
+        }
+      }
+    },
+    "Öffnungszeiten, Kosten/Gebühren oder allgemeine Hinweise." : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Öffnungszeiten, Kosten/Gebühren oder allgemeine Hinweise."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Opening hours, fees/costs, or general notices."
+          }
+        }
+      }
+    },
+    "Öffnungszeiten: %@" : {
+      "comment" : "A label summarizing the opening hours of the toilet.",
+      "isCommentAutoGenerated" : true,
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Öffnungszeiten: %@"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Opening hours: %@"
+          }
+        }
+      }
+    },
+    "Öffnungszeiten: Täglich 24 Stunden geöffnet" : {
+      "comment" : "A label describing the opening hours of a toilet.",
+      "isCommentAutoGenerated" : true,
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Öffnungszeiten: Täglich 24 Stunden geöffnet"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Opening hours: Open 24 hours daily"
+          }
+        }
+      }
+    },
+    "Optionale Nachricht eingeben" : {
+      "comment" : "A label displayed above a text field for entering an optional message.",
+      "isCommentAutoGenerated" : true,
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Optionale Nachricht eingeben"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Enter optional message"
+          }
+        }
+      }
+    },
+    "Orte werden geladen..." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Orte werden geladen..."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Loading places..."
+          }
+        }
+      }
+    },
+    "Per Foto anlegen" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Per Foto anlegen"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Add via photo"
+          }
+        }
+      }
+    },
+    "Quelle: https://www.cbf-da.de/leistungen/euroschluessel" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Quelle: https://www.cbf-da.de/leistungen/euroschluessel"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Source: https://www.cbf-da.de/leistungen/euroschluessel"
+          }
+        }
+      }
+    },
+    "Rechts" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rechts"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Right"
+          }
+        }
+      }
+    },
+    "Rollstuhlgerecht" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rollstuhlgerecht"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wheelchair accessible"
+          }
+        }
+      }
+    },
+    "S" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "S"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "S"
+          }
+        }
+      }
+    },
+    "Sa–So" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sa–So"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sat–Sun"
+          }
+        }
+      }
+    },
+    "Schaltet zwischen Standard- und Satellitenansicht der Karte um." : {
+      "comment" : "A hint for the user to switch between standard and satellite views of the map.",
+      "isCommentAutoGenerated" : true,
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Schaltet zwischen Standard- und Satellitenansicht der Karte um."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Switches between standard and satellite map view."
+          }
+        }
+      }
+    },
+    "Scharf links" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Scharf links"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sharp left"
+          }
+        }
+      }
+    },
+    "Scharf rechts" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Scharf rechts"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sharp right"
+          }
+        }
+      }
+    },
+    "Schilder & Hinweise" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Schilder & Hinweise"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Signs & notices"
+          }
+        }
+      }
+    },
+    "Schließen" : {
+      "comment" : "A button to dismiss the lightbox.",
+      "isCommentAutoGenerated" : true,
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Schließen"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Close"
+          }
+        }
+      }
+    },
+    "schließt bald" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "schließt bald"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "closes soon"
+          }
+        }
+      }
+    },
+    "schließt in %lld Min." : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "schließt in %lld Min."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "closes in %lld min."
+          }
+        }
+      }
+    },
+    "schließt in %lld Std." : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "schließt in %lld Std."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "closes in %lld hrs."
+          }
+        }
+      }
+    },
+    "schließt in %lld Std. %lld Min." : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "schließt in %1$lld Std. %2$lld Min."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "closes in %1$lld hrs. %2$lld min."
+          }
+        }
+      }
+    },
+    "Schließt um" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Schließt um"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Closes at"
+          }
+        }
+      }
+    },
+    "Standard Filter anwenden" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Standard Filter anwenden"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Apply default filters"
+          }
+        }
+      }
+    },
+    "Standort auf der Karte" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Standort auf der Karte"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Location on map"
+          }
+        }
+      }
+    },
+    "Standort wird ermittelt..." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Standort wird ermittelt..."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Locating..."
+          }
+        }
+      }
+    },
+    "Standort-Berechtigung verweigert. Bitte aktiviere den Zugriff in den iOS-Einstellungen." : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Standort-Berechtigung verweigert. Bitte aktiviere den Zugriff in den iOS-Einstellungen."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Location permission denied. Please enable access in iOS Settings."
+          }
+        }
+      }
+    },
+    "Standortzugriff erforderlich für Notfall-Navigation." : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Standortzugriff erforderlich für Notfall-Navigation."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Location access required for emergency navigation."
+          }
+        }
+      }
+    },
+    "Startet die Routenführung in der externen Karten-App." : {
+      "comment" : "A hint for the user to start the navigation in the external maps app.",
+      "isCommentAutoGenerated" : true,
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Startet die Routenführung in der externen Karten-App."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Starts routing in the external maps app."
+          }
+        }
+      }
+    },
+    "Startet die Routenführung zu dieser Toilette." : {
+      "comment" : "A hint for the \"Navigate\" button.",
+      "isCommentAutoGenerated" : true,
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Startet die Routenführung zu dieser Toilette."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Starts directions to this toilet."
+          }
+        }
+      }
+    },
+    "Suche nach \"%@\"" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Suche nach \"%@\""
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Search for \"%@\""
+          }
+        }
+      }
+    },
+    "Suchen" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Suchen"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Search"
+          }
+        }
+      }
+    },
+    "Suchergebnisse für \"%@\" geladen" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Suchergebnisse für \"%@\" geladen"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Search results loaded for \"%@\""
+          }
+        }
+      }
+    },
+    "Täglich" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Täglich"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Daily"
+          }
+        }
+      }
+    },
+    "Täglich 24 Stunden geöffnet" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Täglich 24 Stunden geöffnet"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Open 24 hours daily"
+          }
+        }
+      }
+    },
+    "Tippe doppelt, um diese Toilette auf der Karte anzuzeigen." : {
+      "comment" : "A hint that can be shown to the user when they tap a toilet row.",
+      "isCommentAutoGenerated" : true,
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tippe doppelt, um diese Toilette auf der Karte anzuzeigen."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Double-tap to show this toilet on the map."
+          }
+        }
+      }
+    },
+    "Tippe hier, um an diesem Ort eine Toilette einzutragen ›" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tippe hier, um an diesem Ort eine Toilette einzutragen ›"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tap here to add a toilet at this location ›"
+          }
+        }
+      }
+    },
+    "Tippe hier, um Fotos hinzuzufügen" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tippe hier, um Fotos hinzuzufügen"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tap here to add photos"
+          }
+        }
+      }
+    },
+    "Tippe oder ziehe, um den Standort anzupassen" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tippe oder ziehe, um den Standort anzupassen"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tap or drag to adjust the location"
+          }
+        }
+      }
+    },
+    "Toilette existiert nicht" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Toilette existiert nicht"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Toilet does not exist"
+          }
+        }
+      }
+    },
+    "Toilette gehört woanders hin" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Toilette gehört woanders hin"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Toilet belongs somewhere else"
+          }
+        }
+      }
+    },
+    "Toilette gehört zum Ort" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Toilette gehört zum Ort"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Toilet belongs to venue"
+          }
+        }
+      }
+    },
+    "Toilette per Foto anlegen" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Toilette per Foto anlegen"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Add toilet by photo"
+          }
+        }
+      }
+    },
+    "Toilette Standort" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Toilette Standort"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Toilet location"
+          }
+        }
+      }
+    },
+    "Toilette überprüfen" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Toilette überprüfen"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Check toilet"
+          }
+        }
+      }
+    },
+    "Toilette wurde verlegt" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Toilette wurde verlegt"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Toilet was relocated"
+          }
+        }
+      }
+    },
+    "Toiletten ohne Euroschlüssel anzeigen" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Toiletten ohne Euroschlüssel anzeigen"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Show toilets without Euro key"
+          }
+        }
+      }
+    },
+    "Toiletten ohne Geschlechtertrennung anzeigen" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Toiletten ohne Geschlechtertrennung anzeigen"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Show toilets without gender separation"
+          }
+        }
+      }
+    },
+    "Toiletten ohne Wickelraum anzeigen" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Toiletten ohne Wickelraum anzeigen"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Show toilets without changing table"
+          }
+        }
+      }
+    },
+    "Ungültige API-Adresse." : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ungültige API-Adresse."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Invalid API address."
+          }
+        }
+      }
+    },
+    "Unisex" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Unisex"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Unisex"
+          }
+        }
+      }
+    },
+    "Upload..." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Upload..."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Upload..."
+          }
+        }
+      }
+    },
+    "Verstanden" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Verstanden"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Understood"
+          }
+        }
+      }
+    },
+    "Viel" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Viel"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Much"
+          }
+        }
+      }
+    },
+    "Vielen Dank!" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Vielen Dank!"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Thank you!"
+          }
+        }
+      }
+    },
+    "Von anderen Gästen oder dem Betreiber vor Ort bestätigt." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Von anderen Gästen oder dem Betreiber vor Ort bestätigt."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Confirmed by other guests or the local operator."
+          }
+        }
+      }
+    },
+    "Vorschlag: %@" : {
+      "comment" : "A label for a button that presents a suggestion for the feedback's subject. The argument is the suggestion.",
+      "isCommentAutoGenerated" : true,
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Vorschlag: %@"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Suggestion: %@"
+          }
+        }
+      }
+    },
+    "W" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "W"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "W"
+          }
+        }
+      }
+    },
+    "Wähle zwischen der internen Kompass-Navigation und der externen Karten-App." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wähle zwischen der internen Kompass-Navigation und der externen Karten-App."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Choose between internal compass navigation and external maps app."
+          }
+        }
+      }
+    },
+    "Wähle zwischen Kompass- und Karten-Navigation." : {
+      "comment" : "A hint for the user to choose between compass and map navigation.",
+      "isCommentAutoGenerated" : true,
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wähle zwischen Kompass- und Karten-Navigation."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Choose between compass and map navigation."
+          }
+        }
+      }
+    },
+    "WC #%@" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "WC #%@"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "WC #%@"
+          }
+        }
+      }
+    },
+    "WC #%lld" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "WC #%lld"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "WC #%lld"
+          }
+        }
+      }
+    },
+    "Wdh." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wdh."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Retry"
+          }
+        }
+      }
+    },
+    "Webseite" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Webseite"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Website"
+          }
+        }
+      }
+    },
+    "Webseite öffnen (cbf-da.de)" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Webseite öffnen (cbf-da.de)"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Open website (cbf-da.de)"
+          }
+        }
+      }
+    },
+    "Webseite: %@" : {
+      "comment" : "A label at the bottom of the toilet detail view that links to the toilet's website. The argument is the website URL.",
+      "isCommentAutoGenerated" : true,
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Webseite: %@"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Website: %@"
+          }
+        }
+      }
+    },
+    "Weiteren Zeitraum hinzufügen" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Weiteren Zeitraum hinzufügen"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Add another time period"
+          }
+        }
+      }
+    },
+    "Wenig" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wenig"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Little"
+          }
+        }
+      }
+    },
+    "Wickelraum vorhanden" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wickelraum vorhanden"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Baby changing facility available"
+          }
+        }
+      }
+    },
+    "Wickeltisch" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wickeltisch"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Changing table"
+          }
+        }
+      }
+    },
+    "Zeige, zu welchem Gebäude, Restaurant oder Geschäft die Toilette gehört." : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zeige, zu welchem Gebäude, Restaurant oder Geschäft die Toilette gehört."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Show which building, restaurant, or shop the toilet belongs to."
+          }
+        }
+      }
+    },
+    "Zeitraum %@" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zeitraum %@"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Period %@"
+          }
+        }
+      }
+    },
+    "Zeitraum %@ entfernen" : {
+      "comment" : "A button to delete a time range.",
+      "isCommentAutoGenerated" : true,
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zeitraum %@ entfernen"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Remove period %@"
+          }
+        }
+      }
+    },
+    "Ziel erreicht!" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ziel erreicht!"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Destination reached!"
+          }
+        }
+      }
+    },
+    "Ziel: %@, %@" : {
+      "comment" : "A label that describes the toilet's name and owner.",
+      "isCommentAutoGenerated" : true,
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ziel: %1$@, %2$@"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Destination: %1$@, %2$@"
+          }
+        }
+      }
+    },
+    "Zu Satellitenansicht wechseln" : {
+      "comment" : "A hint displayed when tapping the satellite view button.",
+      "isCommentAutoGenerated" : true,
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zu Satellitenansicht wechseln"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Switch to satellite view"
+          }
+        }
+      }
+    },
+    "Zu Standardkarte wechseln" : {
+      "comment" : "A label for a button that switches between standard and satellite views.",
+      "isCommentAutoGenerated" : true,
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zu Standardkarte wechseln"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Switch to standard map"
+          }
+        }
+      }
+    },
+    "Zugehöriger Ort" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zugehöriger Ort"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Associated venue"
+          }
+        }
+      }
+    },
+    "Zurück" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zurück"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Back"
+          }
+        }
+      }
+    },
+    "Zurück (Umdrehen)" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zurück (Umdrehen)"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Turn around"
+          }
+        }
+      }
+    },
+    "Zustimmen & Hochladen" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zustimmen & Hochladen"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Agree & Upload"
+          }
+        }
+      }
+    },
+    "Zustimmen und Foto hochladen" : {
+      "comment" : "A button that allows the user to upload a photo.",
+      "isCommentAutoGenerated" : true,
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zustimmen und Foto hochladen"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Agree and upload photo"
+          }
+        }
+      }
+    }
+  },
+  "version" : "1.3"
+}

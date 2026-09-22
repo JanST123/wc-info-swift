@@ -17,7 +17,7 @@ struct ToiletRowView: View {
             rowContent
                 .accessibilityElement(children: .combine)
                 .accessibilityLabel(accessibilityLabel)
-                .accessibilityHint("Tippe doppelt, um diese Toilette auf der Karte anzuzeigen.")
+                .accessibilityHint(Text("Tippe doppelt, um diese Toilette auf der Karte anzuzeigen."))
                 .accessibilityAddTraits(.isButton)
 
             if isActive {
@@ -30,7 +30,7 @@ struct ToiletRowView: View {
                     }
                     .buttonStyle(.borderedProminent)
                     .tint(.purple)
-                    .accessibilityHint("Startet die Routenführung zu dieser Toilette.")
+                    .accessibilityHint(Text("Startet die Routenführung zu dieser Toilette."))
 
                     Spacer()
                     
@@ -40,7 +40,7 @@ struct ToiletRowView: View {
                             .foregroundStyle(.purple)
                     }
                     .buttonStyle(.borderless)
-                    .accessibilityHint("Öffnet die Detailansicht.")
+                    .accessibilityHint(Text("Öffnet die Detailansicht."))
                 }
             }
         }
@@ -115,7 +115,7 @@ struct ToiletRowView: View {
                                     .foregroundColor(.purple)
                             }
                             .buttonStyle(.plain)
-                            .accessibilityLabel("Informationen zu nicht-öffentlichen Toiletten")
+                            .accessibilityLabel(Text("Informationen zu nicht-öffentlichen Toiletten"))
                         }
                         .contentShape(Rectangle())
                         .onTapGesture {
@@ -212,25 +212,27 @@ struct ToiletRowView: View {
     private var accessibilityLabel: String {
         var parts = [toilet.owner, toilet.name]
         if !toilet.isPublicAccessible {
-            parts.append("Nicht öffentlich zugänglich")
+            parts.append(String(localized: "Nicht öffentlich zugänglich"))
         }
         if let address = toilet.address, !address.isEmpty {
             parts.append(address)
         }
         if let comment = toilet.comment, !comment.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
-            parts.append("Bemerkung: \(comment.trimmingCharacters(in: .whitespacesAndNewlines))")
+            let template = String(localized: "Bemerkung: %@")
+            parts.append(String(format: template, comment.trimmingCharacters(in: .whitespacesAndNewlines)))
         }
         if let distance = formattedDistance {
-            parts.append("Entfernung \(distance)")
+            let template = String(localized: "Entfernung %@")
+            parts.append(String(format: template, distance))
         }
-        if toilet.isQualified { parts.append("Geprüfte Toilette") }
-        if toilet.hasWheelchairAccess { parts.append("Rollstuhlgerecht") }
+        if toilet.isQualified { parts.append(String(localized: "Geprüfte Toilette")) }
+        if toilet.hasWheelchairAccess { parts.append(String(localized: "Rollstuhlgerecht")) }
         if toilet.euroKey?.lowercased() == "yes" || toilet.euroKey?.lowercased() == "true" || toilet.euroKey == "1" {
-            parts.append("Euroschlüssel")
+            parts.append(String(localized: "Euroschlüssel"))
         }
-        if toilet.hasChangingTable { parts.append("Wickeltisch") }
-        if toilet.isGenderSeparated { parts.append("Getrennte Toiletten") }
-        if toilet.isUnisex { parts.append("Unisex") }
+        if toilet.hasChangingTable { parts.append(String(localized: "Wickeltisch")) }
+        if toilet.isGenderSeparated { parts.append(String(localized: "Getrennte Toiletten")) }
+        if toilet.isUnisex { parts.append(String(localized: "Unisex")) }
         return parts.joined(separator: ", ")
     }
 

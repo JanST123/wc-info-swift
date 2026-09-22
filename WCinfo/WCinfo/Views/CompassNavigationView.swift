@@ -38,7 +38,7 @@ struct CompassNavigationView: View {
                     Button("Schließen") {
                         dismiss()
                     }
-                    .accessibilityLabel("Kompass-Navigation schließen")
+                    .accessibilityLabel(Text("Kompass-Navigation schließen"))
                 }
             }
             .onAppear {
@@ -85,7 +85,7 @@ struct CompassNavigationView: View {
         .background(Color(uiColor: .secondarySystemBackground))
         .clipShape(RoundedRectangle(cornerRadius: 14))
         .accessibilityElement(children: .combine)
-        .accessibilityLabel("Ziel: \(toilet.name), \(toilet.owner)")
+        .accessibilityLabel(Text("Ziel: \(toilet.name), \(toilet.owner)"))
     }
 
     // MARK: - Compass Dial & Needle
@@ -135,7 +135,7 @@ struct CompassNavigationView: View {
         }
         .frame(width: 270, height: 270)
         .accessibilityElement()
-        .accessibilityLabel("Kompassnadel zeigt in Richtung Toilette")
+        .accessibilityLabel(Text("Kompassnadel zeigt in Richtung Toilette"))
         .accessibilityValue(accessibilityCompassValue)
     }
 
@@ -197,8 +197,8 @@ struct CompassNavigationView: View {
             .background(Color.purple.opacity(0.12))
             .clipShape(RoundedRectangle(cornerRadius: 12))
         }
-        .accessibilityLabel("In Apple Maps oder Google Maps öffnen")
-        .accessibilityHint("Startet die Routenführung in der externen Karten-App.")
+        .accessibilityLabel(Text("In Apple Maps oder Google Maps öffnen"))
+        .accessibilityHint(Text("Startet die Routenführung in der externen Karten-App."))
     }
 
     // MARK: - Helpers
@@ -216,11 +216,12 @@ struct CompassNavigationView: View {
     private var accessibilityCompassValue: String {
         if let meters = compass.distanceInMeters {
             if compass.hasArrived {
-                return "Ziel erreicht"
+                return String(localized: "Ziel erreicht!")
             }
-            return "\(Int(meters.rounded())) Meter Entfernung, Richtung: \(compass.directionDescription)"
+            let template = String(localized: "%lld Meter Entfernung, Richtung: %@")
+            return String(format: template, Int64(meters.rounded()), compass.directionDescription)
         }
-        return "Standort wird geladen"
+        return String(localized: "Standort wird ermittelt...")
     }
 
     private func openExternalMaps() {

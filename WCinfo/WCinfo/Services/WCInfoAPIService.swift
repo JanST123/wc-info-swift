@@ -28,11 +28,11 @@ enum WCInfoAPIError: Error, LocalizedError {
     var message: String? {
         switch self {
         case .invalidURL:
-            return "Ungültige API-Adresse."
+            return String(localized: "Ungültige API-Adresse.")
         case .invalidResponse(_, let message, _):
             return message
         case .decodingError:
-            return "Die Server-Antwort konnte nicht verarbeitet werden."
+            return String(localized: "Die Server-Antwort konnte nicht verarbeitet werden.")
         case .networkError(let underlying):
             return underlying.localizedDescription
         }

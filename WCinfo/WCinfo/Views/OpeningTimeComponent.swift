@@ -25,11 +25,11 @@ struct OpeningTimeComponent: View {
                     .foregroundColor(isOpen ?? false ? .green : .primary)
 
                 if isOpen ?? false, let closeTimestamp {
-                    Text(timeUntil(closeTimestamp, prefix: "schließt"))
+                    Text(timeUntil(closeTimestamp, action: .closes))
                         .font(.caption)
                         .foregroundColor(urgencyColor(for: closeTimestamp))
                 } else if !(isOpen ?? false), let openTimestamp {
-                    Text(timeUntil(openTimestamp, prefix: "öffnet"))
+                    Text(timeUntil(openTimestamp, action: .opens))
                         .font(.caption)
                         .foregroundColor(.purple)
                 }
@@ -59,47 +59,68 @@ struct OpeningTimeComponent: View {
     private var accessibilityLabel: String {
         var parts = [String]()
         if isOpen24Hours {
-            parts.append("Jetzt geöffnet")
-            parts.append("24 Stunden geöffnet")
+            parts.append(String(localized: "Jetzt geöffnet"))
+            parts.append(String(localized: "24 Stunden geöffnet"))
             return parts.joined(separator: ", ")
         }
         if let isOpen {
-            parts.append(isOpen ? "Jetzt geöffnet" : "Geschlossen")
+            parts.append(isOpen ? String(localized: "Jetzt geöffnet") : String(localized: "Geschlossen"))
             if isOpen, let closeTimestamp {
-                parts.append("schließt \(timeUntil(closeTimestamp, prefix: ""))")
+                parts.append(timeUntil(closeTimestamp, action: .closes))
             } else if !isOpen, let openTimestamp {
-                parts.append("öffnet \(timeUntil(openTimestamp, prefix: ""))")
+                parts.append(timeUntil(openTimestamp, action: .opens))
             }
             if !isOpen && accessibleOutsideOpeningTimes {
-                parts.append("Auch außerhalb der Öffnungszeiten zugänglich")
+                parts.append(String(localized: "Auch außerhalb der Öffnungszeiten zugänglich"))
             }
         } else {
-            parts.append("Keine Öffnungszeiten verfügbar")
+            parts.append(String(localized: "Keine Öffnungszeiten"))
             if accessibleOutsideOpeningTimes {
-                parts.append("Auch außerhalb der Öffnungszeiten zugänglich")
+                parts.append(String(localized: "Auch außerhalb der Öffnungszeiten zugänglich"))
             }
         }
         return parts.joined(separator: ", ")
     }
 
-    private func timeUntil(_ date: Date, prefix: String) -> String {
+    private enum TimeUntilAction {
+        case closes
+        case opens
+    }
+
+    private func timeUntil(_ date: Date, action: TimeUntilAction) -> String {
         let seconds = date.timeIntervalSinceNow
-        guard seconds > 0 else { return prefix.isEmpty ? "bald" : "\(prefix) bald" }
-        let minutes = Int(seconds / 60)
+        let minutes = max(0, Int(seconds / 60))
         let hours = minutes / 60
         let remainingMinutes = minutes % 60
 
-        let timeString: String
-        if hours > 0 {
-            if remainingMinutes > 0 {
-                timeString = "in \(hours) Std. \(remainingMinutes) Min."
+        switch action {
+        case .closes:
+            if seconds <= 0 {
+                return String(localized: "schließt bald")
+            } else if hours > 0 && remainingMinutes > 0 {
+                let template = String(localized: "schließt in %lld Std. %lld Min.")
+                return String(format: template, hours, remainingMinutes)
+            } else if hours > 0 {
+                let template = String(localized: "schließt in %lld Std.")
+                return String(format: template, hours)
             } else {
-                timeString = "in \(hours) Std."
+                let template = String(localized: "schließt in %lld Min.")
+                return String(format: template, minutes)
             }
-        } else {
-            timeString = "in \(minutes) Min."
+        case .opens:
+            if seconds <= 0 {
+                return String(localized: "öffnet bald")
+            } else if hours > 0 && remainingMinutes > 0 {
+                let template = String(localized: "öffnet in %lld Std. %lld Min.")
+                return String(format: template, hours, remainingMinutes)
+            } else if hours > 0 {
+                let template = String(localized: "öffnet in %lld Std.")
+                return String(format: template, hours)
+            } else {
+                let template = String(localized: "öffnet in %lld Min.")
+                return String(format: template, minutes)
+            }
         }
-        return prefix.isEmpty ? timeString : "\(prefix) \(timeString)"
     }
 
     private func urgencyColor(for closeTimestamp: Date) -> Color {

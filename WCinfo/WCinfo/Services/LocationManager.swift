@@ -74,7 +74,7 @@ extension LocationManager: CLLocationManagerDelegate {
             case .denied, .restricted:
                 Analytics.shared.trackEvent(category: "location", action: "denied")
                 ErrorManager.shared.reportMessage(
-                    "Standortzugriff wurde verweigert. Bitte aktiviere den Standortzugriff in den Einstellungen, um Toiletten in der Nähe zu finden.",
+                    String(localized: "Standortzugriff wurde verweigert. Bitte aktiviere den Standortzugriff in den Einstellungen, um Toiletten in der Nähe zu finden."),
                     context: ["status": String(describing: authorizationStatus)]
                 )
             case .notDetermined:

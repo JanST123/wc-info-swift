@@ -9,9 +9,9 @@ enum EmergencyNavigationError: LocalizedError {
     var errorDescription: String? {
         switch self {
         case .noToiletsFound:
-            return "Keine passende Toilette in deiner Nähe gefunden."
+            return String(localized: "Keine passende Toilette in deiner Nähe gefunden.")
         case .locationUnavailable:
-            return "Dein aktueller Standort konnte nicht ermittelt werden."
+            return String(localized: "Dein aktueller Standort konnte nicht ermittelt werden.")
         }
     }
 }
@@ -45,7 +45,7 @@ final class EmergencyNavigationManager: ObservableObject {
         )
 
         isSearching = true
-        statusMessage = "Standort wird ermittelt..."
+        statusMessage = String(localized: "Standort wird ermittelt...")
         errorMessage = nil
 
         Task {
@@ -53,7 +53,7 @@ final class EmergencyNavigationManager: ObservableObject {
                 let location = try await locationManager.getCurrentLocation()
                 let userLocation = location
 
-                statusMessage = "Nächste Toilette wird gesucht..."
+                statusMessage = String(localized: "Nächste Toilette wird gesucht...")
 
                 let initialFilterQuery = filterSettings.apiFilterQueryString
                 let toilets = try await WCInfoAPIService.shared.fetchToiletsNearby(
@@ -82,7 +82,7 @@ final class EmergencyNavigationManager: ObservableObject {
                     } ?? Double.infinity
 
                     if publicDistance > Double(filterSettings.maxPublicDistanceMeters) {
-                        statusMessage = "Prüfe nähere geöffnete Toiletten..."
+                        statusMessage = String(localized: "Prüfe nähere geöffnete Toiletten...")
 
                         var fallbackSettings = filterSettings
                         fallbackSettings.showNonPublic = true // allow non-public
@@ -134,7 +134,8 @@ final class EmergencyNavigationManager: ObservableObject {
             } catch {
                 self.isSearching = false
                 self.statusMessage = nil
-                self.errorMessage = "Fehler bei der Notfall-Suche: \(error.localizedDescription)"
+                let errDesc = error.localizedDescription
+                self.errorMessage = String(localized: "Fehler bei der Notfall-Suche: \(errDesc)")
                 ErrorManager.shared.report(error, context: ["action": "urgent_navigation"])
             }
         }

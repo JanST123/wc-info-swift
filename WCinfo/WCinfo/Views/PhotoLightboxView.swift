@@ -87,7 +87,7 @@ struct PhotoLightboxView: View {
                                 .clipShape(Circle())
                         }
                         .buttonStyle(.plain)
-                        .accessibilityLabel("Schließen")
+                        .accessibilityLabel(Text("Schließen"))
                     }
                     .padding(.horizontal, 20)
                     .padding(.top, 16)
@@ -107,7 +107,7 @@ struct PhotoLightboxView: View {
                                 Image(systemName: "nosign")
                                     .font(.subheadline.bold())
                             }
-                            Text("Remove this photo")
+                            Text("Foto entfernen")
                                 .font(.subheadline.bold())
                         }
                         .foregroundColor(.red)
@@ -118,7 +118,7 @@ struct PhotoLightboxView: View {
                     }
                     .buttonStyle(.plain)
                     .disabled(isDeleting)
-                    .accessibilityLabel("Remove this photo")
+                    .accessibilityLabel(Text("Foto entfernen"))
                     .padding(.bottom, photos.count > 1 ? 44 : 24)
                 }
             }

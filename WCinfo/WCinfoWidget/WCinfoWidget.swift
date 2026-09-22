@@ -257,26 +257,27 @@ struct WCinfoWidgetEntryView: View {
     private var activeFilterTags: [String] {
         var tags: [String] = []
         if !entry.configuration.showClosed {
-            tags.append("Geöffnet")
+            tags.append(String(localized: "Geöffnet"))
         }
         if !entry.configuration.showNonPublic {
             if entry.configuration.allowNonPublicFallback {
-                tags.append("Öffentlich (>\(entry.configuration.maxPublicDistanceMeters)m Ausweich)")
+                let template = String(localized: "Öffentlich (>%lldm Ausweich)")
+                tags.append(String(format: template, Int64(entry.configuration.maxPublicDistanceMeters)))
             } else {
-                tags.append("Nur Öffentlich")
+                tags.append(String(localized: "Nur Öffentlich"))
             }
         }
         if !entry.configuration.showNonWheelchairAccessible {
-            tags.append("Rollstuhlgerecht")
+            tags.append(String(localized: "Rollstuhlgerecht"))
         }
         if !entry.configuration.showWithoutChangingTable {
-            tags.append("Wickeltisch")
+            tags.append(String(localized: "Wickeltisch"))
         }
         if !entry.configuration.showWithoutGenderSeparation {
-            tags.append("Getrennt")
+            tags.append(String(localized: "Getrennt"))
         }
         if !entry.configuration.showWithoutEuroKey {
-            tags.append("Euroschlüssel")
+            tags.append(String(localized: "Euroschlüssel"))
         }
         return tags
     }
@@ -333,8 +334,8 @@ struct WCinfoWidget: Widget {
                     for: .widget
                 )
         }
-        .configurationDisplayName("Notfall-Toilette")
-        .description("Finde und navigiere mit nur einem Fingertipp direkt per Kompass zur nächsten passenden Toilette.")
+        .configurationDisplayName(LocalizedStringResource("Notfall-Toilette"))
+        .description(LocalizedStringResource("Finde und navigiere mit nur einem Fingertipp direkt per Kompass zur nächsten passenden Toilette."))
         .supportedFamilies([
             .systemSmall,
             .systemMedium,

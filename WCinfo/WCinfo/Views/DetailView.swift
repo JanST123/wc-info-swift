@@ -40,7 +40,7 @@ struct DetailView: View {
                     Button("Schließen") {
                         dismiss()
                     }
-                    .accessibilityLabel("Details schließen")
+                    .accessibilityLabel(Text("Details schließen"))
                 }
             }
             .confirmationDialog(
@@ -130,7 +130,7 @@ struct DetailView: View {
                 }
                 .foregroundColor(.purple)
             }
-            .accessibilityLabel("Änderungen für diese Toilette vorschlagen")
+            .accessibilityLabel(Text("Änderungen für diese Toilette vorschlagen"))
         }
     }
 
@@ -139,7 +139,7 @@ struct DetailView: View {
         HStack(alignment: .firstTextBaseline, spacing: 8) {
             Text(toilet.name)
                 .font(.title.bold())
-                .accessibilityLabel("Name: \(toilet.name)")
+                .accessibilityLabel(Text("Name: \(toilet.name)"))
 
             if toilet.isQualified {
                 QualifiedBadgeView(iconSize: 22)
@@ -149,13 +149,13 @@ struct DetailView: View {
         Label("Betreiber: \(toilet.owner)", systemImage: "building.2")
             .font(.body)
             .foregroundStyle(.primary)
-            .accessibilityLabel("Betreiber: \(toilet.owner)")
+            .accessibilityLabel(Text("Betreiber: \(toilet.owner)"))
 
         if toilet.isPublicAccessible {
             Label("Öffentlich zugänglich", systemImage: "figure.walk")
                 .font(.body)
                 .foregroundStyle(.primary)
-                .accessibilityLabel("Öffentlich zugängliche Toilette")
+                .accessibilityLabel(Text("Öffentlich zugängliche Toilette"))
         }
 
         Spacer(minLength: 4)
@@ -176,8 +176,8 @@ struct DetailView: View {
             .background(Color.purple)
             .clipShape(RoundedRectangle(cornerRadius: 12))
         }
-        .accessibilityLabel("Navigieren zu \(toilet.name)")
-        .accessibilityHint("Wähle zwischen Kompass- und Karten-Navigation.")
+        .accessibilityLabel(Text("Navigieren zu \(toilet.name)"))
+        .accessibilityHint(Text("Wähle zwischen Kompass- und Karten-Navigation."))
     }
 
     private var featuresSection: some View {
@@ -208,7 +208,7 @@ struct DetailView: View {
                             .foregroundColor(.purple)
                     }
                     .buttonStyle(.plain)
-                    .accessibilityLabel("Informationen zum Euroschlüssel")
+                    .accessibilityLabel(Text("Informationen zum Euroschlüssel"))
                 }
             }
 
@@ -278,7 +278,7 @@ struct DetailView: View {
                         .shadow(color: Color.purple.opacity(0.3), radius: 3, x: 0, y: 2)
                     }
                     .buttonStyle(.plain)
-                    .accessibilityLabel("Foto hinzufügen")
+                    .accessibilityLabel(Text("Foto hinzufügen"))
                 }
                 .padding(.vertical, 2)
             }
@@ -319,7 +319,7 @@ struct DetailView: View {
                 }
             }
             .accessibilityElement(children: .combine)
-            .accessibilityLabel(toilet.isOpen24HoursEveryDay ? "Öffnungszeiten: Täglich 24 Stunden geöffnet" : "Öffnungszeiten: \(periods.map(\.formatted).joined(separator: ", "))")
+            .accessibilityLabel(toilet.isOpen24HoursEveryDay ? Text("Öffnungszeiten: Täglich 24 Stunden geöffnet") : Text("Öffnungszeiten: \(periods.map(\.formatted).joined(separator: ", "))"))
 
             Spacer(minLength: 4)
 
@@ -357,7 +357,7 @@ struct DetailView: View {
                     .foregroundStyle(.secondary)
             }
             .accessibilityElement(children: .combine)
-            .accessibilityLabel("Adresse: \(address)")
+            .accessibilityLabel(Text("Adresse: \(address)"))
 
             Spacer(minLength: 4)
         }
@@ -387,7 +387,7 @@ struct DetailView: View {
                 }
             }
             .accessibilityElement(children: .combine)
-            .accessibilityLabel("Ablagefläche: \(title)")
+            .accessibilityLabel(Text("Ablagefläche: \(title)"))
 
             Spacer(minLength: 4)
         }
@@ -426,7 +426,7 @@ struct DetailView: View {
                 }
             }
             .accessibilityElement(children: .combine)
-            .accessibilityLabel("Webseite: \(trimmed)")
+            .accessibilityLabel(Text("Webseite: \(trimmed)"))
 
             Spacer(minLength: 4)
         }
@@ -443,7 +443,7 @@ struct DetailView: View {
                     .foregroundStyle(.secondary)
             }
             .accessibilityElement(children: .combine)
-            .accessibilityLabel("Bemerkung: \(comment)")
+            .accessibilityLabel(Text("Bemerkung: \(comment)"))
         }
     }
 
@@ -526,11 +526,11 @@ struct DetailView: View {
     private func storageTitle(for value: String) -> String? {
         switch value.lowercased() {
         case "none":
-            return "Keine"
+            return String(localized: "Keine")
         case "little":
-            return "Wenig"
+            return String(localized: "Wenig")
         case "much":
-            return "Viel"
+            return String(localized: "Viel")
         default:
             return nil
         }

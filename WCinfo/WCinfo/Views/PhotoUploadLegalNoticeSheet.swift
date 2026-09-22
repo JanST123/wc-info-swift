@@ -54,7 +54,7 @@ struct PhotoUploadLegalNoticeSheet: View {
 
                     // Privacy Note
                     VStack(alignment: .leading, spacing: 8) {
-                        Text(.init("Der Zeitpunkt und deine IP werden im Zusammenhang mit den hochgeladenen Fotos bei uns gespeichert. Weitere Informationen findest du auch in unserer [Datenschutzerklärung](https://wc-info.de/Law/Privacy)."))
+                        Text("Der Zeitpunkt und deine IP werden im Zusammenhang mit den hochgeladenen Fotos bei uns gespeichert. Weitere Informationen findest du auch in unserer [Datenschutzerklärung](https://wc-info.de/Law/Privacy).")
                             .font(.caption)
                             .foregroundColor(.secondary)
                             .tint(.purple)
@@ -77,7 +77,7 @@ struct PhotoUploadLegalNoticeSheet: View {
                                 .clipShape(RoundedRectangle(cornerRadius: 12))
                                 .shadow(color: Color.purple.opacity(0.3), radius: 4, x: 0, y: 2)
                         }
-                        .accessibilityLabel("Zustimmen und Foto hochladen")
+                        .accessibilityLabel(Text("Zustimmen und Foto hochladen"))
 
                         Button {
                             onCancel()
@@ -88,7 +88,7 @@ struct PhotoUploadLegalNoticeSheet: View {
                                 .foregroundColor(.secondary)
                         }
                         .padding(.top, 2)
-                        .accessibilityLabel("Abbrechen")
+                        .accessibilityLabel(Text("Abbrechen"))
                     }
                     .padding(.top, 8)
                 }
@@ -108,7 +108,7 @@ struct PhotoUploadLegalNoticeSheet: View {
         }
     }
 
-    private func ruleRow(text: String) -> some View {
+    private func ruleRow(text: LocalizedStringKey) -> some View {
         HStack(alignment: .top, spacing: 8) {
             Image(systemName: "xmark.circle.fill")
                 .font(.footnote)

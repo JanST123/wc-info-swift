@@ -119,35 +119,35 @@ final class CompassManager: NSObject, ObservableObject {
 
     var directionDescription: String {
         guard let _ = distanceInMeters else {
-            return "Standort wird ermittelt..."
+            return String(localized: "Standort wird ermittelt...")
         }
         if hasArrived {
-            return "Du hast das Ziel erreicht!"
+            return String(localized: "Du hast das Ziel erreicht!")
         }
         if !isHeadingAvailable {
-            return "Kompass nicht verfügbar"
+            return String(localized: "Kompass nicht verfügbar")
         }
 
         let angle = relativeAngle
         switch angle {
         case 345...360, 0..<15:
-            return "Geradeaus"
+            return String(localized: "Geradeaus")
         case 15..<75:
-            return "Halb rechts"
+            return String(localized: "Halb rechts")
         case 75..<105:
-            return "Rechts"
+            return String(localized: "Rechts")
         case 105..<165:
-            return "Scharf rechts"
+            return String(localized: "Scharf rechts")
         case 165..<195:
-            return "Hinter dir"
+            return String(localized: "Hinter dir")
         case 195..<255:
-            return "Scharf links"
+            return String(localized: "Scharf links")
         case 255..<285:
-            return "Links"
+            return String(localized: "Links")
         case 285..<345:
-            return "Halb links"
+            return String(localized: "Halb links")
         default:
-            return "Geradeaus"
+            return String(localized: "Geradeaus")
         }
     }
 }

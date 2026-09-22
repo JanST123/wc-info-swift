@@ -10,12 +10,14 @@ struct ToiletFeedbackView: View {
     @State private var errorMessage: String? = nil
     @State private var showSuccessAlert: Bool = false
 
-    private let suggestedSubjects: [String] = [
-        "Toilette existiert nicht",
-        "Toilette überprüfen",
-        "Toilette wurde verlegt",
-        "Toilette gehört woanders hin"
-    ]
+    private var suggestedSubjects: [String] {
+        [
+            String(localized: "Toilette existiert nicht"),
+            String(localized: "Toilette überprüfen"),
+            String(localized: "Toilette wurde verlegt"),
+            String(localized: "Toilette gehört woanders hin")
+        ]
+    }
 
     private var isFormValid: Bool {
         !subject.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
@@ -47,7 +49,7 @@ struct ToiletFeedbackView: View {
                     Button("Abbrechen") {
                         dismiss()
                     }
-                    .accessibilityLabel("Feedback abbrechen")
+                    .accessibilityLabel(Text("Feedback abbrechen"))
                 }
             }
             .alert("Vielen Dank!", isPresented: $showSuccessAlert) {
@@ -118,7 +120,7 @@ struct ToiletFeedbackView: View {
                             )
                     }
                     .buttonStyle(.plain)
-                    .accessibilityLabel("Vorschlag: \(suggestion)")
+                    .accessibilityLabel(Text("Vorschlag: \(suggestion)"))
                 }
             }
 
@@ -126,7 +128,7 @@ struct ToiletFeedbackView: View {
                 .padding(12)
                 .background(Color(uiColor: .secondarySystemBackground))
                 .clipShape(RoundedRectangle(cornerRadius: 10))
-                .accessibilityLabel("Betreff Eingabefeld")
+                .accessibilityLabel(Text("Betreff Eingabefeld"))
         }
     }
 
@@ -145,7 +147,7 @@ struct ToiletFeedbackView: View {
                 .padding(12)
                 .background(Color(uiColor: .secondarySystemBackground))
                 .clipShape(RoundedRectangle(cornerRadius: 10))
-                .accessibilityLabel("Optionale Nachricht eingeben")
+                .accessibilityLabel(Text("Optionale Nachricht eingeben"))
         }
     }
 
@@ -162,7 +164,7 @@ struct ToiletFeedbackView: View {
         .padding(10)
         .background(Color.red.opacity(0.1))
         .clipShape(RoundedRectangle(cornerRadius: 8))
-        .accessibilityLabel("Fehler: \(message)")
+        .accessibilityLabel(Text("Fehler: \(message)"))
     }
 
     private var submitButton: some View {
@@ -182,7 +184,7 @@ struct ToiletFeedbackView: View {
             .clipShape(RoundedRectangle(cornerRadius: 12))
         }
         .disabled(!isFormValid || isSubmitting)
-        .accessibilityLabel("Feedback senden")
+        .accessibilityLabel(Text("Feedback senden"))
     }
 
     // MARK: - Actions

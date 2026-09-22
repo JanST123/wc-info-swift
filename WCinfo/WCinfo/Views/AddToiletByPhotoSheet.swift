@@ -83,13 +83,17 @@ struct AddToiletByPhotoSheet: View {
                     }
 
                     if uploadedPhotoCount > 0 {
+                        let photoCountText = uploadedPhotoCount == 1 ? String(localized: "1 Foto") : String(localized: "\(uploadedPhotoCount) Fotos")
+                        let template = String(localized: "Fertigstellen (%@)")
+                        let buttonText = String(format: template, photoCountText)
+
                         Button {
                             onToiletCreated?()
                             dismiss()
                         } label: {
                             HStack {
                                 Image(systemName: "checkmark.circle.fill")
-                                Text("Fertigstellen (\(uploadedPhotoCount) \(uploadedPhotoCount == 1 ? "Foto" : "Fotos"))")
+                                Text(buttonText)
                                     .fontWeight(.semibold)
                             }
                             .frame(maxWidth: .infinity)
@@ -100,6 +104,7 @@ struct AddToiletByPhotoSheet: View {
                             .shadow(color: Color.purple.opacity(0.3), radius: 6, x: 0, y: 3)
                         }
                         .padding(.top, 8)
+                        .accessibilityLabel(Text(buttonText))
                     }
                 }
                 .padding(20)
@@ -120,7 +125,7 @@ struct AddToiletByPhotoSheet: View {
         }
     }
 
-    private func tipRow(icon: String, title: String, description: String) -> some View {
+    private func tipRow(icon: String, title: LocalizedStringKey, description: LocalizedStringKey) -> some View {
         HStack(alignment: .top, spacing: 12) {
             Image(systemName: icon)
                 .font(.title3)

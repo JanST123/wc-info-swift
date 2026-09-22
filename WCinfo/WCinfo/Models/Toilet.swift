@@ -137,7 +137,8 @@ struct OpeningHoursPeriod: Codable, Hashable {
         if let close {
             return "\(open.formattedDay) \(open.formattedTime) – \(close.formattedTime)"
         } else {
-            return "\(open.formattedDay) ab \(open.formattedTime)"
+            let fromTemplate = String(localized: "%@ ab %@")
+            return String(format: fromTemplate, open.formattedDay, open.formattedTime)
         }
     }
 }
@@ -146,13 +147,10 @@ struct OpeningHoursTime: Codable, Hashable {
     let day: Int
     let time: String
 
-    private static let dayNames = [
-        "So", "Mo", "Di", "Mi", "Do", "Fr", "Sa"
-    ]
-
     var formattedDay: String {
         guard (0...6).contains(day) else { return "?" }
-        return Self.dayNames[day]
+        let symbols = Calendar.current.shortWeekdaySymbols
+        return symbols[day]
     }
 
     var formattedTime: String {
@@ -292,13 +290,10 @@ public struct GooglePlacesPoint: Codable, Hashable, Equatable {
         self.minute = minute
     }
 
-    private static let dayNames = [
-        "So", "Mo", "Di", "Mi", "Do", "Fr", "Sa"
-    ]
-
     public var formattedDay: String {
         guard (0...6).contains(day) else { return "?" }
-        return Self.dayNames[day]
+        let symbols = Calendar.current.shortWeekdaySymbols
+        return symbols[day]
     }
 
     public var formattedTime: String {
@@ -327,7 +322,8 @@ public struct GooglePlacesPeriod: Codable, Hashable, Equatable {
 
     public var formatted: String {
         if is24Hours {
-            return "\(open.formattedDay) 24 Stunden geöffnet"
+            let open24Template = String(localized: "%@ 24 Stunden geöffnet")
+            return String(format: open24Template, open.formattedDay)
         } else if let close {
             if open.day == close.day {
                 return "\(open.formattedDay) \(open.formattedTime) – \(close.formattedTime)"
@@ -335,7 +331,8 @@ public struct GooglePlacesPeriod: Codable, Hashable, Equatable {
                 return "\(open.formattedDay) \(open.formattedTime) – \(close.formattedDay) \(close.formattedTime)"
             }
         } else {
-            return "\(open.formattedDay) ab \(open.formattedTime)"
+            let fromTemplate = String(localized: "%@ ab %@")
+            return String(format: fromTemplate, open.formattedDay, open.formattedTime)
         }
     }
 }

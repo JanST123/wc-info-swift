@@ -68,7 +68,7 @@ struct LocationPickerMapView: View {
                             .foregroundColor(.white)
                             .clipShape(RoundedRectangle(cornerRadius: 8))
                         }
-                        .accessibilityLabel("Diese Position wählen")
+                        .accessibilityLabel(Text("Diese Position wählen"))
                     }
                     .padding(12)
                     .background(.ultraThinMaterial)
@@ -83,7 +83,7 @@ struct LocationPickerMapView: View {
                         isSatellite.toggle()
                     }
                 } label: {
-                    Image(systemName: isSatellite ? "globe.europe.africa.fill" : "square.2.layers.3d")
+                    Image(systemName: "square.2.layers.3d")
                         .font(.system(size: 16, weight: .semibold))
                         .foregroundColor(isSatellite ? .white : .primary)
                         .frame(width: 40, height: 40)
@@ -92,8 +92,8 @@ struct LocationPickerMapView: View {
                         .shadow(color: .black.opacity(0.18), radius: 4, x: 0, y: 2)
                 }
                 .padding(12)
-                .accessibilityLabel(isSatellite ? "Zu Standardkarte wechseln" : "Zu Satellitenansicht wechseln")
-                .accessibilityHint("Schaltet zwischen Standard- und Satellitenansicht der Karte um.")
+                .accessibilityLabel(isSatellite ? Text("Zu Standardkarte wechseln") : Text("Zu Satellitenansicht wechseln"))
+                .accessibilityHint(Text("Schaltet zwischen Standard- und Satellitenansicht der Karte um."))
             }
         }
     }
@@ -121,8 +121,8 @@ private struct LocationPickerGMSView: UIViewRepresentable {
 
         let marker = GMSMarker(position: selectedCoordinate)
         marker.isDraggable = true
-        marker.title = "Toilette Standort"
-        marker.snippet = "Tippe oder ziehe, um den Standort anzupassen"
+        marker.title = String(localized: "Toilette Standort")
+        marker.snippet = String(localized: "Tippe oder ziehe, um den Standort anzupassen")
         marker.map = mapView
         context.coordinator.marker = marker
 

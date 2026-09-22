@@ -166,15 +166,18 @@ private struct TimeRangeCardView: View {
 
     @State private var localDraft: TimeRangeDraft
 
-    private let weekdays: [(day: Int, name: String)] = [
-        (1, "Mo"),
-        (2, "Di"),
-        (3, "Mi"),
-        (4, "Do"),
-        (5, "Fr"),
-        (6, "Sa"),
-        (0, "So")
-    ]
+    private var weekdays: [(day: Int, name: String)] {
+        let symbols = Calendar.current.shortWeekdaySymbols
+        return [
+            (1, symbols.indices.contains(1) ? symbols[1] : "Mo"),
+            (2, symbols.indices.contains(2) ? symbols[2] : "Di"),
+            (3, symbols.indices.contains(3) ? symbols[3] : "Mi"),
+            (4, symbols.indices.contains(4) ? symbols[4] : "Do"),
+            (5, symbols.indices.contains(5) ? symbols[5] : "Fr"),
+            (6, symbols.indices.contains(6) ? symbols[6] : "Sa"),
+            (0, symbols.indices.contains(0) ? symbols[0] : "So")
+        ]
+    }
 
     init(
         draft: TimeRangeDraft,
@@ -211,15 +214,15 @@ private struct TimeRangeCardView: View {
                             .clipShape(Circle())
                     }
                     .buttonStyle(.plain)
-                    .accessibilityLabel("Zeitraum \(index + 1) entfernen")
+                    .accessibilityLabel(Text("Zeitraum \(index + 1) entfernen"))
                 }
             }
 
             // Quick select presets
             HStack(spacing: 8) {
-                presetButton(title: "Mo–Fr", days: [1, 2, 3, 4, 5])
-                presetButton(title: "Sa–So", days: [6, 0])
-                presetButton(title: "Täglich", days: [0, 1, 2, 3, 4, 5, 6])
+                presetButton(title: String(localized: "Mo–Fr"), days: [1, 2, 3, 4, 5])
+                presetButton(title: String(localized: "Sa–So"), days: [6, 0])
+                presetButton(title: String(localized: "Täglich"), days: [0, 1, 2, 3, 4, 5, 6])
             }
 
             // Weekday Chips

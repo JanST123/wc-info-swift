@@ -21,10 +21,10 @@ struct MapView: UIViewRepresentable {
         mapView.settings.myLocationButton = true
         mapView.delegate = context.coordinator
         mapView.overrideUserInterfaceStyle = colorScheme == .dark ? .dark : .light
-        mapView.accessibilityLabel = "Karte mit \(toilets.count) Toiletten in der Nähe"
+        let template = String(localized: "Karte mit %lld Toiletten in der Nähe")
+        mapView.accessibilityLabel = String(format: template, Int64(toilets.count))
         mapView.isAccessibilityElement = true
         context.coordinator.lastCenter = center
-        print("[MapView] Created map at \(center.latitude), \(center.longitude)")
         return mapView
     }
 
@@ -94,82 +94,60 @@ struct MapView: UIViewRepresentable {
             context.coordinator.lastSelectedID = selectedToiletID
         }
 
-        mapView.accessibilityLabel = "Karte mit \(toilets.count) Toiletten in der Nähe"
+        let template = String(localized: "Karte mit %lld Toiletten in der Nähe")
+        mapView.accessibilityLabel = String(format: template, Int64(toilets.count))
     }
 
     func makeCoordinator() -> Coordinator {
-        Coordinator()
+        Coordinator(self)
     }
 
     final class Coordinator: NSObject, GMSMapViewDelegate {
-        var lastCenter: CLLocationCoordinate2D?
-        var lastSelectedID: Int?
+        var parent: MapView
         var toilets: [Toilet] = []
         var onShowDetails: (Toilet) -> Void = { _ in }
         var onAddToiletAtCoordinate: ((CLLocationCoordinate2D) -> Void)? = nil
         var onCameraWillMove: ((_ gesture: Bool) -> Void)? = nil
         var onCameraIdle: ((_ south: Double, _ west: Double, _ north: Double, _ east: Double) -> Void)? = nil
+        var lastCenter: CLLocationCoordinate2D?
+        var lastSelectedID: Int?
         var addMarker: GMSMarker?
 
-        @MainActor
-        func mapView(_ mapView: GMSMapView, didFailToLocateUserWithError error: Error) {
-            print("[MapView] didFailToLocateUserWithError: \(error.localizedDescription)")
-            ErrorManager.shared.report(error, context: ["source": "MapView.userLocation"])
-        }
-
-        func mapViewDidStartTileRendering(_ mapView: GMSMapView) {
-            print("[MapView] Started tile rendering")
-        }
-
-        func mapViewDidFinishTileRendering(_ mapView: GMSMapView) {
-            print("[MapView] Finished tile rendering")
-        }
-
-        func didTapMyLocationButton(for mapView: GMSMapView) -> Bool {
-            if let userLocation = mapView.myLocation {
-                let camera = GMSCameraPosition.camera(
-                    withLatitude: userLocation.coordinate.latitude,
-                    longitude: userLocation.coordinate.longitude,
-                    zoom: max(mapView.camera.zoom, 15)
-                )
-                mapView.animate(to: camera)
-                return true
-            }
-            return false
+        init(_ parent: MapView) {
+            self.parent = parent
         }
 
         func mapView(_ mapView: GMSMapView, willMove gesture: Bool) {
             onCameraWillMove?(gesture)
         }
 
-        func mapView(_ mapView: GMSMapView, idleAt position: GMSCameraPosition) {
+        func mapView(_ mapView: GMSMapView, idleAt cameraPosition: GMSCameraPosition) {
             let visibleRegion = mapView.projection.visibleRegion()
-            let bounds = GMSCoordinateBounds(region: visibleRegion)
-            let south = bounds.southWest.latitude
-            let west = bounds.southWest.longitude
-            let north = bounds.northEast.latitude
-            let east = bounds.northEast.longitude
+            let south = min(visibleRegion.nearLeft.latitude, visibleRegion.nearRight.latitude)
+            let north = max(visibleRegion.farLeft.latitude, visibleRegion.farRight.latitude)
+            let west = min(visibleRegion.nearLeft.longitude, visibleRegion.farLeft.longitude)
+            let east = max(visibleRegion.nearRight.longitude, visibleRegion.farRight.longitude)
             onCameraIdle?(south, west, north, east)
         }
 
         func mapView(_ mapView: GMSMapView, didTapAt coordinate: CLLocationCoordinate2D) {
+            if let existing = addMarker {
+                existing.map = nil
+                addMarker = nil
+            }
+        }
+
+        func mapView(_ mapView: GMSMapView, didLongPressAt coordinate: CLLocationCoordinate2D) {
             addMarker?.map = nil
+
             let marker = GMSMarker(position: coordinate)
-            marker.title = "Neue Toilette hinzufügen"
-            marker.snippet = "Tippe hier, um eine Toilette hinzuzufügen ›"
+            marker.title = String(localized: "Neue Toilette hinzufügen")
+            marker.snippet = String(localized: "Tippe hier, um an diesem Ort eine Toilette einzutragen ›")
             marker.icon = GMSMarker.markerImage(with: .systemPurple)
             marker.userData = "add_toilet_marker"
             marker.map = mapView
-            mapView.selectedMarker = marker
             addMarker = marker
-        }
-
-        func mapView(_ mapView: GMSMapView, didTap marker: GMSMarker) -> Bool {
-            if marker.userData as? String != "add_toilet_marker" {
-                addMarker?.map = nil
-                addMarker = nil
-            }
-            return false
+            mapView.selectedMarker = marker
         }
 
         func mapView(_ mapView: GMSMapView, markerInfoWindow marker: GMSMarker) -> UIView? {
@@ -204,7 +182,7 @@ struct MapView: UIViewRepresentable {
 /// Note: GMSMapView renders info windows as a static snapshot, so real
 /// UIControls (e.g. UIButton) inside this view will not receive touches.
 /// Taps anywhere on the window are instead handled by
-/// `GMSMapViewDelegate.mapView(_:didTapInfoWindowOf:)`.
+/// `GMSMapViewDelegate.mapView(_:didTapInfoWindowOf:)` .
 private final class ToiletInfoWindowView: UIView {
     private static let maxWidth: CGFloat = 260
     private static let horizontalPadding: CGFloat = 12
@@ -228,7 +206,7 @@ private final class ToiletInfoWindowView: UIView {
         snippetLabel.numberOfLines = 2
 
         let detailsLabel = UILabel()
-        detailsLabel.text = "Details ansehen ›"
+        detailsLabel.text = String(localized: "Details ansehen ›")
         detailsLabel.font = .preferredFont(forTextStyle: .footnote).withTraits(.traitBold) ?? .boldSystemFont(ofSize: 13)
         detailsLabel.textColor = .systemPurple
 
@@ -244,8 +222,6 @@ private final class ToiletInfoWindowView: UIView {
 
         addSubview(textStack)
 
-        // GMSMapView uses this view's `frame` directly (it does not resolve
-        // Auto Layout constraints), so we must size it manually up front.
         let fittingSize = textStack.systemLayoutSizeFitting(
             CGSize(width: Self.maxWidth - Self.horizontalPadding * 2, height: .greatestFiniteMagnitude),
             withHorizontalFittingPriority: .required,
@@ -261,7 +237,7 @@ private final class ToiletInfoWindowView: UIView {
 
         isAccessibilityElement = true
         accessibilityLabel = "\(toilet.displayName). \(toilet.accessibilitySnippet)"
-        accessibilityHint = "Doppeltippen, um Details zu öffnen."
+        accessibilityHint = String(localized: "Doppeltippen, um Details zu öffnen.")
         accessibilityTraits = .button
     }
 
@@ -281,13 +257,13 @@ private final class AddToiletInfoWindowView: UIView {
         backgroundColor = .systemBackground
 
         let titleLabel = UILabel()
-        titleLabel.text = "Neue Toilette hinzufügen"
+        titleLabel.text = String(localized: "Neue Toilette hinzufügen")
         titleLabel.font = .preferredFont(forTextStyle: .headline)
         titleLabel.numberOfLines = 1
         titleLabel.textColor = .systemPurple
 
         let snippetLabel = UILabel()
-        snippetLabel.text = "Tippe hier, um an diesem Ort eine Toilette einzutragen ›"
+        snippetLabel.text = String(localized: "Tippe hier, um an diesem Ort eine Toilette einzutragen ›")
         snippetLabel.font = .preferredFont(forTextStyle: .footnote)
         snippetLabel.textColor = .secondaryLabel
         snippetLabel.numberOfLines = 2
@@ -318,8 +294,8 @@ private final class AddToiletInfoWindowView: UIView {
         )
 
         isAccessibilityElement = true
-        accessibilityLabel = "Neue Toilette an diesem Ort hinzufügen"
-        accessibilityHint = "Doppeltippen, um die Toilettenerfassung zu starten."
+        accessibilityLabel = String(localized: "Neue Toilette an diesem Ort hinzufügen")
+        accessibilityHint = String(localized: "Doppeltippen, um die Toilettenerfassung zu starten.")
         accessibilityTraits = .button
     }
 
@@ -337,14 +313,14 @@ private extension UIFont {
 
 extension Toilet {
     var displayName: String {
-        name.isEmpty ? "WC #\(id)" : name
+        name.isEmpty ? String(localized: "WC #\(id)") : name
     }
 
     var accessibilitySnippet: String {
         var parts = [String]()
-        if hasWheelchairAccess { parts.append("Rollstuhlgerecht") }
-        if isGenderSeparated { parts.append("Getrennte Toiletten") } else { parts.append("Unisex") }
-        if hasChangingTable { parts.append("Wickeltisch") }
+        if hasWheelchairAccess { parts.append(String(localized: "Rollstuhlgerecht")) }
+        if isGenderSeparated { parts.append(String(localized: "Getrennte Toiletten")) } else { parts.append(String(localized: "Unisex")) }
+        if hasChangingTable { parts.append(String(localized: "Wickeltisch")) }
         if let address, !address.isEmpty { parts.append(address) }
         return parts.joined(separator: ", ")
     }

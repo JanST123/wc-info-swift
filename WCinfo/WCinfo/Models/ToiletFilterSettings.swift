@@ -132,38 +132,31 @@ struct ToiletFilterSettings: Equatable, Codable {
         var activeRestrictions: [String] = []
 
         if !showClosed {
-            activeRestrictions.append("jetzt geöffnete")
+            activeRestrictions.append(String(localized: "jetzt geöffnete"))
         }
         if !showNonPublic {
-            activeRestrictions.append("öffentliche")
+            activeRestrictions.append(String(localized: "öffentliche"))
         }
         if !showNonWheelchairAccessible {
-            activeRestrictions.append("barrierefreie")
+            activeRestrictions.append(String(localized: "barrierefreie"))
         }
         if !showWithoutChangingTable {
-            activeRestrictions.append("mit Wickelraum")
+            activeRestrictions.append(String(localized: "mit Wickelraum"))
         }
         if !showWithoutGenderSeparation {
-            activeRestrictions.append("getrennte")
+            activeRestrictions.append(String(localized: "getrennte"))
         }
         if !showWithoutEuroKey {
-            activeRestrictions.append("mit Euroschlüssel")
+            activeRestrictions.append(String(localized: "mit Euroschlüssel"))
         }
 
         if activeRestrictions.isEmpty {
-            var string = AttributedString("Zeige ")
-            var all = AttributedString("alle")
-            all.inlinePresentationIntent = .stronglyEmphasized
-            string.append(all)
-            string.append(AttributedString(" Toiletten an."))
-            return string
+            return (try? AttributedString(markdown: String(localized: "Zeige **alle** Toiletten an."))) ?? AttributedString(String(localized: "Zeige **alle** Toiletten an."))
         } else {
-            var string = AttributedString("Zeige nur ")
-            var boldPart = AttributedString(activeRestrictions.joined(separator: ", "))
-            boldPart.inlinePresentationIntent = .stronglyEmphasized
-            string.append(boldPart)
-            string.append(AttributedString(" Toiletten an."))
-            return string
+            let joined = activeRestrictions.joined(separator: ", ")
+            let template = String(localized: "Zeige nur **%@** Toiletten an.")
+            let formatted = String(format: template, joined)
+            return (try? AttributedString(markdown: formatted)) ?? AttributedString(formatted)
         }
     }
 }

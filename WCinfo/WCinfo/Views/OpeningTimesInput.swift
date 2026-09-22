@@ -3,13 +3,13 @@ import SwiftUI
 struct OpeningTimesInput: View {
     @Binding var periods: [GooglePlacesPeriod]?
 
-    @State private var drafts: [TimeRangeDraft] = [
-        TimeRangeDraft(
-            selectedDays: [1, 2, 3, 4, 5],
-            openTime: TimeRangeDraft.makeTime(hour: 8, minute: 0),
-            closeTime: TimeRangeDraft.makeTime(hour: 18, minute: 0)
-        )
-    ]
+    @State private var drafts: [TimeRangeDraft]
+
+    init(periods: Binding<[GooglePlacesPeriod]?>) {
+        self._periods = periods
+        let initialDrafts = Self.parsePeriodsToDrafts(periods.wrappedValue)
+        self._drafts = State(initialValue: initialDrafts)
+    }
 
     var body: some View {
         VStack(spacing: 16) {
@@ -61,6 +61,70 @@ struct OpeningTimesInput: View {
         .onAppear {
             syncOutput()
         }
+    }
+
+    private static func parsePeriodsToDrafts(_ periods: [GooglePlacesPeriod]?) -> [TimeRangeDraft] {
+        guard let periods = periods, !periods.isEmpty else {
+            return [
+                TimeRangeDraft(
+                    selectedDays: [1, 2, 3, 4, 5],
+                    openTime: TimeRangeDraft.makeTime(hour: 8, minute: 0),
+                    closeTime: TimeRangeDraft.makeTime(hour: 18, minute: 0)
+                )
+            ]
+        }
+
+        struct DraftKey: Hashable {
+            let is24Hours: Bool
+            let openHour: Int
+            let openMinute: Int
+            let closeHour: Int
+            let closeMinute: Int
+        }
+
+        var grouped: [DraftKey: Set<Int>] = [:]
+        var keyOrder: [DraftKey] = []
+
+        for period in periods {
+            let is24 = period.is24Hours
+            let openHour = period.open.hour
+            let openMinute = period.open.minute
+            let closeHour = period.close?.hour ?? (is24 ? 0 : 18)
+            let closeMinute = period.close?.minute ?? 0
+            let key = DraftKey(
+                is24Hours: is24,
+                openHour: openHour,
+                openMinute: openMinute,
+                closeHour: closeHour,
+                closeMinute: closeMinute
+            )
+            if grouped[key] == nil {
+                keyOrder.append(key)
+            }
+            grouped[key, default: []].insert(period.open.day)
+        }
+
+        var result: [TimeRangeDraft] = []
+        for key in keyOrder {
+            if let days = grouped[key] {
+                result.append(
+                    TimeRangeDraft(
+                        selectedDays: days,
+                        openTime: TimeRangeDraft.makeTime(hour: key.openHour, minute: key.openMinute),
+                        closeTime: TimeRangeDraft.makeTime(hour: key.closeHour, minute: key.closeMinute),
+                        is24Hours: key.is24Hours
+                    )
+                )
+            }
+        }
+
+        return result.isEmpty ? [
+            TimeRangeDraft(
+                selectedDays: [1, 2, 3, 4, 5],
+                openTime: TimeRangeDraft.makeTime(hour: 8, minute: 0),
+                closeTime: TimeRangeDraft.makeTime(hour: 18, minute: 0)
+            )
+        ] : result
     }
 
     private func syncOutput() {

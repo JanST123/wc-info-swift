@@ -27,6 +27,9 @@ struct UpdateScreen: View {
     @State private var comment = ""
     @State private var showingEuroKeyInfo = false
 
+    @State private var hasOpeningTimes = false
+    @State private var placeOpeningHours: [GooglePlacesPeriod]?
+
     @State private var website = ""
     @State private var address = ""
     @State private var placeCoordinates: CLLocationCoordinate2D?
@@ -68,6 +71,8 @@ struct UpdateScreen: View {
                     propertiesSection
 
                     storageSpaceSection
+
+                    openingTimesSection
 
                     locationPickerSection
 
@@ -430,6 +435,36 @@ struct UpdateScreen: View {
         .accessibilityLabel("Ablagefläche \(title): \(storageSpace == value ? "Ausgewählt" : "Nicht ausgewählt")")
     }
 
+    // MARK: - Section: Öffnungszeiten
+
+    private var openingTimesSection: some View {
+        VStack(alignment: .leading, spacing: 10) {
+            Button {
+                withAnimation(.easeInOut(duration: 0.25)) {
+                    hasOpeningTimes.toggle()
+                    if !hasOpeningTimes {
+                        placeOpeningHours = nil
+                    }
+                }
+            } label: {
+                HStack(spacing: 8) {
+                    checkboxView(isChecked: hasOpeningTimes)
+                    Text("Öffnungszeiten angeben")
+                        .font(.subheadline.bold())
+                        .foregroundStyle(.primary)
+                }
+            }
+            .buttonStyle(.plain)
+            .accessibilityLabel("Öffnungszeiten angeben: \(hasOpeningTimes ? "Ausgewählt" : "Nicht ausgewählt")")
+            .accessibilityHint("Umschalten, um Öffnungszeiten für diese Toilette anzugeben oder zu bearbeiten.")
+
+            if hasOpeningTimes {
+                OpeningTimesInput(periods: $placeOpeningHours)
+                    .padding(.top, 4)
+            }
+        }
+    }
+
     // MARK: - Location Picker Section
 
     private var locationPickerSection: some View {
@@ -578,6 +613,8 @@ struct UpdateScreen: View {
             website = toilet.website ?? ""
             address = toilet.address ?? (location?.name ?? "")
             placeCoordinates = toilet.coordinate
+            placeOpeningHours = toilet.placeOpeningHours
+            hasOpeningTimes = (toilet.placeOpeningHours != nil && !toilet.placeOpeningHours!.isEmpty)
             belongsToPlace = (toilet.placeId != nil || !toilet.owner.isEmpty)
             if let placeId = toilet.placeId {
                 selectedPlace = NearbyPlaceOption(id: placeId, name: toilet.owner, secondaryText: nil)
@@ -634,6 +671,12 @@ struct UpdateScreen: View {
                 if let coord = details.coordinate {
                     placeCoordinates = coord
                 }
+                if let hours = details.openingHours, !hours.isEmpty {
+                    if placeOpeningHours == nil || placeOpeningHours!.isEmpty {
+                        placeOpeningHours = hours
+                        hasOpeningTimes = true
+                    }
+                }
             } catch {
                 print("[CreateScreen] fetchPlaceDetails error: \(error)")
             }
@@ -673,7 +716,7 @@ struct UpdateScreen: View {
                 hasChangingTable: hasChangingTable,
                 accessibleOutsideOpeningTimes: accessibleOutsideOpeningTimes,
                 publicAccessible: isPublicAccessible,
-                placeOpeningHours: toilet.placeOpeningHours,
+                placeOpeningHours: hasOpeningTimes ? placeOpeningHours : nil,
                 address: trimmedAddress.isEmpty ? nil : trimmedAddress,
                 website: trimmedWebsite.isEmpty ? nil : trimmedWebsite,
                 comment: trimmedComment.isEmpty ? nil : trimmedComment,
@@ -726,6 +769,7 @@ struct UpdateScreen: View {
             hasChangingTable: hasChangingTable,
             accessibleOutsideOpeningTimes: accessibleOutsideOpeningTimes,
             publicAccessible: isPublicAccessible,
+            placeOpeningHours: hasOpeningTimes ? placeOpeningHours : nil,
             address: trimmedAddress.isEmpty ? nil : trimmedAddress,
             website: trimmedWebsite.isEmpty ? nil : trimmedWebsite,
             comment: trimmedComment.isEmpty ? nil : trimmedComment,

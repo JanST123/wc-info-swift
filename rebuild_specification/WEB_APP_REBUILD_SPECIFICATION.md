@@ -507,17 +507,7 @@ A conversational step-by-step wizard guiding users to contribute a toilet with m
 ## 8. Simulator Screenshots & Visual References
 
 Captured reference screenshots from the running iOS application:
-
-```carousel
-![iPad Landscape Results Split View](/Users/jan/Library/Developer/Xcode/CodingAssistant/antigravity/antigravity-acp/brain/e1adda04-8440-441e-a7f3-c2dfeba42dc5/ipad_urgent_navigate.png)
-<!-- slide -->
-![iPad Landscape Home Search View](/Users/jan/Library/Developer/Xcode/CodingAssistant/antigravity/antigravity-acp/brain/e1adda04-8440-441e-a7f3-c2dfeba42dc5/ipad_home.png)
-<!-- slide -->
-![iPhone Portrait Results & Navigation View](/Users/jan/Library/Developer/Xcode/CodingAssistant/antigravity/antigravity-acp/brain/e1adda04-8440-441e-a7f3-c2dfeba42dc5/iphone_urgent_navigation.png)
-<!-- slide -->
-![iPhone Portrait Home Search Screen](/Users/jan/Library/Developer/Xcode/CodingAssistant/antigravity/antigravity-acp/brain/e1adda04-8440-441e-a7f3-c2dfeba42dc5/iphone_home.png)
-```
-
+Screenshots can be Found in the Screenshots directory
 ### Key Visual Observations:
 1. **iPad Landscape**: Clear two-column layout. The left column lists results with distance, status, and icons; the right column displays the full-height interactive map with custom category markers.
 2. **iPhone Portrait**: Maximizes screen space with floating glassmorphic search/filters at the top and a bottom card/drawer structure for result lists and detail sheets.

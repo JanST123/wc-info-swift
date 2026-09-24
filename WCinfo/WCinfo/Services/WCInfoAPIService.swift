@@ -55,7 +55,7 @@ actor WCInfoAPIService {
         if let url = Config.apiBaseURL, !url.isEmpty {
             return url
         }
-        return "https://api2.wc-info.de"
+        return "https://api.wc-info.org"
     }
 
     func fetchToiletsNearby(latitude: Double, longitude: Double, distance: Int = 10, filter: String? = nil) async throws -> [Toilet] {

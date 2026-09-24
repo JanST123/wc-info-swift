@@ -385,6 +385,7 @@
       }
     },
     "Aktuellen Standort verwenden" : {
+      "extractionState" : "stale",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -1231,6 +1232,7 @@
       }
     },
     "Eingabefehler: Bitte gib einen Ort ein." : {
+      "extractionState" : "stale",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -1906,6 +1908,7 @@
       }
     },
     "Gib eine Adresse, einen Ort oder eine Sehenswürdigkeit ein." : {
+      "extractionState" : "stale",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -2091,6 +2094,7 @@
       }
     },
     "In der Nähe suchen" : {
+      "extractionState" : "stale",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -4013,6 +4017,7 @@
       }
     },
     "Ort eingeben" : {
+      "extractionState" : "stale",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -4563,6 +4568,7 @@
       }
     },
     "Sucht Toiletten am eingegebenen Ort." : {
+      "extractionState" : "stale",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -4579,6 +4585,7 @@
       }
     },
     "Sucht Toiletten in der Nähe deines aktuellen Standorts." : {
+      "extractionState" : "stale",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -4679,6 +4686,7 @@
       }
     },
     "Tippe doppelt, um diesen Ort auszuwählen." : {
+      "extractionState" : "stale",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -5199,6 +5207,7 @@
       }
     },
     "Vorschläge" : {
+      "extractionState" : "stale",
       "localizations" : {
         "de" : {
           "stringUnit" : {

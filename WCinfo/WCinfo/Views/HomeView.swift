@@ -88,7 +88,7 @@ struct HomeView: View {
         Image("logo")
             .resizable()
             .scaledToFit()
-            .frame(width: 170, height: 170)
+            .frame(width: 210, height: 210)
             .shadow(color: .black.opacity(0.25), radius: 8, x: 0, y: 4)
             .accessibilityLabel("WCinfo Logo")
             .accessibilityHidden(true)
@@ -97,14 +97,14 @@ struct HomeView: View {
     private var searchCard: some View {
         VStack(alignment: .leading, spacing: 8) {
             HStack(spacing: 12) {
-                TextField("Ort, Adresse oder Einrichtung eingeben...", text: $searchText, prompt: Text("Ort, Adresse oder Einrichtung eingeben..."))
+                TextField("Wo möchtest du nach Toiletten suchen?", text: $searchText)
                     .textFieldStyle(.plain)
                     .foregroundColor(.primary)
                     .tint(.purple)
                     .submitLabel(.search)
                     .focused($searchFieldFocused)
-                    .accessibilityLabel(Text("Ort eingeben"))
-                    .accessibilityHint(Text("Gib eine Adresse, einen Ort oder eine Sehenswürdigkeit ein."))
+                    .accessibilityLabel("Ort eingeben")
+                    .accessibilityHint("Gib eine Adresse, einen Ort oder eine Sehenswürdigkeit ein.")
                     .onSubmit { performSearch() }
                     .onChange(of: searchText) { _, newValue in
                         if showSearchValidation {
@@ -119,8 +119,8 @@ struct HomeView: View {
                         .foregroundColor(.purple)
                         .frame(width: 36, height: 36)
                 }
-                .accessibilityLabel(Text("Aktuellen Standort verwenden"))
-                .accessibilityHint(Text("Sucht Toiletten in der Nähe deines aktuellen Standorts."))
+                .accessibilityLabel("Aktuellen Standort verwenden")
+                .accessibilityHint("Sucht Toiletten in der Nähe deines aktuellen Standorts.")
             }
             .padding(.horizontal, 16)
             .frame(height: 52)
@@ -137,7 +137,7 @@ struct HomeView: View {
                     .font(.caption)
                     .foregroundColor(.red)
                     .padding(.horizontal, 4)
-                    .accessibilityLabel(Text("Eingabefehler: Bitte gib einen Ort ein."))
+                    .accessibilityLabel("Eingabefehler: Bitte gib einen Ort ein.")
             }
 
             if !predictions.isEmpty {
@@ -161,7 +161,7 @@ struct HomeView: View {
                             .padding(.horizontal, 16)
                     }
                     .buttonStyle(.plain)
-                    .accessibilityHint(Text("Tippe doppelt, um diesen Ort auszuwählen."))
+                    .accessibilityHint("Tippe doppelt, um diesen Ort auszuwählen.")
 
                     Divider()
                         .padding(.leading, 16)
@@ -171,7 +171,7 @@ struct HomeView: View {
         .frame(maxHeight: 220)
         .background(.regularMaterial)
         .clipShape(RoundedRectangle(cornerRadius: 12))
-        .accessibilityLabel(Text("Vorschläge"))
+        .accessibilityLabel("Vorschläge")
     }
 
     private var actionButtons: some View {
@@ -184,8 +184,8 @@ struct HomeView: View {
             }
             .background(searchText.isEmpty ? Color.gray : Color(red: 0.4, green: 0.4, blue: 0.4))
             .clipShape(RoundedRectangle(cornerRadius: 12))
-            .accessibilityLabel(Text("Suchen"))
-            .accessibilityHint(Text("Sucht Toiletten am eingegebenen Ort."))
+            .accessibilityLabel("Suchen")
+            .accessibilityHint("Sucht Toiletten am eingegebenen Ort.")
 
             Button(action: requestCurrentLocation) {
                 Text("In der Nähe")
@@ -195,8 +195,8 @@ struct HomeView: View {
             }
             .background(Color.purple)
             .clipShape(RoundedRectangle(cornerRadius: 12))
-            .accessibilityLabel(Text("In der Nähe suchen"))
-            .accessibilityHint(Text("Sucht Toiletten in der Nähe deines aktuellen Standorts."))
+            .accessibilityLabel("In der Nähe suchen")
+            .accessibilityHint("Sucht Toiletten in der Nähe deines aktuellen Standorts.")
         }
     }
 
@@ -233,7 +233,7 @@ struct HomeView: View {
         let trimmed = searchText.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !trimmed.isEmpty else {
             showSearchValidation = true
-            UIAccessibility.post(notification: .announcement, argument: String(localized: "Bitte gib einen Ort ein, um danach zu suchen."))
+            UIAccessibility.post(notification: .announcement, argument: "Bitte gib einen Ort ein.")
             return
         }
         predictions = []
@@ -257,7 +257,7 @@ struct HomeView: View {
             for await _ in locationManager.$location.values {
                 guard let location = locationManager.location else { continue }
                 selectedLocation = SearchedLocation(
-                    name: String(localized: "Aktueller Standort"),
+                    name: "Aktueller Standort",
                     coordinate: location.coordinate
                 )
                 break

@@ -326,6 +326,10 @@ struct CreateScreen: View {
                     if websiteInput.isEmpty, let site = details.website {
                         websiteInput = site
                     }
+                    if (placeOpeningHours == nil || placeOpeningHours!.isEmpty), let hours = details.openingHours, !hours.isEmpty {
+                        placeOpeningHours = hours
+                    }
+
                 } catch {
                     print("[CreateScreen] Error loading place details: \(error)")
                 }
@@ -971,8 +975,17 @@ struct CreateScreen: View {
             steps.append(.address)
         }
 
-        // Q12 Opening Times
-        steps.append(.openingTimes)
+        // Q11 (Skipped if place has website)
+        /*
+        if selectedPlace == nil || selectedPlaceDetails?.website == nil {
+            steps.append(.website)
+        }
+         */
+
+        // Q12 Opening Times (Skipped if place has opening hours)
+        if selectedPlace == nil || (selectedPlaceDetails?.openingHours?.isEmpty ?? true) {
+            steps.append(.openingTimes)
+        }
 
         // Q9 Public Access & Q13 Outside Opening Times (Skipped if no opening times available from place or user input)
         let hasOpeningTimes = (placeOpeningHours != nil && !placeOpeningHours!.isEmpty) ||
@@ -1075,7 +1088,7 @@ struct CreateScreen: View {
             hasChangingTable: nil,
             accessibleOutsideOpeningTimes: nil,
             publicAccessible: nil,
-            placeOpeningHours: nil,
+            placeOpeningHours: placeOpeningHours ?? selectedPlaceDetails?.openingHours,
             address: trimmedAddress.isEmpty ? selectedPlaceDetails?.formattedAddress : trimmedAddress,
             website: trimmedWebsite.isEmpty ? selectedPlaceDetails?.website : trimmedWebsite,
             comment: nil,
@@ -1130,7 +1143,7 @@ struct CreateScreen: View {
             hasChangingTable: nil,
             accessibleOutsideOpeningTimes: accessibleOutsideOpeningTimes,
             publicAccessible: publicAccessible,
-            placeOpeningHours: placeOpeningHours,
+            placeOpeningHours: placeOpeningHours ?? selectedPlaceDetails?.openingHours,
             address: trimmedAddress.isEmpty ? nil : trimmedAddress,
             website: trimmedWebsite.isEmpty ? nil : trimmedWebsite,
             comment: trimmedComment.isEmpty ? nil : trimmedComment,

@@ -72,12 +72,26 @@ final class PlacesService: ObservableObject {
                     var options: [NearbyPlaceOption] = []
                     for place in places ?? [] {
                         guard let placeID = place.placeID, let name = place.name else { continue }
+                        var parsedPeriods: [GooglePlacesPeriod]? = nil
+                        if let gmsPeriods = place.openingHours?.periods, !gmsPeriods.isEmpty {
+                            parsedPeriods = gmsPeriods.map { p in
+                                let openDay = Int(p.openEvent.day.rawValue)
+                                let openPoint = GooglePlacesPoint(day: openDay, hour: Int(p.openEvent.time.hour), minute: Int(p.openEvent.time.minute))
+                                var closePoint: GooglePlacesPoint? = nil
+                                if let closeEvent = p.closeEvent {
+                                    let closeDay = Int(closeEvent.day.rawValue)
+                                    closePoint = GooglePlacesPoint(day: closeDay, hour: Int(closeEvent.time.hour), minute: Int(closeEvent.time.minute))
+                                }
+                                return GooglePlacesPeriod(open: openPoint, close: closePoint)
+                            }
+                        }
                         self?.placeDetailsCache[placeID] = PlaceDetails(
                             placeID: placeID,
                             name: name,
                             formattedAddress: place.formattedAddress,
                             website: place.website?.absoluteString,
-                            coordinate: place.coordinate
+                            coordinate: place.coordinate,
+                            openingHours: parsedPeriods
                         )
                         options.append(NearbyPlaceOption(
                             id: placeID,

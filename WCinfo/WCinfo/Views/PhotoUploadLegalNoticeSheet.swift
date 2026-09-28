@@ -5,7 +5,7 @@ struct PhotoUploadLegalNoticeSheet: View {
     var onConfirm: () -> Void
     var onCancel: () -> Void
 
-    private let privacyURL = URL(string: "https://wc-info.de/Law/Privacy")!
+    private let privacyURL = URL(string: "https://wc-info.org/Law/Privacy")!
 
     var body: some View {
         NavigationStack {
@@ -54,7 +54,7 @@ struct PhotoUploadLegalNoticeSheet: View {
 
                     // Privacy Note
                     VStack(alignment: .leading, spacing: 8) {
-                        Text("Der Zeitpunkt und deine IP werden im Zusammenhang mit den hochgeladenen Fotos bei uns gespeichert. Weitere Informationen findest du auch in unserer [Datenschutzerklärung](https://wc-info.de/Law/Privacy).")
+                        Text("Der Zeitpunkt und deine IP werden im Zusammenhang mit den hochgeladenen Fotos bei uns gespeichert. Weitere Informationen findest du auch in unserer [Datenschutzerklärung](https://wc-info.org/Law/Privacy).")
                             .font(.caption)
                             .foregroundColor(.secondary)
                             .tint(.purple)

@@ -32,6 +32,8 @@
 		3D14FCD83063C582001F5F79 /* EmergencyLoadingOverlayView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D14FCD73063C582001F5F79 /* EmergencyLoadingOverlayView.swift */; };
 		3D14FCDB3063D2D2001F5F79 /* InfoPlist.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = 3D14FCD93063D2D2001F5F79 /* InfoPlist.xcstrings */; };
 		3D14FCDC3063D2D2001F5F79 /* Localizable.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = 3D14FCDA3063D2D2001F5F79 /* Localizable.xcstrings */; };
+		3DC7D577306ACD11004CA7EC /* DeepLinkParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3DC7D576306ACD11004CA7EC /* DeepLinkParser.swift */; };
+		3DC7D579306ACD16004CA7EC /* DeepLinkManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3DC7D578306ACD16004CA7EC /* DeepLinkManager.swift */; };
 		41971C017127FD081AC3DCA0 /* lavendel.webp in Resources */ = {isa = PBXBuildFile; fileRef = 45ABED18316429508872959F /* lavendel.webp */; };
 		44FCF2006384CA06AF06B219 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 785017DA774C5F6FACF2DEA8 /* Assets.xcassets */; };
 		53B5ADA9717EB304257E985D /* GooglePlaces in Frameworks */ = {isa = PBXBuildFile; productRef = 6DADB02E48D49CCBDF450B83 /* GooglePlaces */; };
@@ -98,6 +100,9 @@
 		3D14FCD73063C582001F5F79 /* EmergencyLoadingOverlayView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmergencyLoadingOverlayView.swift; sourceTree = "<group>"; };
 		3D14FCD93063D2D2001F5F79 /* InfoPlist.xcstrings */ = {isa = PBXFileReference; lastKnownFileType = text.json.xcstrings; path = InfoPlist.xcstrings; sourceTree = "<group>"; };
 		3D14FCDA3063D2D2001F5F79 /* Localizable.xcstrings */ = {isa = PBXFileReference; lastKnownFileType = text.json.xcstrings; path = Localizable.xcstrings; sourceTree = "<group>"; };
+		3DC7D575306ACC43004CA7EC /* WCinfo.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = WCinfo.entitlements; sourceTree = "<group>"; };
+		3DC7D576306ACD11004CA7EC /* DeepLinkParser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeepLinkParser.swift; sourceTree = "<group>"; };
+		3DC7D578306ACD16004CA7EC /* DeepLinkManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeepLinkManager.swift; sourceTree = "<group>"; };
 		4034CA2D98426248D8BA6677 /* PhotoLightboxView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoLightboxView.swift; sourceTree = "<group>"; };
 		40B98EAAE3DDD2D2813555C1 /* DetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetailView.swift; sourceTree = "<group>"; };
 		440843A00BC7F792DD4ED1DA /* OpeningTimeComponent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OpeningTimeComponent.swift; sourceTree = "<group>"; };
@@ -245,6 +250,7 @@
 		A79527DA3370D71BE1D7AB5D /* WCinfo */ = {
 			isa = PBXGroup;
 			children = (
+				3DC7D575306ACC43004CA7EC /* WCinfo.entitlements */,
 				3D14FCD93063D2D2001F5F79 /* InfoPlist.xcstrings */,
 				3D14FCDA3063D2D2001F5F79 /* Localizable.xcstrings */,
 				785017DA774C5F6FACF2DEA8 /* Assets.xcassets */,
@@ -268,6 +274,8 @@
 				0B9E1A59C7B37C57F6BAEEBE /* WCInfoAPIService.swift */,
 				3D14FCB33063C03B001F5F79 /* CompassManager.swift */,
 				3D14FCD53063C57F001F5F79 /* EmergencyNavigationManager.swift */,
+				3DC7D576306ACD11004CA7EC /* DeepLinkParser.swift */,
+				3DC7D578306ACD16004CA7EC /* DeepLinkManager.swift */,
 			);
 			path = Services;
 			sourceTree = "<group>";
@@ -419,6 +427,8 @@
 				2519E29D392BDCA6B930C850 /* DetailView.swift in Sources */,
 				A678300D3E8290C73D892652 /* ErrorManager.swift in Sources */,
 				1773BC379D73E05576BAC7E3 /* FilterBannerView.swift in Sources */,
+				3DC7D579306ACD16004CA7EC /* DeepLinkManager.swift in Sources */,
+				3DC7D577306ACD11004CA7EC /* DeepLinkParser.swift in Sources */,
 				3530D800C9089F27660DA170 /* HomeView.swift in Sources */,
 				3D14FCB63063C046001F5F79 /* CompassNavigationView.swift in Sources */,
 				0CDD01A1104F0B0AD58FC906 /* LocationManager.swift in Sources */,
@@ -596,6 +606,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOLS = YES;
+				CODE_SIGN_ENTITLEMENTS = WCinfo/WCinfo.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 932937B3UQ;
@@ -681,6 +692,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOLS = YES;
+				CODE_SIGN_ENTITLEMENTS = WCinfo/WCinfo.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 932937B3UQ;

@@ -5,6 +5,7 @@ import CoreLocation
 struct HomeView: View {
     @StateObject private var placesService = PlacesService()
     @StateObject private var locationManager = LocationManager()
+    @ObservedObject private var deepLinkManager = DeepLinkManager.shared
 
     @State private var searchText = ""
     @State private var predictions: [GMSAutocompletePlaceSuggestion] = []
@@ -53,6 +54,24 @@ struct HomeView: View {
             .onAppear {
                 observeKeyboard()
                 Analytics.shared.trackScreen("Home")
+                if let pending = deepLinkManager.selectedLocation {
+                    selectedLocation = pending
+                    deepLinkManager.selectedLocation = nil
+                }
+            }
+            .onChange(of: deepLinkManager.selectedLocation) { _, newLocation in
+                if let newLocation {
+                    if selectedLocation != nil {
+                        selectedLocation = nil
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                            selectedLocation = newLocation
+                            deepLinkManager.selectedLocation = nil
+                        }
+                    } else {
+                        selectedLocation = newLocation
+                        deepLinkManager.selectedLocation = nil
+                    }
+                }
             }
         }
     }

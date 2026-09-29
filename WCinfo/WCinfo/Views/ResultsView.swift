@@ -4,6 +4,7 @@ import MapKit
 
 struct ResultsView: View {
     let location: SearchedLocation
+    var initialToiletId: Int? = nil
 
     @State private var toilets: [Toilet] = []
     @State private var isLoading = true
@@ -22,6 +23,10 @@ struct ResultsView: View {
     @State private var currentBounds: (south: Double, west: Double, north: Double, east: Double)? = nil
     @State private var boundsFetchTask: Task<Void, Never>? = nil
     @State private var isSatellite = false
+
+    private var targetToiletId: Int? {
+        initialToiletId ?? location.initialToiletId
+    }
 
     var body: some View {
         GeometryReader { geometry in
@@ -42,6 +47,22 @@ struct ResultsView: View {
         .navigationBarTitleDisplayMode(.inline)
         .onAppear {
             Analytics.shared.trackScreen("Results")
+        }
+        .task {
+            if let id = targetToiletId, detailToilet == nil {
+                do {
+                    let toilet = try await WCInfoAPIService.shared.fetchToilet(id: id)
+                    if detailToilet == nil {
+                        selectedToilet = toilet
+                        detailToilet = toilet
+                        if !toilets.contains(where: { $0.id == toilet.id }) {
+                            toilets.insert(toilet, at: 0)
+                        }
+                    }
+                } catch {
+                    print("[ResultsView] Could not pre-fetch toilet by ID \(id): \(error)")
+                }
+            }
         }
         .sheet(item: $detailToilet) { toilet in
             DetailView(
@@ -354,6 +375,9 @@ struct ResultsView: View {
             toilets = sorted
             if let currentDetail = detailToilet, let updated = sorted.first(where: { $0.id == currentDetail.id }) {
                 detailToilet = updated
+            } else if detailToilet == nil, let id = targetToiletId, let match = sorted.first(where: { $0.id == id }) {
+                selectedToilet = match
+                detailToilet = match
             }
             Analytics.shared.trackEvent(category: "results", action: isPullToRefresh ? "refresh_bounds" : "loaded_bounds", name: location.name, value: Float(toilets.count))
         } catch {

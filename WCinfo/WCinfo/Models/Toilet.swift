@@ -272,6 +272,13 @@ struct SearchedLocation: Identifiable, Hashable {
     let id = UUID()
     let name: String
     let coordinate: CLLocationCoordinate2D
+    var initialToiletId: Int? = nil
+
+    init(name: String, coordinate: CLLocationCoordinate2D, initialToiletId: Int? = nil) {
+        self.name = name
+        self.coordinate = coordinate
+        self.initialToiletId = initialToiletId
+    }
 
     func hash(into hasher: inout Hasher) {
         hasher.combine(id)

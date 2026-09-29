@@ -58,6 +58,19 @@ actor WCInfoAPIService {
         return "https://api.wc-info.org"
     }
 
+    func fetchToilet(id: Int) async throws -> Toilet {
+        guard let url = URL(string: "\(baseURL)/toilet/\(id)") else {
+            throw WCInfoAPIError.invalidURL
+        }
+        let data = try await performRequest(url: url)
+        do {
+            return try decoder.decode(Toilet.self, from: data)
+        } catch {
+            let rawBody = String(data: data, encoding: .utf8)
+            throw WCInfoAPIError.decodingError(underlying: error, responseBody: rawBody)
+        }
+    }
+
     func fetchToiletsNearby(latitude: Double, longitude: Double, distance: Int = 10, filter: String? = nil) async throws -> [Toilet] {
         let clampedDistance = min(max(distance, 1), 10)
         var urlComponents = URLComponents(string: "\(baseURL)/toilets/nearby/\(latitude)/\(longitude)")

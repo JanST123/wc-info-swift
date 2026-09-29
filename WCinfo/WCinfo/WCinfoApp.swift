@@ -7,6 +7,7 @@ import MatomoTracker
 @main
 struct WCinfoApp: App {
     @StateObject private var emergencyManager = EmergencyNavigationManager.shared
+    @StateObject private var deepLinkManager = DeepLinkManager.shared
 
     init() {
         let key = Config.googleAPIKey
@@ -34,13 +35,35 @@ struct WCinfoApp: App {
             HomeView()
                 .overlay(ErrorBannerView())
                 .overlay(EmergencyLoadingOverlayView())
+                .overlay {
+                    if deepLinkManager.isLoading {
+                        ZStack {
+                            Color.black.opacity(0.4)
+                                .ignoresSafeArea()
+                            VStack(spacing: 12) {
+                                ProgressView()
+                                    .scaleEffect(1.3)
+                                    .tint(.white)
+                                if let msg = deepLinkManager.loadingMessage {
+                                    Text(msg)
+                                        .font(.subheadline.bold())
+                                        .foregroundColor(.white)
+                                }
+                            }
+                            .padding(24)
+                            .background(.ultraThinMaterial)
+                            .clipShape(RoundedRectangle(cornerRadius: 16))
+                        }
+                        .transition(.opacity)
+                    }
+                }
                 .sheet(item: $emergencyManager.compassToilet) { toilet in
                     CompassNavigationView(toilet: toilet)
                         .presentationDetents([.large])
                         .presentationDragIndicator(.visible)
                 }
                 .onOpenURL { url in
-                    emergencyManager.handleURL(url)
+                    deepLinkManager.handleURL(url)
                 }
         }
     }

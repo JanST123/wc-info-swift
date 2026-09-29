@@ -55,29 +55,57 @@ struct CompassNavigationView: View {
     // MARK: - Toilet Info Header
 
     private var toiletInfoCard: some View {
-        VStack(alignment: .leading, spacing: 6) {
-            HStack(alignment: .firstTextBaseline) {
-                Text(toilet.displayName)
-                    .font(.headline)
-                    .lineLimit(2)
+        VStack(alignment: .leading, spacing: 8) {
+            HStack(alignment: .top, spacing: 12) {
+                VStack(alignment: .leading, spacing: 4) {
+                    HStack(alignment: .firstTextBaseline, spacing: 6) {
+                        Text(toilet.displayName)
+                            .font(.headline)
+                            .lineLimit(2)
 
-                if toilet.isQualified {
-                    QualifiedBadgeView(iconSize: 16)
+                        if toilet.isQualified {
+                            QualifiedBadgeView(iconSize: 16)
+                        }
+                    }
+
+                    if !toilet.owner.isEmpty && toilet.owner != toilet.displayName && toilet.owner != toilet.name {
+                        Text(toilet.owner)
+                            .font(.subheadline)
+                            .foregroundStyle(.secondary)
+                    }
+
+                    if let address = toilet.address, !address.isEmpty {
+                        Text(address)
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
+                    }
                 }
 
-                Spacer()
+                Spacer(minLength: 8)
+
+                OpeningTimeComponent(
+                    hasOpeningHours: toilet.placeOpeningHours != nil,
+                    isOpen: toilet.isOpen24HoursEveryDay ? true : toilet.isOpen,
+                    openTimestamp: toilet.isOpen24HoursEveryDay ? nil : toilet.openTimestamp,
+                    closeTimestamp: toilet.isOpen24HoursEveryDay ? nil : toilet.closeTimestamp,
+                    accessibleOutsideOpeningTimes: toilet.accessibleOutsideOpeningTimes,
+                    isOpen24Hours: toilet.isOpen24HoursEveryDay,
+                    isTemporaryClosed: toilet.temporaryClosed,
+                    alignment: .trailing
+                )
             }
 
-            if !toilet.owner.isEmpty && toilet.owner != toilet.displayName && toilet.owner != toilet.name {
-                Text(toilet.owner)
-                    .font(.subheadline)
-                    .foregroundStyle(.secondary)
-            }
+            if !toilet.isPublicAccessible {
+                HStack(alignment: .top, spacing: 6) {
+                    Image(systemName: "exclamationmark.triangle.fill")
+                        .font(.caption)
+                        .foregroundColor(.orange)
 
-            if let address = toilet.address, !address.isEmpty {
-                Text(address)
-                    .font(.caption)
-                    .foregroundStyle(.secondary)
+                    Text("Hinweis: Dies ist eine Kundentoilette oder nicht-öffentliche Einrichtung (z.B. Café, Bahnhof).")
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                }
+                .padding(.top, 2)
             }
         }
         .padding()
@@ -85,7 +113,6 @@ struct CompassNavigationView: View {
         .background(Color(uiColor: .secondarySystemBackground))
         .clipShape(RoundedRectangle(cornerRadius: 14))
         .accessibilityElement(children: .combine)
-        .accessibilityLabel(Text("Ziel: \(toilet.displayName), \(toilet.owner)"))
     }
 
     // MARK: - Compass Dial & Needle

@@ -692,9 +692,6 @@ struct UpdateScreen: View {
                 if let site = details.website, !site.isEmpty {
                     website = site
                 }
-                if let coord = details.coordinate {
-                    placeCoordinates = coord
-                }
                 if let hours = details.openingHours, !hours.isEmpty {
                     if placeOpeningHours == nil || placeOpeningHours!.isEmpty {
                         placeOpeningHours = hours
@@ -702,7 +699,7 @@ struct UpdateScreen: View {
                     }
                 }
             } catch {
-                print("[CreateScreen] fetchPlaceDetails error: \(error)")
+                print("[UpdateScreen] fetchPlaceDetails error: \(error)")
             }
         }
     }

@@ -607,3 +607,64 @@ struct PlaceDetails: Hashable {
         lhs.placeID == rhs.placeID
     }
 }
+
+// MARK: - URL Slug and Sharing
+
+extension String {
+    func toURLSlug() -> String {
+        var text = self.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !text.isEmpty else { return "" }
+
+        let replacements: [(String, String)] = [
+            ("ä", "ae"), ("ö", "oe"), ("ü", "ue"),
+            ("Ä", "Ae"), ("Ö", "Oe"), ("Ü", "Ue"),
+            ("ß", "ss")
+        ]
+        for (target, replacement) in replacements {
+            text = text.replacingOccurrences(of: target, with: replacement)
+        }
+
+        if let transformed = text.applyingTransform(.toLatin, reverse: false)?
+            .applyingTransform(.stripDiacritics, reverse: false) {
+            text = transformed
+        }
+
+        var result = ""
+        var lastWasHyphen = false
+
+        for scalar in text.unicodeScalars {
+            if CharacterSet.alphanumerics.contains(scalar) {
+                result.append(Character(scalar))
+                lastWasHyphen = false
+            } else if !lastWasHyphen {
+                result.append("-")
+                lastWasHyphen = true
+            }
+        }
+
+        return result.trimmingCharacters(in: CharacterSet(charactersIn: "-"))
+    }
+}
+
+extension Toilet {
+    var shareURL: URL {
+        let placeSegment: String
+        if let placeId = placeId?.trimmingCharacters(in: .whitespacesAndNewlines), !placeId.isEmpty {
+            let placeName = owner.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ? name : owner
+            let placeSlug = placeName.toURLSlug()
+            let finalPlaceSlug = placeSlug.isEmpty ? "Nearby" : placeSlug
+            placeSegment = "\(finalPlaceSlug)---\(placeId)"
+        } else {
+            placeSegment = "Nearby---NEARBY"
+        }
+
+        let toiletNameOrOwner = owner.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ? name : owner
+        let toiletSlug = toiletNameOrOwner.toURLSlug()
+        let finalToiletSlug = toiletSlug.isEmpty ? "toilet" : toiletSlug
+        let toiletSegment = "\(finalToiletSlug)---\(id)"
+
+        let urlString = "https://wc-info.org/Toilets/\(placeSegment)/\(toiletSegment)"
+        return URL(string: urlString) ?? URL(string: "https://wc-info.org")!
+    }
+}
+

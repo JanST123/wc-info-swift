@@ -42,6 +42,13 @@ struct DetailView: View {
                     }
                     .accessibilityLabel(Text("Details schließen"))
                 }
+
+                ToolbarItem(placement: .primaryAction) {
+                    ShareLink(item: toilet.shareURL) {
+                        Image(systemName: "square.and.arrow.up")
+                    }
+                    .accessibilityLabel(Text("Toilette teilen"))
+                }
             }
             .confirmationDialog(
                 "Änderungen vorschlagen",

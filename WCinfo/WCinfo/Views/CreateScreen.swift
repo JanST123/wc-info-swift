@@ -27,7 +27,6 @@ struct CreateScreen: View {
     var initialCoordinate: CLLocationCoordinate2D? = nil
     var onToiletCreated: (() -> Void)? = nil
 
-    @StateObject private var placesService = PlacesService()
     @StateObject private var locationManager = LocationManager()
 
     // MARK: - Navigation & Flow State
@@ -42,6 +41,7 @@ struct CreateScreen: View {
 
     // MARK: - Places Data
     @State private var nearbyPlaces: [NearbyPlaceOption] = []
+    @State private var fetchedPlaceResources: [String: PlaceResource] = [:]
     @State private var isLoadingPlaces = false
     @State private var selectedPlace: NearbyPlaceOption?
     @State private var selectedPlaceDetails: PlaceDetails?
@@ -315,24 +315,16 @@ struct CreateScreen: View {
         selectedPlace = place
         isNoneOfThesePlaces = (place == nil)
 
-        if let place {
-            Task {
-                do {
-                    let details = try await placesService.fetchPlaceDetails(for: place.id)
-                    selectedPlaceDetails = details
-                    if addressInput.isEmpty, let addr = details.formattedAddress {
-                        addressInput = addr
-                    }
-                    if websiteInput.isEmpty, let site = details.website {
-                        websiteInput = site
-                    }
-                    if (placeOpeningHours == nil || placeOpeningHours!.isEmpty), let hours = details.openingHours, !hours.isEmpty {
-                        placeOpeningHours = hours
-                    }
-
-                } catch {
-                    print("[CreateScreen] Error loading place details: \(error)")
-                }
+        if let place, let resource = fetchedPlaceResources[place.id], let details = resource.toPlaceDetails() {
+            selectedPlaceDetails = details
+            if addressInput.isEmpty, let addr = details.formattedAddress {
+                addressInput = addr
+            }
+            if websiteInput.isEmpty, let site = details.website {
+                websiteInput = site
+            }
+            if (placeOpeningHours == nil || placeOpeningHours!.isEmpty), let hours = details.openingHours, !hours.isEmpty {
+                placeOpeningHours = hours
             }
         } else {
             selectedPlaceDetails = nil
@@ -1167,10 +1159,24 @@ struct CreateScreen: View {
         defer { isLoadingPlaces = false }
 
         do {
-            let places = try await placesService.fetchNearbyPlaces(coordinate: coordinate, radius: 200.0)
-            nearbyPlaces = places
+            let placeResources = try await WCInfoAPIService.shared.fetchNearestPlaces(
+                latitude: coordinate.latitude,
+                longitude: coordinate.longitude,
+                radius: 200.0,
+                limit: 10
+            )
+            var options: [NearbyPlaceOption] = []
+            var resourceMap: [String: PlaceResource] = [:]
+            for resource in placeResources {
+                if let option = resource.toNearbyPlaceOption() {
+                    options.append(option)
+                    resourceMap[option.id] = resource
+                }
+            }
+            nearbyPlaces = options
+            fetchedPlaceResources = resourceMap
         } catch {
-            print("[CreateScreen] fetchNearbyPlaces error: \(error)")
+            print("[CreateScreen] fetchNearestPlaces error: \(error)")
         }
     }
 }

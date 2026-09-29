@@ -110,6 +110,34 @@ actor WCInfoAPIService {
         }
     }
 
+    func fetchNearestPlaces(latitude: Double, longitude: Double, radius: Double? = nil, limit: Int? = nil) async throws -> [PlaceResource] {
+        var urlComponents = URLComponents(string: "\(baseURL)/places/nearest/\(latitude)/\(longitude)")
+        var queryItems: [URLQueryItem] = []
+        if let radius = radius {
+            queryItems.append(URLQueryItem(name: "radius", value: String(radius)))
+        }
+        if let limit = limit {
+            queryItems.append(URLQueryItem(name: "limit", value: String(limit)))
+        }
+        if !queryItems.isEmpty {
+            urlComponents?.queryItems = queryItems
+        }
+
+        guard let url = urlComponents?.url else {
+            throw WCInfoAPIError.invalidURL
+        }
+        let data = try await performRequest(url: url)
+        do {
+            if let response = try? decoder.decode(NearestPlacesResponse.self, from: data) {
+                return response.places
+            }
+            return try decoder.decode([PlaceResource].self, from: data)
+        } catch {
+            let rawBody = String(data: data, encoding: .utf8)
+            throw WCInfoAPIError.decodingError(underlying: error, responseBody: rawBody)
+        }
+    }
+
     func addToilet(_ payload: AddToiletPayload) async throws -> AddToiletResponse {
         guard let url = URL(string: "\(baseURL)/toilet/add") else {
             throw WCInfoAPIError.invalidURL

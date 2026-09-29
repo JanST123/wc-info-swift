@@ -300,6 +300,45 @@ public struct GooglePlacesPoint: Codable, Hashable, Equatable {
         self.minute = minute
     }
 
+    enum CodingKeys: String, CodingKey {
+        case day, hour, minute
+    }
+
+    public init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+
+        if let d = try? container.decode(Int.self, forKey: .day) {
+            day = d
+        } else if let s = try? container.decode(String.self, forKey: .day), let d = Int(s) {
+            day = d
+        } else {
+            day = (try? container.decode(Int.self, forKey: .day)) ?? 0
+        }
+
+        if let h = try? container.decode(Int.self, forKey: .hour) {
+            hour = h
+        } else if let s = try? container.decode(String.self, forKey: .hour), let h = Int(s) {
+            hour = h
+        } else {
+            hour = 0
+        }
+
+        if let m = try? container.decode(Int.self, forKey: .minute) {
+            minute = m
+        } else if let s = try? container.decode(String.self, forKey: .minute), let m = Int(s) {
+            minute = m
+        } else {
+            minute = 0
+        }
+    }
+
+    public func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        try container.encode(day, forKey: .day)
+        try container.encode(hour, forKey: .hour)
+        try container.encode(minute, forKey: .minute)
+    }
+
     public var formattedDay: String {
         guard (0...6).contains(day) else { return "?" }
         let symbols = Calendar.current.shortWeekdaySymbols
@@ -366,9 +405,20 @@ extension Collection where Element == GooglePlacesPeriod {
     }
 }
 
+public struct NearestPlacesResponse: Codable {
+    public let status: String?
+    public let places: [PlaceResource]
+
+    public init(status: String? = nil, places: [PlaceResource]) {
+        self.status = status
+        self.places = places
+    }
+}
+
 public struct PlaceResource: Codable, Hashable {
     public let id: String?
     public let displayName: DisplayNameText?
+    public let name: String?
     public let location: PlaceLocation?
     public let formattedAddress: String?
     public let websiteUri: String?
@@ -378,17 +428,246 @@ public struct PlaceResource: Codable, Hashable {
     public struct DisplayNameText: Codable, Hashable {
         public let text: String?
         public let languageCode: String?
+
+        public init(text: String?, languageCode: String? = nil) {
+            self.text = text
+            self.languageCode = languageCode
+        }
+
+        enum CodingKeys: String, CodingKey {
+            case text
+            case languageCode
+        }
+
+        public init(from decoder: Decoder) throws {
+            if let singleValueContainer = try? decoder.singleValueContainer(),
+               let stringValue = try? singleValueContainer.decode(String.self) {
+                self.text = stringValue
+                self.languageCode = nil
+                return
+            }
+            let container = try decoder.container(keyedBy: CodingKeys.self)
+            self.text = try container.decodeIfPresent(String.self, forKey: .text)
+            self.languageCode = try container.decodeIfPresent(String.self, forKey: .languageCode)
+        }
+
+        public func encode(to encoder: Encoder) throws {
+            var container = encoder.container(keyedBy: CodingKeys.self)
+            try container.encodeIfPresent(text, forKey: .text)
+            try container.encodeIfPresent(languageCode, forKey: .languageCode)
+        }
     }
 
     public struct PlaceLocation: Codable, Hashable {
         public let latitude: Double?
         public let longitude: Double?
+
+        public init(latitude: Double?, longitude: Double?) {
+            self.latitude = latitude
+            self.longitude = longitude
+        }
+
+        enum CodingKeys: String, CodingKey {
+            case latitude, longitude, lat, lng, lon
+        }
+
+        public init(from decoder: Decoder) throws {
+            let container = try decoder.container(keyedBy: CodingKeys.self)
+            let parsedLat = (try? container.decodeIfPresent(Double.self, forKey: .latitude))
+                ?? (try? container.decodeIfPresent(Double.self, forKey: .lat))
+            let parsedLon = (try? container.decodeIfPresent(Double.self, forKey: .longitude))
+                ?? (try? container.decodeIfPresent(Double.self, forKey: .lng))
+                ?? (try? container.decodeIfPresent(Double.self, forKey: .lon))
+            self.latitude = parsedLat
+            self.longitude = parsedLon
+        }
+
+        public func encode(to encoder: Encoder) throws {
+            var container = encoder.container(keyedBy: CodingKeys.self)
+            try container.encodeIfPresent(latitude, forKey: .latitude)
+            try container.encodeIfPresent(longitude, forKey: .longitude)
+        }
     }
 
     public struct RegularOpeningHours: Codable, Hashable {
         public let openNow: Bool?
         public let periods: [GooglePlacesPeriod]?
         public let weekdayDescriptions: [String]?
+
+        public init(openNow: Bool? = nil, periods: [GooglePlacesPeriod]? = nil, weekdayDescriptions: [String]? = nil) {
+            self.openNow = openNow
+            self.periods = periods
+            self.weekdayDescriptions = weekdayDescriptions
+        }
+
+        enum CodingKeys: String, CodingKey {
+            case openNow, periods, weekdayDescriptions
+        }
+
+        public init(from decoder: Decoder) throws {
+            if let arrayContainer = try? decoder.singleValueContainer(),
+               let periodsArray = try? arrayContainer.decode([GooglePlacesPeriod].self) {
+                self.openNow = nil
+                self.periods = periodsArray
+                self.weekdayDescriptions = nil
+                return
+            }
+            let container = try decoder.container(keyedBy: CodingKeys.self)
+            self.openNow = try container.decodeIfPresent(Bool.self, forKey: .openNow)
+            self.periods = try container.decodeIfPresent([GooglePlacesPeriod].self, forKey: .periods)
+            self.weekdayDescriptions = try container.decodeIfPresent([String].self, forKey: .weekdayDescriptions)
+        }
+
+        public func encode(to encoder: Encoder) throws {
+            var container = encoder.container(keyedBy: CodingKeys.self)
+            try container.encodeIfPresent(openNow, forKey: .openNow)
+            try container.encodeIfPresent(periods, forKey: .periods)
+            try container.encodeIfPresent(weekdayDescriptions, forKey: .weekdayDescriptions)
+        }
+    }
+
+    enum CodingKeys: String, CodingKey {
+        case id
+        case placeId = "place_id"
+        case displayName
+        case name
+        case location
+        case geometry
+        case formattedAddress
+        case formatted_address
+        case address
+        case websiteUri
+        case website
+        case regularOpeningHours
+        case openingHours = "opening_hours"
+        case placeOpeningHours = "place_opening_hours"
+        case types
+    }
+
+    private struct GeometryContainer: Codable {
+        let location: PlaceLocation?
+    }
+
+    public init(
+        id: String? = nil,
+        displayName: DisplayNameText? = nil,
+        name: String? = nil,
+        location: PlaceLocation? = nil,
+        formattedAddress: String? = nil,
+        websiteUri: String? = nil,
+        regularOpeningHours: RegularOpeningHours? = nil,
+        types: [String]? = nil
+    ) {
+        self.id = id
+        self.displayName = displayName
+        self.name = name
+        self.location = location
+        self.formattedAddress = formattedAddress
+        self.websiteUri = websiteUri
+        self.regularOpeningHours = regularOpeningHours
+        self.types = types
+    }
+
+    public init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+
+        self.id = (try? container.decodeIfPresent(String.self, forKey: .id))
+            ?? (try? container.decodeIfPresent(String.self, forKey: .placeId))
+
+        self.displayName = try? container.decodeIfPresent(DisplayNameText.self, forKey: .displayName)
+        self.name = try? container.decodeIfPresent(String.self, forKey: .name)
+
+        if let loc = try? container.decodeIfPresent(PlaceLocation.self, forKey: .location) {
+            self.location = loc
+        } else if let geom = try? container.decodeIfPresent(GeometryContainer.self, forKey: .geometry) {
+            self.location = geom.location
+        } else {
+            self.location = nil
+        }
+
+        self.formattedAddress = (try? container.decodeIfPresent(String.self, forKey: .formattedAddress))
+            ?? (try? container.decodeIfPresent(String.self, forKey: .formatted_address))
+            ?? (try? container.decodeIfPresent(String.self, forKey: .address))
+
+        self.websiteUri = (try? container.decodeIfPresent(String.self, forKey: .websiteUri))
+            ?? (try? container.decodeIfPresent(String.self, forKey: .website))
+
+        if let hours = try? container.decodeIfPresent(RegularOpeningHours.self, forKey: .regularOpeningHours) {
+            self.regularOpeningHours = hours
+        } else if let hours = try? container.decodeIfPresent(RegularOpeningHours.self, forKey: .openingHours) {
+            self.regularOpeningHours = hours
+        } else if let periods = try? container.decodeIfPresent([GooglePlacesPeriod].self, forKey: .placeOpeningHours) {
+            self.regularOpeningHours = RegularOpeningHours(periods: periods)
+        } else {
+            self.regularOpeningHours = nil
+        }
+
+        self.types = try? container.decodeIfPresent([String].self, forKey: .types)
+    }
+
+    public func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        try container.encodeIfPresent(id, forKey: .id)
+        try container.encodeIfPresent(displayName, forKey: .displayName)
+        try container.encodeIfPresent(name, forKey: .name)
+        try container.encodeIfPresent(location, forKey: .location)
+        try container.encodeIfPresent(formattedAddress, forKey: .formattedAddress)
+        try container.encodeIfPresent(websiteUri, forKey: .websiteUri)
+        try container.encodeIfPresent(regularOpeningHours, forKey: .regularOpeningHours)
+        try container.encodeIfPresent(types, forKey: .types)
+    }
+
+    public var resolvedPlaceId: String? {
+        id
+    }
+
+    public var resolvedName: String? {
+        if let text = displayName?.text, !text.isEmpty {
+            return text
+        }
+        if let n = name, !n.isEmpty {
+            if n.hasPrefix("places/") {
+                return nil
+            }
+            return n
+        }
+        return nil
+    }
+
+    public var resolvedAddress: String? {
+        formattedAddress
+    }
+
+    public var resolvedWebsite: String? {
+        websiteUri
+    }
+
+    public var resolvedCoordinate: CLLocationCoordinate2D? {
+        if let loc = location, let lat = loc.latitude, let lon = loc.longitude {
+            return CLLocationCoordinate2D(latitude: lat, longitude: lon)
+        }
+        return nil
+    }
+
+    public var resolvedOpeningHours: [GooglePlacesPeriod]? {
+        regularOpeningHours?.periods
+    }
+
+    func toNearbyPlaceOption() -> NearbyPlaceOption? {
+        guard let placeId = resolvedPlaceId, let name = resolvedName, !name.isEmpty else { return nil }
+        return NearbyPlaceOption(id: placeId, name: name, secondaryText: resolvedAddress)
+    }
+
+    func toPlaceDetails() -> PlaceDetails? {
+        guard let placeId = resolvedPlaceId else { return nil }
+        return PlaceDetails(
+            placeID: placeId,
+            name: resolvedName,
+            formattedAddress: resolvedAddress,
+            website: resolvedWebsite,
+            coordinate: resolvedCoordinate,
+            openingHours: resolvedOpeningHours
+        )
     }
 }
 
@@ -667,4 +946,3 @@ extension Toilet {
         return URL(string: urlString) ?? URL(string: "https://wc-info.org")!
     }
 }
-

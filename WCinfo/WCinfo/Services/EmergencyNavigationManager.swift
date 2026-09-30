@@ -70,7 +70,7 @@ final class EmergencyNavigationManager: ObservableObject {
                     return d1 < d2
                 }
 
-                var selectedToilet: Toilet? = sortedToilets.first
+                var selectedToilet: Toilet? = sortedToilets.first { ($0.placeOpeningHours?.count ?? 0) > 0 || $0.accessibleOutsideOpeningTimes }
                 var fallbackUsed = false
 
                 // Non-public fallback check:
@@ -102,7 +102,7 @@ final class EmergencyNavigationManager: ObservableObject {
                             return d1 < d2
                         }
 
-                        if let nearestFallback = sortedFallback.first {
+                        if let nearestFallback = sortedFallback.first(where: { ($0.placeOpeningHours?.count ?? 0) > 0 || $0.accessibleOutsideOpeningTimes }) {
                             let fallbackDistance = userLocation.distance(
                                 from: CLLocation(latitude: nearestFallback.lat, longitude: nearestFallback.lon)
                             )

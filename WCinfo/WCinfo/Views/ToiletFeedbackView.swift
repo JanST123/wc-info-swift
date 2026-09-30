@@ -200,7 +200,7 @@ struct ToiletFeedbackView: View {
 
         let payload = SendToiletFeedbackRequest(
             subject: trimmedSubject,
-            message: trimmedMessage
+            message: trimmedMessage.isEmpty ? nil : trimmedMessage
         )
 
         Task {

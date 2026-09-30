@@ -830,9 +830,9 @@ struct UpdateToiletResponse: Codable {
 
 public struct SendToiletFeedbackRequest: Codable {
     public let subject: String
-    public let message: String
+    public let message: String?
 
-    public init(subject: String, message: String) {
+    public init(subject: String, message: String? = nil) {
         self.subject = subject
         self.message = message
     }

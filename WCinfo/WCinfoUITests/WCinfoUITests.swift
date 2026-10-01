@@ -23,9 +23,21 @@ final class WCinfoUITests: XCTestCase {
         let folder = "\(outputDirectory)/\(language)"
         let fileURL = URL(fileURLWithPath: "\(folder)/\(name).png")
         try? FileManager.default.createDirectory(at: fileURL.deletingLastPathComponent(), withIntermediateDirectories: true)
-        let data = screenshot.pngRepresentation
-        try? data.write(to: fileURL)
-        print("[Screenshot] Successfully saved: \(fileURL.path)")
+
+        let image = screenshot.image
+        // Force redraw through UIGraphicsImageRenderer to bake in UIImage.imageOrientation
+        // so that iPad landscape screenshots are saved with native 2752x2064 dimensions.
+        let format = UIGraphicsImageRendererFormat()
+        format.scale = image.scale
+        let renderer = UIGraphicsImageRenderer(size: image.size, format: format)
+        let normalizedImage = renderer.image { _ in
+            image.draw(in: CGRect(origin: .zero, size: image.size))
+        }
+
+        if let data = normalizedImage.pngData() {
+            try? data.write(to: fileURL)
+            print("[Screenshot] Successfully saved: \(fileURL.path) [\(Int(normalizedImage.size.width * normalizedImage.scale))x\(Int(normalizedImage.size.height * normalizedImage.scale))]")
+        }
     }
 
     @MainActor
@@ -164,52 +176,64 @@ final class WCinfoUITests: XCTestCase {
         springboard.activate()
         Thread.sleep(forTimeInterval: 1.0)
 
-        // Enter jiggle mode to show widgets or add widget if not already added
-        let homeScreenCenter = springboard.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.2))
-        homeScreenCenter.press(forDuration: 2.0)
+        // Enter jiggle/edit mode
+        let homeScreenEmptySpace = springboard.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.2))
+        homeScreenEmptySpace.press(forDuration: 2.5)
         Thread.sleep(forTimeInterval: 1.0)
 
-        // Try to tap Add Widget button (+)
-        let addWidgetButton = springboard.buttons["AddWidgetButton"].exists ? springboard.buttons["AddWidgetButton"] : springboard.navigationBars.buttons.firstMatch
-        if addWidgetButton.exists {
-            addWidgetButton.tap()
-            Thread.sleep(forTimeInterval: 1.5)
+        // In iOS 18+, tap "Edit" / "Bearbeiten" on top left if it exists
+        let editMenuButton = springboard.buttons.matching(NSPredicate(format: "label CONTAINS[c] 'Bearbeiten' OR label CONTAINS[c] 'Edit' OR identifier == 'edit-button'")).firstMatch
+        if editMenuButton.waitForExistence(timeout: 2.0) {
+            editMenuButton.tap()
+            Thread.sleep(forTimeInterval: 1.0)
 
-            let searchField = springboard.searchFields.firstMatch
-            if searchField.exists {
-                searchField.tap()
-                searchField.typeText("WC")
-                Thread.sleep(forTimeInterval: 1.0)
+            let addWidgetMenuItem = springboard.buttons.matching(NSPredicate(format: "label CONTAINS[c] 'Widget' OR label CONTAINS[c] 'Hinzufügen' OR label CONTAINS[c] 'Add'")).firstMatch
+            if addWidgetMenuItem.waitForExistence(timeout: 2.0) {
+                addWidgetMenuItem.tap()
+                Thread.sleep(forTimeInterval: 1.5)
             }
+        } else {
+            // Direct Add Widget (+) button
+            let addWidgetBtn = springboard.buttons["AddWidgetButton"].exists ? springboard.buttons["AddWidgetButton"] : springboard.navigationBars.buttons.firstMatch
+            if addWidgetBtn.exists {
+                addWidgetBtn.tap()
+                Thread.sleep(forTimeInterval: 1.5)
+            }
+        }
+
+        // In Widget Gallery Sheet, search for WC
+        let searchField = springboard.searchFields.firstMatch
+        if searchField.waitForExistence(timeout: 3.0) {
+            searchField.tap()
+            searchField.typeText("WC")
+            Thread.sleep(forTimeInterval: 1.0)
 
             let wcInfoItem = springboard.tables.cells.matching(NSPredicate(format: "label CONTAINS[c] 'WC'")).firstMatch
-            if wcInfoItem.exists {
+            if wcInfoItem.waitForExistence(timeout: 2.0) {
                 wcInfoItem.tap()
                 Thread.sleep(forTimeInterval: 1.0)
+            } else {
+                let cell = springboard.cells.matching(NSPredicate(format: "label CONTAINS[c] 'WC'")).firstMatch
+                if cell.waitForExistence(timeout: 2.0) {
+                    cell.tap()
+                    Thread.sleep(forTimeInterval: 1.0)
+                }
             }
 
             let addWidgetAction = springboard.buttons.matching(NSPredicate(format: "label CONTAINS[c] 'Widget' OR label CONTAINS[c] 'hinzufügen' OR label CONTAINS[c] 'Add'")).firstMatch
-            if addWidgetAction.exists {
+            if addWidgetAction.waitForExistence(timeout: 2.0) {
                 addWidgetAction.tap()
-                Thread.sleep(forTimeInterval: 1.0)
+                Thread.sleep(forTimeInterval: 1.5)
             }
+        }
 
-            // Exit jiggle mode
-            let doneButton = springboard.buttons.matching(NSPredicate(format: "label CONTAINS[c] 'Fertig' OR label CONTAINS[c] 'Done' OR identifier == 'done-button'")).firstMatch
-            if doneButton.exists {
-                doneButton.tap()
-            } else {
-                springboard.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.05)).tap()
-            }
-            Thread.sleep(forTimeInterval: 1.5)
+        // Exit edit mode
+        let doneButton = springboard.buttons.matching(NSPredicate(format: "label CONTAINS[c] 'Fertig' OR label CONTAINS[c] 'Done' OR identifier == 'done-button'")).firstMatch
+        if doneButton.exists {
+            doneButton.tap()
+            Thread.sleep(forTimeInterval: 1.0)
         } else {
-            // If already added, exit jiggle mode
-            let doneButton = springboard.buttons.matching(NSPredicate(format: "label CONTAINS[c] 'Fertig' OR label CONTAINS[c] 'Done' OR identifier == 'done-button'")).firstMatch
-            if doneButton.exists {
-                doneButton.tap()
-            } else {
-                springboard.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.05)).tap()
-            }
+            springboard.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.05)).tap()
             Thread.sleep(forTimeInterval: 1.0)
         }
 

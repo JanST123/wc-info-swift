@@ -42,7 +42,29 @@ final class CompassManager: NSObject, ObservableObject {
             locationManager.startUpdatingHeading()
             isHeadingAvailable = true
         } else {
+            #if targetEnvironment(simulator)
+            isHeadingAvailable = true
+            headingDegrees = 20.0
+            if userLocation == nil {
+                userLocation = CLLocation(
+                    latitude: targetCoordinate.latitude - 0.0011,
+                    longitude: targetCoordinate.longitude - 0.0006
+                )
+            }
+            recalculate()
+            #else
             isHeadingAvailable = false
+            #endif
+        }
+
+        if ProcessInfo.processInfo.arguments.contains("-UITest") {
+            isHeadingAvailable = true
+            headingDegrees = 15.0
+            userLocation = CLLocation(
+                latitude: targetCoordinate.latitude - 0.0011,
+                longitude: targetCoordinate.longitude - 0.0006
+            )
+            recalculate()
         }
     }
 

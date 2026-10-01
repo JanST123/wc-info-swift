@@ -31,6 +31,7 @@ struct FilterBannerView: View {
                         .clipShape(RoundedRectangle(cornerRadius: 8))
                 }
                 .buttonStyle(.plain)
+                .accessibilityIdentifier("FilterToggleButton")
                 .accessibilityLabel(isExpanded ? Text("Filter einklappen") : Text("Filter ausklappen"))
             }
             .padding(.horizontal, 14)

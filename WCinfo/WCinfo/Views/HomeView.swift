@@ -116,7 +116,7 @@ struct HomeView: View {
     private var searchCard: some View {
         VStack(alignment: .leading, spacing: 8) {
             HStack(spacing: 12) {
-                TextField("Wo möchtest du nach Toiletten suchen?", text: $searchText)
+                TextField("Wo möchtest du suchen?", text: $searchText)
                     .textFieldStyle(.plain)
                     .foregroundColor(.primary)
                     .tint(.purple)

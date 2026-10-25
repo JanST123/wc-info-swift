@@ -298,7 +298,9 @@ struct CreateScreen: View {
             } else {
                 VStack(spacing: 12) {
                     ForEach(nearbyPlaces.prefix(3)) { place in
-                        primaryChoiceButton(verbatimTitle: place.name, verbatimSubtitle: place.secondaryText) {
+                        let subtitleParts = [place.formattedDistance, place.secondaryText].compactMap { $0 }.filter { !$0.isEmpty }
+                        let subtitle = subtitleParts.isEmpty ? nil : subtitleParts.joined(separator: " • ")
+                        primaryChoiceButton(verbatimTitle: place.name, verbatimSubtitle: subtitle) {
                             selectPlaceOption(place)
                         }
                     }
@@ -911,7 +913,7 @@ struct CreateScreen: View {
             .clipShape(RoundedRectangle(cornerRadius: 12))
             .shadow(color: .purple.opacity(0.2), radius: 4, x: 0, y: 2)
         }
-        .accessibilityLabel(Text(verbatim: verbatimTitle))
+        .accessibilityLabel(Text(verbatim: verbatimSubtitle != nil ? "\(verbatimTitle), \(verbatimSubtitle!)" : verbatimTitle))
     }
 
     private func secondaryChoiceButton(title: LocalizedStringKey, action: @escaping () -> Void) -> some View {

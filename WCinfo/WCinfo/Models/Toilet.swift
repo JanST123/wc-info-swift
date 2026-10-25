@@ -424,6 +424,7 @@ public struct PlaceResource: Codable, Hashable {
     public let websiteUri: String?
     public let regularOpeningHours: RegularOpeningHours?
     public let types: [String]?
+    public let distance: Double?
 
     public struct DisplayNameText: Codable, Hashable {
         public let text: String?
@@ -542,6 +543,7 @@ public struct PlaceResource: Codable, Hashable {
         case openingHours = "opening_hours"
         case placeOpeningHours = "place_opening_hours"
         case types
+        case distance
     }
 
     private struct GeometryContainer: Codable {
@@ -556,7 +558,8 @@ public struct PlaceResource: Codable, Hashable {
         formattedAddress: String? = nil,
         websiteUri: String? = nil,
         regularOpeningHours: RegularOpeningHours? = nil,
-        types: [String]? = nil
+        types: [String]? = nil,
+        distance: Double? = nil
     ) {
         self.id = id
         self.displayName = displayName
@@ -566,6 +569,7 @@ public struct PlaceResource: Codable, Hashable {
         self.websiteUri = websiteUri
         self.regularOpeningHours = regularOpeningHours
         self.types = types
+        self.distance = distance
     }
 
     public init(from decoder: Decoder) throws {
@@ -603,6 +607,16 @@ public struct PlaceResource: Codable, Hashable {
         }
 
         self.types = try? container.decodeIfPresent([String].self, forKey: .types)
+
+        if let d = try? container.decodeIfPresent(Double.self, forKey: .distance) {
+            self.distance = d
+        } else if let i = try? container.decodeIfPresent(Int.self, forKey: .distance) {
+            self.distance = Double(i)
+        } else if let s = try? container.decodeIfPresent(String.self, forKey: .distance), let d = Double(s) {
+            self.distance = d
+        } else {
+            self.distance = nil
+        }
     }
 
     public func encode(to encoder: Encoder) throws {
@@ -615,6 +629,7 @@ public struct PlaceResource: Codable, Hashable {
         try container.encodeIfPresent(websiteUri, forKey: .websiteUri)
         try container.encodeIfPresent(regularOpeningHours, forKey: .regularOpeningHours)
         try container.encodeIfPresent(types, forKey: .types)
+        try container.encodeIfPresent(distance, forKey: .distance)
     }
 
     public var resolvedPlaceId: String? {
@@ -655,7 +670,7 @@ public struct PlaceResource: Codable, Hashable {
 
     func toNearbyPlaceOption() -> NearbyPlaceOption? {
         guard let placeId = resolvedPlaceId, let name = resolvedName, !name.isEmpty else { return nil }
-        return NearbyPlaceOption(id: placeId, name: name, secondaryText: resolvedAddress)
+        return NearbyPlaceOption(id: placeId, name: name, secondaryText: resolvedAddress, distance: distance)
     }
 
     func toPlaceDetails() -> PlaceDetails? {
@@ -852,6 +867,16 @@ struct NearbyPlaceOption: Identifiable, Hashable {
     let id: String // placeID
     let name: String
     let secondaryText: String?
+    var distance: Double? = nil
+
+    var formattedDistance: String? {
+        guard let distance else { return nil }
+        if distance < 1000 {
+            return String(format: "%.0f m", distance)
+        } else {
+            return String(format: "%.1f km", distance / 1000.0)
+        }
+    }
 }
 
 struct PlaceDetails: Hashable {

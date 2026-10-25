@@ -1251,6 +1251,23 @@
         }
       }
     },
+    "Eingabe löschen" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Eingabe löschen"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Clear text"
+          }
+        }
+      }
+    },
     "Eingabefehler: Bitte gib einen Ort ein." : {
       "extractionState" : "stale",
       "localizations" : {

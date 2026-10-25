@@ -137,14 +137,20 @@ struct HomeView: View {
                         Task { await updatePredictions(for: newValue) }
                     }
 
-                Button(action: requestCurrentLocation) {
-                    Image(systemName: "location.circle.fill")
-                        .font(.title2)
-                        .foregroundColor(.purple)
-                        .frame(width: 36, height: 36)
+                if !searchText.isEmpty {
+                    Button {
+                        searchText = ""
+                        predictions = []
+                        showSearchValidation = false
+                    } label: {
+                        Image(systemName: "xmark.circle.fill")
+                            .font(.body)
+                            .foregroundStyle(.secondary)
+                            .frame(width: 36, height: 36)
+                    }
+                    .buttonStyle(.plain)
+                    .accessibilityLabel("Eingabe löschen")
                 }
-                .accessibilityLabel("Aktuellen Standort verwenden")
-                .accessibilityHint("Sucht Toiletten in der Nähe deines aktuellen Standorts.")
             }
             .padding(.horizontal, 16)
             .frame(height: 52)

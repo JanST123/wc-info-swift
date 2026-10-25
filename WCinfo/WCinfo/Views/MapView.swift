@@ -9,6 +9,7 @@ struct MapView: UIViewRepresentable {
     let toilets: [Toilet]
     let selectedToiletID: Int?
     var mapType: GMSMapViewType = .normal
+    var onSelectToilet: ((Toilet?) -> Void)? = nil
     var onShowDetails: (Toilet) -> Void = { _ in }
     var onAddToiletAtCoordinate: ((CLLocationCoordinate2D) -> Void)? = nil
     var onCameraWillMove: ((_ gesture: Bool) -> Void)? = nil
@@ -31,6 +32,7 @@ struct MapView: UIViewRepresentable {
 
     func updateUIView(_ mapView: GMSMapView, context: Context) {
         context.coordinator.toilets = toilets
+        context.coordinator.onSelectToilet = onSelectToilet
         context.coordinator.onShowDetails = onShowDetails
         context.coordinator.onAddToiletAtCoordinate = onAddToiletAtCoordinate
         context.coordinator.onCameraWillMove = onCameraWillMove
@@ -59,6 +61,15 @@ struct MapView: UIViewRepresentable {
             mapView.animate(to: camera)
         }
 
+        if let selectedToiletID {
+            context.coordinator.activeInfoWindowToiletID = selectedToiletID
+        }
+
+        // Preserve any currently open marker tooltip ID across marker rebuilds
+        let activeMarkerToiletID = selectedToiletID
+            ?? (mapView.selectedMarker?.userData as? Int)
+            ?? context.coordinator.activeInfoWindowToiletID
+
         mapView.clear()
         var selectedMarker: GMSMarker?
         for toilet in toilets {
@@ -68,7 +79,7 @@ struct MapView: UIViewRepresentable {
             marker.icon = toilet.markerIcon
             marker.userData = toilet.id
             marker.map = mapView
-            if toilet.id == selectedToiletID {
+            if toilet.id == activeMarkerToiletID {
                 selectedMarker = marker
             }
         }
@@ -76,13 +87,16 @@ struct MapView: UIViewRepresentable {
         // Restore active addMarker if present
         if let addMarker = context.coordinator.addMarker {
             addMarker.map = mapView
+            if activeMarkerToiletID == nil {
+                mapView.selectedMarker = addMarker
+            }
         }
 
         if let selectedMarker {
             mapView.selectedMarker = selectedMarker
 
             let selectionChanged = context.coordinator.lastSelectedID != selectedToiletID
-            if selectionChanged {
+            if selectionChanged, selectedToiletID != nil {
                 let camera = GMSCameraPosition.camera(
                     withTarget: selectedMarker.position,
                     zoom: max(mapView.camera.zoom, 16)
@@ -106,12 +120,14 @@ struct MapView: UIViewRepresentable {
     final class Coordinator: NSObject, GMSMapViewDelegate {
         var parent: MapView
         var toilets: [Toilet] = []
+        var onSelectToilet: ((Toilet?) -> Void)? = nil
         var onShowDetails: (Toilet) -> Void = { _ in }
         var onAddToiletAtCoordinate: ((CLLocationCoordinate2D) -> Void)? = nil
         var onCameraWillMove: ((_ gesture: Bool) -> Void)? = nil
         var onCameraIdle: ((_ south: Double, _ west: Double, _ north: Double, _ east: Double) -> Void)? = nil
         var lastCenter: CLLocationCoordinate2D?
         var lastSelectedID: Int?
+        var activeInfoWindowToiletID: Int?
         var addMarker: GMSMarker?
 
         init(_ parent: MapView) {
@@ -131,15 +147,31 @@ struct MapView: UIViewRepresentable {
             onCameraIdle?(south, west, north, east)
         }
 
+        func mapView(_ mapView: GMSMapView, didTap marker: GMSMarker) -> Bool {
+            if let toiletID = marker.userData as? Int,
+               let toilet = toilets.first(where: { $0.id == toiletID }) {
+                activeInfoWindowToiletID = toiletID
+                lastSelectedID = toiletID
+                onSelectToilet?(toilet)
+            }
+            return false
+        }
+
         func mapView(_ mapView: GMSMapView, didTapAt coordinate: CLLocationCoordinate2D) {
             if let existing = addMarker {
                 existing.map = nil
                 addMarker = nil
             }
+            activeInfoWindowToiletID = nil
+            lastSelectedID = nil
+            onSelectToilet?(nil)
         }
 
         func mapView(_ mapView: GMSMapView, didLongPressAt coordinate: CLLocationCoordinate2D) {
             addMarker?.map = nil
+            activeInfoWindowToiletID = nil
+            lastSelectedID = nil
+            onSelectToilet?(nil)
 
             let marker = GMSMarker(position: coordinate)
             marker.title = String(localized: "Neue Toilette hinzufügen")

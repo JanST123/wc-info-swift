@@ -226,6 +226,12 @@ struct ResultsView: View {
                 toilets: toilets,
                 selectedToiletID: selectedToilet?.id,
                 mapType: isSatellite ? .hybrid : .normal,
+                onSelectToilet: { toilet in
+                    selectedToilet = toilet
+                    if let toilet {
+                        Analytics.shared.trackEvent(category: "results", action: "select_toilet_marker", name: String(toilet.id))
+                    }
+                },
                 onShowDetails: { toilet in
                     openDetails(for: toilet, source: "marker")
                 },
@@ -373,6 +379,9 @@ struct ResultsView: View {
                 return loc1.distance(from: targetLocation) < loc2.distance(from: targetLocation)
             }
             toilets = sorted
+            if let currentSelected = selectedToilet, let updatedSelected = sorted.first(where: { $0.id == currentSelected.id }) {
+                selectedToilet = updatedSelected
+            }
             if let currentDetail = detailToilet, let updated = sorted.first(where: { $0.id == currentDetail.id }) {
                 detailToilet = updated
             } else if detailToilet == nil, let id = targetToiletId, let match = sorted.first(where: { $0.id == id }) {

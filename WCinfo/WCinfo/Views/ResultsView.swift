@@ -223,6 +223,7 @@ struct ResultsView: View {
         ZStack(alignment: .top) {
             MapView(
                 center: location.coordinate,
+                locationName: location.name,
                 toilets: toilets,
                 selectedToiletID: selectedToilet?.id,
                 mapType: isSatellite ? .hybrid : .normal,

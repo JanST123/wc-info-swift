@@ -6,6 +6,7 @@ import CoreImage
 struct MapView: UIViewRepresentable {
     @Environment(\.colorScheme) private var colorScheme
     let center: CLLocationCoordinate2D
+    var locationName: String? = nil
     let toilets: [Toilet]
     let selectedToiletID: Int?
     var mapType: GMSMapViewType = .normal
@@ -63,6 +64,7 @@ struct MapView: UIViewRepresentable {
 
         if let selectedToiletID {
             context.coordinator.activeInfoWindowToiletID = selectedToiletID
+            context.coordinator.isCenterMarkerSelected = false
         }
 
         // Preserve any currently open marker tooltip ID across marker rebuilds
@@ -70,7 +72,17 @@ struct MapView: UIViewRepresentable {
             ?? (mapView.selectedMarker?.userData as? Int)
             ?? context.coordinator.activeInfoWindowToiletID
 
+        let isCenterMarkerSelected = (mapView.selectedMarker?.userData as? String == "center_location_marker")
+            || context.coordinator.isCenterMarkerSelected
+
         mapView.clear()
+
+        // Default marker at the searched/current location of the ResultsView
+        let centerMarker = GMSMarker(position: center)
+        centerMarker.title = locationName ?? String(localized: "Ausgewählter Ort")
+        centerMarker.userData = "center_location_marker"
+        centerMarker.map = mapView
+
         var selectedMarker: GMSMarker?
         for toilet in toilets {
             let marker = GMSMarker(position: toilet.coordinate)
@@ -87,7 +99,7 @@ struct MapView: UIViewRepresentable {
         // Restore active addMarker if present
         if let addMarker = context.coordinator.addMarker {
             addMarker.map = mapView
-            if activeMarkerToiletID == nil {
+            if activeMarkerToiletID == nil && !isCenterMarkerSelected {
                 mapView.selectedMarker = addMarker
             }
         }
@@ -104,6 +116,8 @@ struct MapView: UIViewRepresentable {
                 mapView.animate(to: camera)
                 context.coordinator.lastSelectedID = selectedToiletID
             }
+        } else if isCenterMarkerSelected && activeMarkerToiletID == nil {
+            mapView.selectedMarker = centerMarker
         } else if context.coordinator.addMarker == nil {
             mapView.selectedMarker = nil
             context.coordinator.lastSelectedID = selectedToiletID
@@ -128,6 +142,7 @@ struct MapView: UIViewRepresentable {
         var lastCenter: CLLocationCoordinate2D?
         var lastSelectedID: Int?
         var activeInfoWindowToiletID: Int?
+        var isCenterMarkerSelected: Bool = false
         var addMarker: GMSMarker?
 
         init(_ parent: MapView) {
@@ -148,10 +163,18 @@ struct MapView: UIViewRepresentable {
         }
 
         func mapView(_ mapView: GMSMapView, didTap marker: GMSMarker) -> Bool {
+            if marker.userData as? String == "center_location_marker" {
+                activeInfoWindowToiletID = nil
+                lastSelectedID = nil
+                isCenterMarkerSelected = true
+                onSelectToilet?(nil)
+                return false
+            }
             if let toiletID = marker.userData as? Int,
                let toilet = toilets.first(where: { $0.id == toiletID }) {
                 activeInfoWindowToiletID = toiletID
                 lastSelectedID = toiletID
+                isCenterMarkerSelected = false
                 onSelectToilet?(toilet)
             }
             return false
@@ -164,6 +187,7 @@ struct MapView: UIViewRepresentable {
             }
             activeInfoWindowToiletID = nil
             lastSelectedID = nil
+            isCenterMarkerSelected = false
             onSelectToilet?(nil)
         }
 
@@ -171,6 +195,7 @@ struct MapView: UIViewRepresentable {
             addMarker?.map = nil
             activeInfoWindowToiletID = nil
             lastSelectedID = nil
+            isCenterMarkerSelected = false
             onSelectToilet?(nil)
 
             let marker = GMSMarker(position: coordinate)

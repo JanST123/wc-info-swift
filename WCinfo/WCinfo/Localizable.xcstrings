@@ -4320,6 +4320,40 @@
         }
       }
     },
+    "Schau dir diese Toilette auf WC-Info an: %@" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Schau dir diese Toilette auf WC-Info an: %@"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Check out this toilet on WC-Info: %@"
+          }
+        }
+      }
+    },
+    "Schau dir diese Toilette auf WC-Info an: %@ (%@)" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Schau dir diese Toilette auf WC-Info an: %1$@ (%2$@)"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Check out this toilet on WC-Info: %1$@ (%2$@)"
+          }
+        }
+      }
+    },
     "Schilder & Hinweise" : {
       "extractionState" : "stale",
       "localizations" : {

@@ -945,4 +945,27 @@ extension Toilet {
         let urlString = "https://wc-info.org/Toilets/\(placeSegment)/\(toiletSegment)"
         return URL(string: urlString) ?? URL(string: "https://wc-info.org")!
     }
+
+    var shareSubject: String {
+        let trimmedOwner = owner.trimmingCharacters(in: .whitespacesAndNewlines)
+        let trimmedName = name.trimmingCharacters(in: .whitespacesAndNewlines)
+        if !trimmedOwner.isEmpty && !trimmedName.isEmpty && trimmedOwner.lowercased() != trimmedName.lowercased() {
+            return "\(trimmedOwner) – \(trimmedName)"
+        }
+        return !trimmedOwner.isEmpty ? trimmedOwner : (!trimmedName.isEmpty ? trimmedName : String(localized: "Toilette"))
+    }
+
+    var shareMessage: String {
+        let trimmedOwner = owner.trimmingCharacters(in: .whitespacesAndNewlines)
+        let trimmedName = name.trimmingCharacters(in: .whitespacesAndNewlines)
+
+        if !trimmedOwner.isEmpty && !trimmedName.isEmpty && trimmedOwner.lowercased() != trimmedName.lowercased() {
+            let template = String(localized: "Schau dir diese Toilette auf WC-Info an: %@ (%@)")
+            return String(format: template, trimmedName, trimmedOwner)
+        } else {
+            let singleTitle = !trimmedOwner.isEmpty ? trimmedOwner : (!trimmedName.isEmpty ? trimmedName : String(localized: "Toilette"))
+            let template = String(localized: "Schau dir diese Toilette auf WC-Info an: %@")
+            return String(format: template, singleTitle)
+        }
+    }
 }

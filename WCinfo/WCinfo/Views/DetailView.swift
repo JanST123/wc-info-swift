@@ -44,7 +44,11 @@ struct DetailView: View {
                 }
 
                 ToolbarItem(placement: .primaryAction) {
-                    ShareLink(item: toilet.shareURL) {
+                    ShareLink(
+                        item: toilet.shareURL,
+                        subject: Text(toilet.shareSubject),
+                        message: Text(toilet.shareMessage)
+                    ) {
                         Image(systemName: "square.and.arrow.up")
                     }
                     .accessibilityLabel(Text("Toilette teilen"))

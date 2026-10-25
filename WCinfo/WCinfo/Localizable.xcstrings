@@ -2490,6 +2490,23 @@
         }
       }
     },
+    "Kein passender Ort gefunden." : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kein passender Ort gefunden."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No matching location found."
+          }
+        }
+      }
+    },
     "Keine" : {
       "extractionState" : "manual",
       "localizations" : {

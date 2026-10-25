@@ -12,6 +12,7 @@ struct HomeView: View {
     @State private var selectedLocation: SearchedLocation?
     @State private var keyboardHeight: CGFloat = 0
     @State private var showSearchValidation = false
+    @State private var isSelectingPrediction = false
     @FocusState private var searchFieldFocused: Bool
 
     private var isSearchInvalid: Bool {
@@ -129,6 +130,10 @@ struct HomeView: View {
                         if showSearchValidation {
                             showSearchValidation = false
                         }
+                        if isSelectingPrediction {
+                            isSelectingPrediction = false
+                            return
+                        }
                         Task { await updatePredictions(for: newValue) }
                     }
 
@@ -143,7 +148,7 @@ struct HomeView: View {
             }
             .padding(.horizontal, 16)
             .frame(height: 52)
-            .background(isSearchInvalid ? Color.red.opacity(0.08) : Color(uiColor: .systemBackground))
+            .background(Color(uiColor: .systemBackground))
             .overlay(
                 RoundedRectangle(cornerRadius: 12)
                     .stroke(isSearchInvalid ? Color.red : Color.clear, lineWidth: 2)
@@ -155,7 +160,15 @@ struct HomeView: View {
                 Text("Bitte gib einen Ort ein, um danach zu suchen.")
                     .font(.caption)
                     .foregroundColor(.red)
-                    .padding(.horizontal, 4)
+                    .padding(.horizontal, 12)
+                    .padding(.vertical, 8)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .background(Color(uiColor: .systemBackground))
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 8)
+                            .stroke(Color.red, lineWidth: 1.5)
+                    )
+                    .clipShape(RoundedRectangle(cornerRadius: 8))
                     .accessibilityLabel("Eingabefehler: Bitte gib einen Ort ein.")
             }
 
@@ -195,13 +208,14 @@ struct HomeView: View {
 
     private var actionButtons: some View {
         HStack(spacing: 12) {
+            let isSearchEmpty = searchText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
             Button(action: performSearch) {
                 Text("Suchen")
                     .font(.headline)
                     .foregroundColor(.white)
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
             }
-            .background(searchText.isEmpty ? Color.gray : Color(red: 0.4, green: 0.4, blue: 0.4))
+            .background(isSearchEmpty ? Color.gray : Color(red: 0.4, green: 0.4, blue: 0.4))
             .clipShape(RoundedRectangle(cornerRadius: 12))
             .accessibilityLabel("Suchen")
             .accessibilityHint("Sucht Toiletten am eingegebenen Ort.")
@@ -233,7 +247,9 @@ struct HomeView: View {
     }
 
     private func selectPrediction(_ prediction: GMSAutocompletePlaceSuggestion) {
-        searchText = prediction.attributedFullText.string
+        let placeName = prediction.attributedFullText.string
+        isSelectingPrediction = true
+        searchText = placeName
         predictions = []
         showSearchValidation = false
         searchFieldFocused = false
@@ -241,7 +257,7 @@ struct HomeView: View {
         Task {
             do {
                 let coordinate = try await placesService.fetchCoordinates(for: prediction.placeID)
-                selectedLocation = SearchedLocation(name: searchText, coordinate: coordinate)
+                selectedLocation = SearchedLocation(name: placeName, coordinate: coordinate)
             } catch {
                 ErrorManager.shared.report(error, context: ["action": "select_prediction", "placeID": prediction.placeID])
             }
@@ -252,17 +268,35 @@ struct HomeView: View {
         let trimmed = searchText.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !trimmed.isEmpty else {
             showSearchValidation = true
-            UIAccessibility.post(notification: .announcement, argument: "Bitte gib einen Ort ein.")
+            UIAccessibility.post(notification: .announcement, argument: String(localized: "Bitte gib einen Ort ein, um danach zu suchen."))
             return
         }
+
+        if let firstPrediction = predictions.first {
+            selectPrediction(firstPrediction)
+            return
+        }
+
         predictions = []
         showSearchValidation = false
         searchFieldFocused = false
         Analytics.shared.trackEvent(category: "search", action: "submit", name: trimmed)
         Task {
             do {
-                let coordinate = try await placesService.fetchCoordinates(for: trimmed)
-                selectedLocation = SearchedLocation(name: trimmed, coordinate: coordinate)
+                let suggestions = try await placesService.autocomplete(query: trimmed)
+                guard let bestMatch = suggestions.first else {
+                    ErrorManager.shared.reportMessage(
+                        String(localized: "Kein passender Ort gefunden."),
+                        context: ["action": "perform_search", "query": trimmed],
+                        logToSentry: false
+                    )
+                    return
+                }
+                let placeName = bestMatch.attributedFullText.string
+                isSelectingPrediction = true
+                searchText = placeName
+                let coordinate = try await placesService.fetchCoordinates(for: bestMatch.placeID)
+                selectedLocation = SearchedLocation(name: placeName, coordinate: coordinate)
             } catch {
                 ErrorManager.shared.report(error, context: ["action": "perform_search", "query": trimmed])
             }

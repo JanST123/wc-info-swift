@@ -126,16 +126,37 @@ actor WCInfoAPIService {
         guard let url = urlComponents?.url else {
             throw WCInfoAPIError.invalidURL
         }
-        let data = try await performRequest(url: url)
+        let (data, statusCode) = try await performRequestWithResponse(url: url)
+        let rawBody = String(data: data, encoding: .utf8) ?? "<binary>"
+        let places: [PlaceResource]
         do {
             if let response = try? decoder.decode(NearestPlacesResponse.self, from: data) {
-                return response.places
+                places = response.places
+            } else {
+                places = try decoder.decode([PlaceResource].self, from: data)
             }
-            return try decoder.decode([PlaceResource].self, from: data)
         } catch {
-            let rawBody = String(data: data, encoding: .utf8)
             throw WCInfoAPIError.decodingError(underlying: error, responseBody: rawBody)
         }
+
+        if places.isEmpty {
+            let sentryEvent = Sentry.Event(level: .warning)
+            sentryEvent.message = SentryMessage(formatted: "places/nearest returned no results")
+            var extra: [String: Any] = [
+                "requestMethod": "GET",
+                "requestURL": url.absoluteString,
+                "latitude": latitude,
+                "longitude": longitude,
+                "responseStatusCode": statusCode,
+                "responseBody": rawBody
+            ]
+            if let radius { extra["radius"] = radius }
+            if let limit { extra["limit"] = limit }
+            sentryEvent.extra = extra
+            SentrySDK.capture(event: sentryEvent)
+        }
+
+        return places
     }
 
     func addToilet(_ payload: AddToiletPayload) async throws -> AddToiletResponse {
@@ -264,6 +285,11 @@ actor WCInfoAPIService {
     }
 
     private func performRequest(url: URL, method: String = "GET", body: Data? = nil, customContentType: String? = nil, isRetryAfterCSRF: Bool = false) async throws -> Data {
+        let (data, _) = try await performRequestWithResponse(url: url, method: method, body: body, customContentType: customContentType, isRetryAfterCSRF: isRetryAfterCSRF)
+        return data
+    }
+
+    private func performRequestWithResponse(url: URL, method: String = "GET", body: Data? = nil, customContentType: String? = nil, isRetryAfterCSRF: Bool = false) async throws -> (Data, Int) {
         addBreadcrumb(category: "api", message: "\(method) \(url.absoluteString)")
 
         var request = URLRequest(url: url)
@@ -323,7 +349,7 @@ actor WCInfoAPIService {
                 healthRequest.setValue("Bearer \(apiKey)", forHTTPHeaderField: "Authorization")
             }
             _ = try? await URLSession.shared.data(for: healthRequest)
-            return try await performRequest(url: url, method: method, body: body, isRetryAfterCSRF: true)
+            return try await performRequestWithResponse(url: url, method: method, body: body, customContentType: customContentType, isRetryAfterCSRF: true)
         }
 
         guard (200..<300).contains(httpResponse.statusCode) else {
@@ -331,7 +357,7 @@ actor WCInfoAPIService {
             throw WCInfoAPIError.invalidResponse(statusCode: httpResponse.statusCode, message: message, responseBody: rawBody)
         }
 
-        return data
+        return (data, httpResponse.statusCode)
     }
 
     private func parseErrorMessage(from data: Data) -> String? {

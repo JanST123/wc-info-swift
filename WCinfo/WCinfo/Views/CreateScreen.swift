@@ -1177,6 +1177,17 @@ struct CreateScreen: View {
             fetchedPlaceResources = resourceMap
         } catch {
             print("[CreateScreen] fetchNearestPlaces error: \(error)")
+            var context: [String: Any] = [
+                "action": "fetchNearestPlaces",
+                "latitude": coordinate.latitude,
+                "longitude": coordinate.longitude,
+                "radius": 200.0,
+                "limit": 10
+            ]
+            if let apiError = error as? WCInfoAPIError {
+                context.merge(apiError.diagnosticContext) { _, new in new }
+            }
+            ErrorManager.shared.report(error, context: context, showToUser: false, logToSentry: true)
         }
     }
 }

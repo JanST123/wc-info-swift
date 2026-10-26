@@ -1,40 +1,52 @@
 {
-  "sourceLanguage" : "en",
-  "strings" : {
-    "CFBundleName" : {
-      "comment" : "Bundle name",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "WC-info"
+  "sourceLanguage": "en",
+  "strings": {
+    "CFBundleName": {
+      "comment": "Bundle name",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "WC-info"
           }
         },
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "WC-info"
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "WC-info"
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "WC-info"
           }
         }
       }
     },
-    "NSLocationWhenInUseUsageDescription" : {
-      "comment" : "Privacy - Location When In Use Usage Description",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Dein Standort wird benötigt, um Toiletten in deiner Nähe auf der Karte anzuzeigen und dorthin zu navigieren."
+    "NSLocationWhenInUseUsageDescription": {
+      "comment": "Privacy - Location When In Use Usage Description",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dein Standort wird benötigt, um Toiletten in deiner Nähe auf der Karte anzuzeigen und dorthin zu navigieren."
           }
         },
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Your location is required to display nearby toilets on the map and provide navigation."
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Your location is required to display nearby toilets on the map and provide navigation."
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Je locatie is nodig om toiletten in de buurt op de kaart weer te geven en ernaartoe te navigeren."
           }
         }
       }
     }
   },
-  "version" : "1.3"
+  "version": "1.3"
 }

@@ -1,4 +1,6 @@
 name: WCinfo
+options:
+  knownRegions: [Base, en, de, nl]
 targets:
   WCinfo:
     type: application

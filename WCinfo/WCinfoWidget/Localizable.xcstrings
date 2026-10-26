@@ -14,6 +14,12 @@
             "state": "translated",
             "value": "+%lld"
           }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "+%lld"
+          }
         }
       }
     },
@@ -29,6 +35,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "1-Tap Kompass"
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "1-Tap Kompas"
           }
         }
       }
@@ -46,6 +58,12 @@
             "state": "translated",
             "value": "1-Tap Kompass-Start"
           }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "1-Tap Kompas-start"
+          }
         }
       }
     },
@@ -61,6 +79,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Ab welcher Distanz zur nächsten öffentlichen Toilette auf eine nähere geöffnete nicht-öffentliche ausgewichen wird."
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Vanaf welke afstand tot het dichtstbijzijnde openbare toilet wordt uitgeweken naar een dichterbij gelegen geopend niet-openbaar toilet."
           }
         }
       }
@@ -78,6 +102,12 @@
             "state": "translated",
             "value": "Alle Toiletten"
           }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Alle toiletten"
+          }
         }
       }
     },
@@ -93,6 +123,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Alle verfügbaren Toiletten"
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Alle beschikbare toiletten"
           }
         }
       }
@@ -110,6 +146,12 @@
             "state": "translated",
             "value": "Euroschlüssel"
           }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Euro-sleutel"
+          }
         }
       }
     },
@@ -125,6 +167,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Finde und navigiere mit nur einem Fingertipp direkt per Kompass zur nächsten passenden Toilette."
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Vind en navigeer met één tik direct via het kompas naar het dichtstbijzijnde passende toilet."
           }
         }
       }
@@ -144,6 +192,12 @@
             "state": "translated",
             "value": "Geöffnet"
           }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Geopend"
+          }
         }
       }
     },
@@ -159,6 +213,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Geschlossene Toiletten anzeigen"
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Gesloten toiletten tonen"
           }
         }
       }
@@ -176,6 +236,12 @@
             "state": "translated",
             "value": "Getrennt"
           }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Gescheiden"
+          }
         }
       }
     },
@@ -191,6 +257,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Max. Distanz zur öffentlichen Toilette (Meter)"
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Max. afstand tot openbaar toilet (meter)"
           }
         }
       }
@@ -208,6 +280,12 @@
             "state": "translated",
             "value": "Nächste Toilette"
           }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dichtstbijzijnde toilet"
+          }
         }
       }
     },
@@ -223,6 +301,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Nähere geöffnete, nicht-öffentliche Toilette als Ausweichoption erlauben"
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dichterbij gelegen geopend niet-openbaar toilet toestaan als uitwijkoptie"
           }
         }
       }
@@ -240,6 +324,12 @@
             "state": "translated",
             "value": "Navigiert zu einer näheren geöffneten nicht-öffentlichen Toilette, falls die nächste öffentliche weiter entfernt ist."
           }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Navigeert naar een dichterbij gelegen geopend niet-openbaar toilet als het dichtstbijzijnde openbare toilet verder weg is."
+          }
         }
       }
     },
@@ -255,6 +345,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Nicht-barrierefreie Toiletten anzeigen"
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Niet-rolstoeltoegankelijke toiletten tonen"
           }
         }
       }
@@ -272,6 +368,12 @@
             "state": "translated",
             "value": "Nicht-öffentliche Toiletten anzeigen"
           }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Niet-openbare toiletten tonen"
+          }
         }
       }
     },
@@ -287,6 +389,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "NOTFALL"
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "NOODGEVAL"
           }
         }
       }
@@ -304,6 +412,12 @@
             "state": "translated",
             "value": "Notfall-Filter"
           }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Noodfilter"
+          }
         }
       }
     },
@@ -319,6 +433,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Notfall-Toilette"
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Noodtoilet"
           }
         }
       }
@@ -338,6 +458,12 @@
             "state": "translated",
             "value": "Nur Öffentlich"
           }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Alleen openbaar"
+          }
         }
       }
     },
@@ -353,6 +479,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Nur öffentliche Toiletten mit Ausweichoption"
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Alleen openbare toiletten met uitwijkoptie"
           }
         }
       }
@@ -372,6 +504,12 @@
             "state": "translated",
             "value": "Öffentlich (>%lldm Ausweich)"
           }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Openbaar (>%lld m uitwijk)"
+          }
         }
       }
     },
@@ -387,6 +525,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Ohne Euroschlüssel anzeigen"
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Zonder Euro-sleutel tonen"
           }
         }
       }
@@ -404,6 +548,12 @@
             "state": "translated",
             "value": "Ohne Geschlechtertrennung anzeigen"
           }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Zonder genderscheiding tonen"
+          }
         }
       }
     },
@@ -419,6 +569,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Ohne Wickeltisch anzeigen"
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Zonder verschoontafel tonen"
           }
         }
       }
@@ -436,6 +592,12 @@
             "state": "translated",
             "value": "Passe an, welche Kriterien bei der schnellen Notfall-Navigation berücksichtigt werden sollen."
           }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pas aan met welke criteria rekening gehouden moet worden bij snelle noodnavigatie."
+          }
         }
       }
     },
@@ -451,6 +613,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Rollstuhlgerecht"
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Rolstoeltoegankelijk"
           }
         }
       }
@@ -468,6 +636,12 @@
             "state": "translated",
             "value": "SOFORT-NAVIGATION"
           }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "DIRECTE NAVIGATIE"
+          }
         }
       }
     },
@@ -484,6 +658,12 @@
             "state": "translated",
             "value": "Tippen zum Navigieren"
           }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tik om te navigeren"
+          }
         }
       }
     },
@@ -496,6 +676,12 @@
           }
         },
         "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "WC"
+          }
+        },
+        "nl": {
           "stringUnit": {
             "state": "translated",
             "value": "WC"
@@ -516,6 +702,12 @@
             "state": "translated",
             "value": "WC NOTFALL"
           }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "WC NOODGEVAL"
+          }
         }
       }
     },
@@ -533,6 +725,12 @@
           "stringUnit": {
             "state": "translated",
             "value": "Wickeltisch"
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Verschoontafel"
           }
         }
       }

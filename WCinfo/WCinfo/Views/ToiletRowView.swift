@@ -17,10 +17,10 @@ struct ToiletRowView: View {
             rowContent
                 .accessibilityElement(children: .combine)
                 .accessibilityLabel(accessibilityLabel)
-                .accessibilityHint(Text("Tippe doppelt, um diese Toilette auf der Karte anzuzeigen."))
+                .accessibilityHint(accessibilityHint)
                 .accessibilityAddTraits(.isButton)
 
-            if isActive {
+            if isActive && !toilet.isSummary {
                 Spacer(minLength: 8)
                 HStack(spacing: 16) {
                     Button(action: onNavigate) {
@@ -67,7 +67,42 @@ struct ToiletRowView: View {
         }
     }
 
+    private var accessibilityHint: Text {
+        if toilet.isSummary {
+            return Text(String(localized: "Tippe doppelt, um diesen Bereich auf der Karte anzuzeigen."))
+        }
+        return Text(String(localized: "Tippe doppelt, um diese Toilette auf der Karte anzuzeigen."))
+    }
+
     private var rowContent: some View {
+        VStack(alignment: .leading, spacing: 6) {
+            if toilet.isSummary {
+                summaryRowContent
+            } else {
+                standardRowContent
+            }
+        }
+    }
+
+    private var summaryRowContent: some View {
+        VStack(alignment: .leading, spacing: 6) {
+            HStack(alignment: .center, spacing: 12) {
+                Text(toilet.name)
+                    .font(.headline.bold())
+                    .foregroundStyle(.primary)
+
+                Spacer(minLength: 12)
+
+                if let distance = formattedDistance {
+                    Text(distance)
+                        .font(.body.bold())
+                        .foregroundStyle(.primary)
+                }
+            }
+        }
+    }
+
+    private var standardRowContent: some View {
         VStack(alignment: .leading, spacing: 6) {
             HStack(alignment: .top, spacing: 12) {
                 VStack(alignment: .leading, spacing: 2) {
@@ -211,6 +246,14 @@ struct ToiletRowView: View {
     }
 
     private var accessibilityLabel: String {
+        if toilet.isSummary {
+            var parts = [toilet.name]
+            if let distance = formattedDistance {
+                let template = String(localized: "Entfernung %@")
+                parts.append(String(format: template, distance))
+            }
+            return parts.joined(separator: ", ")
+        }
         var parts = [toilet.owner, toilet.name]
         if toilet.temporaryClosed {
             parts.append(String(localized: "Temporary closed"))

@@ -313,17 +313,24 @@ struct ResultsView: View {
         }
     }
 
+    private var isSummaryMode: Bool {
+        toilets.first?.isSummary ?? false
+    }
+
     private func openDetails(for toilet: Toilet, source: String) {
+        guard !toilet.isSummary else { return }
         selectedToilet = toilet
         detailToilet = toilet
         Analytics.shared.trackEvent(category: "results", action: "open_details_\(source)", name: String(toilet.id))
     }
 
     private func openNavigation(to toilet: Toilet) {
+        guard !toilet.isSummary else { return }
         toiletToNavigate = toilet
     }
 
     private func openExternalMaps(to toilet: Toilet) {
+        guard !toilet.isSummary else { return }
         Analytics.shared.trackEvent(category: "results", action: "navigate_maps", name: String(toilet.id))
         let item = MKMapItem(placemark: MKPlacemark(coordinate: toilet.coordinate))
         item.name = toilet.displayName
@@ -383,11 +390,16 @@ struct ResultsView: View {
             if let currentSelected = selectedToilet, let updatedSelected = sorted.first(where: { $0.id == currentSelected.id }) {
                 selectedToilet = updatedSelected
             }
-            if let currentDetail = detailToilet, let updated = sorted.first(where: { $0.id == currentDetail.id }) {
-                detailToilet = updated
-            } else if detailToilet == nil, let id = targetToiletId, let match = sorted.first(where: { $0.id == id }) {
-                selectedToilet = match
-                detailToilet = match
+            let isSummary = sorted.first?.isSummary ?? false
+            if !isSummary {
+                if let currentDetail = detailToilet, let updated = sorted.first(where: { $0.id == currentDetail.id }) {
+                    detailToilet = updated
+                } else if detailToilet == nil, let id = targetToiletId, let match = sorted.first(where: { $0.id == id }) {
+                    selectedToilet = match
+                    detailToilet = match
+                }
+            } else {
+                detailToilet = nil
             }
             Analytics.shared.trackEvent(category: "results", action: isPullToRefresh ? "refresh_bounds" : "loaded_bounds", name: location.name, value: Float(toilets.count))
         } catch {

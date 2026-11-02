@@ -30,6 +30,10 @@ struct Toilet: Identifiable, Codable, Hashable {
     let closeTimestamp: Date?
     let placeOpeningHours: [GooglePlacesPeriod]?
     let updated: String
+    let isSummary: Bool
+    let summaryCount: Int?
+    let summaryBounds: SummaryBounds?
+    let summaryLocationName: String?
 
     var coordinate: CLLocationCoordinate2D {
         CLLocationCoordinate2D(latitude: lat, longitude: lon)
@@ -60,6 +64,10 @@ struct Toilet: Identifiable, Codable, Hashable {
         case closeTimestamp = "close_timestamp"
         case placeOpeningHours = "place_opening_hours"
         case updated
+        case isSummary = "is_summary"
+        case summaryCount = "summary_count"
+        case summaryBounds = "summary_bounds"
+        case summaryLocationName = "summary_location_name"
     }
 
     init(from decoder: Decoder) throws {
@@ -73,8 +81,35 @@ struct Toilet: Identifiable, Codable, Hashable {
             id = try container.decode(Int.self, forKey: .id)
         }
 
-        name = (try? container.decode(String.self, forKey: .name)) ?? ""
-        owner = (try? container.decode(String.self, forKey: .owner)) ?? ""
+        let summaryFlag = container.decodeFlexibleBoolIfPresent(forKey: .isSummary) ?? false
+        isSummary = summaryFlag
+
+        if let intCount = try? container.decode(Int.self, forKey: .summaryCount) {
+            summaryCount = intCount
+        } else if let strCount = try? container.decode(String.self, forKey: .summaryCount), let intVal = Int(strCount) {
+            summaryCount = intVal
+        } else {
+            summaryCount = nil
+        }
+
+        summaryBounds = try? container.decodeIfPresent(SummaryBounds.self, forKey: .summaryBounds)
+        summaryLocationName = try? container.decodeIfPresent(String.self, forKey: .summaryLocationName)
+
+        if summaryFlag {
+            let count = summaryCount ?? 1
+            let location = summaryLocationName?.trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
+            if !location.isEmpty {
+                let template = String(localized: "%lld Toilets around %@")
+                name = String(format: template, Int64(count), location)
+            } else {
+                let template = String(localized: "%lld Toilets")
+                name = String(format: template, Int64(count))
+            }
+            owner = name
+        } else {
+            name = (try? container.decode(String.self, forKey: .name)) ?? ""
+            owner = (try? container.decode(String.self, forKey: .owner)) ?? ""
+        }
 
         if let dLat = try? container.decode(Double.self, forKey: .lat) {
             lat = dLat
@@ -129,6 +164,146 @@ struct Toilet: Identifiable, Codable, Hashable {
         }
 
         updated = (try? container.decode(String.self, forKey: .updated)) ?? ""
+    }
+
+    init(
+        id: Int,
+        name: String,
+        owner: String,
+        lat: Double,
+        lon: Double,
+        placeId: String? = nil,
+        status: String = "active",
+        isQualified: Bool = false,
+        isUnisex: Bool = false,
+        isGenderSeparated: Bool = false,
+        hasWheelchairAccess: Bool = false,
+        hasChangingTable: Bool = false,
+        source: String? = nil,
+        address: String? = nil,
+        website: String? = nil,
+        comment: String? = nil,
+        euroKey: String? = nil,
+        storageSpace: String? = nil,
+        accessibleOutsideOpeningTimes: Bool = false,
+        isPublicAccessible: Bool = true,
+        temporaryClosed: Bool = false,
+        isOpen: Bool? = nil,
+        distance: Double? = nil,
+        photos: [ToiletPhoto] = [],
+        openTimestamp: Date? = nil,
+        closeTimestamp: Date? = nil,
+        placeOpeningHours: [GooglePlacesPeriod]? = nil,
+        updated: String = "",
+        isSummary: Bool = false,
+        summaryCount: Int? = nil,
+        summaryBounds: SummaryBounds? = nil,
+        summaryLocationName: String? = nil
+    ) {
+        self.id = id
+        self.lat = lat
+        self.lon = lon
+        self.placeId = placeId
+        self.status = status
+        self.isQualified = isQualified
+        self.isUnisex = isUnisex
+        self.isGenderSeparated = isGenderSeparated
+        self.hasWheelchairAccess = hasWheelchairAccess
+        self.hasChangingTable = hasChangingTable
+        self.source = source
+        self.address = address
+        self.website = website
+        self.comment = comment
+        self.euroKey = euroKey
+        self.storageSpace = storageSpace
+        self.accessibleOutsideOpeningTimes = accessibleOutsideOpeningTimes
+        self.isPublicAccessible = isPublicAccessible
+        self.temporaryClosed = temporaryClosed
+        self.isOpen = isOpen
+        self.distance = distance
+        self.photos = photos
+        self.openTimestamp = openTimestamp
+        self.closeTimestamp = closeTimestamp
+        self.placeOpeningHours = placeOpeningHours
+        self.updated = updated
+        self.isSummary = isSummary
+        self.summaryCount = summaryCount
+        self.summaryBounds = summaryBounds
+        self.summaryLocationName = summaryLocationName
+
+        if isSummary {
+            let count = summaryCount ?? 1
+            let location = summaryLocationName?.trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
+            if !location.isEmpty {
+                let template = String(localized: "%lld Toilets around %@")
+                self.name = String(format: template, Int64(count), location)
+            } else {
+                let template = String(localized: "%lld Toilets")
+                self.name = String(format: template, Int64(count))
+            }
+            self.owner = self.name
+        } else {
+            self.name = name
+            self.owner = owner
+        }
+    }
+}
+
+struct SummaryBounds: Codable, Hashable {
+    let south: Double
+    let west: Double
+    let north: Double
+    let east: Double
+
+    init(south: Double, west: Double, north: Double, east: Double) {
+        self.south = south
+        self.west = west
+        self.north = north
+        self.east = east
+    }
+
+    var isValid: Bool {
+        south < north && west < east && (south != 0 || north != 0)
+    }
+
+    enum CodingKeys: String, CodingKey {
+        case south, west, north, east
+    }
+
+    init(from decoder: Decoder) throws {
+        if let container = try? decoder.container(keyedBy: CodingKeys.self) {
+            south = Self.decodeDouble(from: container, key: .south)
+            west = Self.decodeDouble(from: container, key: .west)
+            north = Self.decodeDouble(from: container, key: .north)
+            east = Self.decodeDouble(from: container, key: .east)
+        } else if let singleValue = try? decoder.singleValueContainer(), let stringVal = try? singleValue.decode(String.self) {
+            if let data = stringVal.data(using: .utf8),
+               let parsed = try? JSONDecoder().decode(SummaryBounds.self, from: data) {
+                self = parsed
+            } else {
+                let parts = stringVal.split(separator: ",").compactMap { Double($0.trimmingCharacters(in: .whitespaces)) }
+                if parts.count >= 4 {
+                    south = parts[0]
+                    west = parts[1]
+                    north = parts[2]
+                    east = parts[3]
+                } else {
+                    south = 0; west = 0; north = 0; east = 0
+                }
+            }
+        } else {
+            south = 0; west = 0; north = 0; east = 0
+        }
+    }
+
+    private static func decodeDouble(from container: KeyedDecodingContainer<CodingKeys>, key: CodingKeys) -> Double {
+        if let d = try? container.decode(Double.self, forKey: key) {
+            return d
+        }
+        if let s = try? container.decode(String.self, forKey: key), let d = Double(s) {
+            return d
+        }
+        return 0
     }
 }
 

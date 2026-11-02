@@ -85,11 +85,49 @@ struct MapView: UIViewRepresentable {
 
         var selectedMarker: GMSMarker?
         for toilet in toilets {
+            if toilet.isSummary, let bounds = toilet.summaryBounds, bounds.isValid {
+                let sw = CLLocationCoordinate2D(latitude: bounds.south, longitude: bounds.west)
+                let ne = CLLocationCoordinate2D(latitude: bounds.north, longitude: bounds.east)
+                let gmsBounds = GMSCoordinateBounds(coordinate: sw, coordinate: ne)
+
+                if let shiningImage = MarkerImageCache.shiningOverlayImage {
+                    let overlay = GMSGroundOverlay(bounds: gmsBounds, icon: shiningImage)
+                    overlay.zIndex = toilet.id == activeMarkerToiletID ? 2 : 1
+                    overlay.opacity = toilet.id == activeMarkerToiletID ? 1.0 : 0.75
+                    overlay.map = mapView
+                }
+
+                if toilet.id == activeMarkerToiletID {
+                    let rectPath = GMSMutablePath()
+                    rectPath.add(CLLocationCoordinate2D(latitude: bounds.south, longitude: bounds.west))
+                    rectPath.add(CLLocationCoordinate2D(latitude: bounds.north, longitude: bounds.west))
+                    rectPath.add(CLLocationCoordinate2D(latitude: bounds.north, longitude: bounds.east))
+                    rectPath.add(CLLocationCoordinate2D(latitude: bounds.south, longitude: bounds.east))
+                    rectPath.add(CLLocationCoordinate2D(latitude: bounds.south, longitude: bounds.west))
+
+                    let polygon = GMSPolygon(path: rectPath)
+                    polygon.strokeColor = UIColor.systemPurple.withAlphaComponent(0.6)
+                    polygon.strokeWidth = 2.0
+                    polygon.fillColor = UIColor.systemPurple.withAlphaComponent(0.08)
+                    polygon.zIndex = 3
+                    polygon.map = mapView
+                }
+            }
+
             let marker = GMSMarker(position: toilet.coordinate)
             marker.title = toilet.displayName
             marker.snippet = toilet.accessibilitySnippet
             marker.icon = toilet.markerIcon
             marker.userData = toilet.id
+            if toilet.isSummary {
+                marker.groundAnchor = CGPoint(x: 0.5, y: 0.5)
+                marker.infoWindowAnchor = CGPoint(x: 0.5, y: 0.0)
+                marker.zIndex = 10
+            } else {
+                marker.groundAnchor = CGPoint(x: 0.5, y: 1.0)
+                marker.infoWindowAnchor = CGPoint(x: 0.5, y: 0.0)
+                marker.zIndex = 5
+            }
             marker.map = mapView
             if toilet.id == activeMarkerToiletID {
                 selectedMarker = marker
@@ -109,11 +147,22 @@ struct MapView: UIViewRepresentable {
 
             let selectionChanged = context.coordinator.lastSelectedID != selectedToiletID
             if selectionChanged, selectedToiletID != nil {
-                let camera = GMSCameraPosition.camera(
-                    withTarget: selectedMarker.position,
-                    zoom: max(mapView.camera.zoom, 16)
-                )
-                mapView.animate(to: camera)
+                if let toilet = toilets.first(where: { $0.id == selectedToiletID }),
+                   toilet.isSummary,
+                   let bounds = toilet.summaryBounds,
+                   bounds.isValid {
+                    let sw = CLLocationCoordinate2D(latitude: bounds.south, longitude: bounds.west)
+                    let ne = CLLocationCoordinate2D(latitude: bounds.north, longitude: bounds.east)
+                    let gmsBounds = GMSCoordinateBounds(coordinate: sw, coordinate: ne)
+                    let update = GMSCameraUpdate.fit(gmsBounds, withPadding: 60)
+                    mapView.animate(with: update)
+                } else {
+                    let camera = GMSCameraPosition.camera(
+                        withTarget: selectedMarker.position,
+                        zoom: max(mapView.camera.zoom, 16)
+                    )
+                    mapView.animate(to: camera)
+                }
                 context.coordinator.lastSelectedID = selectedToiletID
             }
         } else if isCenterMarkerSelected && activeMarkerToiletID == nil {
@@ -231,6 +280,10 @@ struct MapView: UIViewRepresentable {
                   let toilet = toilets.first(where: { $0.id == toiletID }) else {
                 return
             }
+            // In summary mode, result rows do not contain valid toilet ids; opening the detail view is prevented
+            guard !toilet.isSummary else {
+                return
+            }
             onShowDetails(toilet)
         }
     }
@@ -254,21 +307,30 @@ private final class ToiletInfoWindowView: UIView {
         let titleLabel = UILabel()
         titleLabel.text = toilet.displayName
         titleLabel.font = .preferredFont(forTextStyle: .headline)
-        titleLabel.numberOfLines = 1
+        titleLabel.numberOfLines = 2
         titleLabel.textColor = .label
 
-        let snippetLabel = UILabel()
-        snippetLabel.text = toilet.accessibilitySnippet
-        snippetLabel.font = .preferredFont(forTextStyle: .footnote)
-        snippetLabel.textColor = .secondaryLabel
-        snippetLabel.numberOfLines = 2
+        var arrangedSubviews: [UIView] = [titleLabel]
 
-        let detailsLabel = UILabel()
-        detailsLabel.text = String(localized: "Details ansehen ›")
-        detailsLabel.font = .preferredFont(forTextStyle: .footnote).withTraits(.traitBold) ?? .boldSystemFont(ofSize: 13)
-        detailsLabel.textColor = .systemPurple
+        if !toilet.isSummary {
+            let snippet = toilet.accessibilitySnippet
+            if !snippet.isEmpty {
+                let snippetLabel = UILabel()
+                snippetLabel.text = snippet
+                snippetLabel.font = .preferredFont(forTextStyle: .footnote)
+                snippetLabel.textColor = .secondaryLabel
+                snippetLabel.numberOfLines = 2
+                arrangedSubviews.append(snippetLabel)
+            }
 
-        let textStack = UIStackView(arrangedSubviews: [titleLabel, snippetLabel, detailsLabel])
+            let detailsLabel = UILabel()
+            detailsLabel.text = String(localized: "Details ansehen ›")
+            detailsLabel.font = .preferredFont(forTextStyle: .footnote).withTraits(.traitBold) ?? .boldSystemFont(ofSize: 13)
+            detailsLabel.textColor = .systemPurple
+            arrangedSubviews.append(detailsLabel)
+        }
+
+        let textStack = UIStackView(arrangedSubviews: arrangedSubviews)
         textStack.axis = .vertical
         textStack.spacing = 4
         textStack.frame = CGRect(
@@ -294,9 +356,15 @@ private final class ToiletInfoWindowView: UIView {
         )
 
         isAccessibilityElement = true
-        accessibilityLabel = "\(toilet.displayName). \(toilet.accessibilitySnippet)"
-        accessibilityHint = String(localized: "Doppeltippen, um Details zu öffnen.")
-        accessibilityTraits = .button
+        if toilet.isSummary {
+            accessibilityLabel = toilet.displayName
+            accessibilityHint = String(localized: "Zusammenfassender Bereich mit mehreren Toiletten.")
+            accessibilityTraits = .none
+        } else {
+            accessibilityLabel = "\(toilet.displayName). \(toilet.accessibilitySnippet)"
+            accessibilityHint = String(localized: "Doppeltippen, um Details zu öffnen.")
+            accessibilityTraits = .button
+        }
     }
 
     required init?(coder: NSCoder) {
@@ -379,6 +447,7 @@ extension Toilet {
     }
 
     var accessibilitySnippet: String {
+        if isSummary { return "" }
         var parts = [String]()
         if temporaryClosed { parts.append(String(localized: "Temporary closed")) }
         if hasWheelchairAccess { parts.append(String(localized: "Rollstuhlgerecht")) }
@@ -408,6 +477,18 @@ private enum MarkerImageCache {
     private static var cache = [String: UIImage]()
 
     static func markerIcon(for toilet: Toilet) -> UIImage? {
+        if toilet.isSummary {
+            let count = max(1, toilet.summaryCount ?? 1)
+            let key = "summary_\(count)"
+            if let cached = cache[key] {
+                return cached
+            }
+            if let summaryImg = createSummaryMarkerImage(count: count) {
+                cache[key] = summaryImg
+                return summaryImg
+            }
+        }
+
         let iconName = toilet.markerIconName
         let key = toilet.temporaryClosed ? "\(iconName)_gray" : iconName
         if let cached = cache[key] {
@@ -427,6 +508,86 @@ private enum MarkerImageCache {
 
         cache[key] = originalImage
         return originalImage
+    }
+
+    static var shiningOverlayImage: UIImage? {
+        if let cached = cache["summary_shining_overlay"] {
+            return cached
+        }
+        let size = CGSize(width: 256, height: 256)
+        let renderer = UIGraphicsImageRenderer(size: size)
+        let image = renderer.image { ctx in
+            let cgContext = ctx.cgContext
+            let colorSpace = CGColorSpaceCreateDeviceRGB()
+
+            let colors: [CGColor] = [
+                UIColor.systemPurple.withAlphaComponent(0.40).cgColor,
+                UIColor.systemPurple.withAlphaComponent(0.24).cgColor,
+                UIColor.systemPurple.withAlphaComponent(0.10).cgColor,
+                UIColor.systemPurple.withAlphaComponent(0.0).cgColor
+            ]
+            let locations: [CGFloat] = [0.0, 0.35, 0.7, 1.0]
+
+            if let gradient = CGGradient(colorsSpace: colorSpace, colors: colors as CFArray, locations: locations) {
+                let center = CGPoint(x: size.width / 2.0, y: size.height / 2.0)
+                let radius = size.width / 2.0
+                cgContext.drawRadialGradient(
+                    gradient,
+                    startCenter: center,
+                    startRadius: 0,
+                    endCenter: center,
+                    endRadius: radius,
+                    options: .drawsAfterEndLocation
+                )
+            }
+        }
+        cache["summary_shining_overlay"] = image
+        return image
+    }
+
+    private static func createSummaryMarkerImage(count: Int) -> UIImage? {
+        let countText = "\(count)"
+        let font = UIFont.systemFont(ofSize: 15, weight: .bold)
+        let attributes: [NSAttributedString.Key: Any] = [
+            .font: font,
+            .foregroundColor: UIColor.white
+        ]
+        let textSize = (countText as NSString).size(withAttributes: attributes)
+        let height: CGFloat = 38.0
+        let width = max(38.0, textSize.width + 18.0)
+        let shadowPadding: CGFloat = 4.0
+        let totalSize = CGSize(width: width + shadowPadding * 2.0, height: height + shadowPadding * 2.0)
+
+        let renderer = UIGraphicsImageRenderer(size: totalSize)
+        return renderer.image { ctx in
+            let cgContext = ctx.cgContext
+
+            cgContext.saveGState()
+            cgContext.setShadow(
+                offset: CGSize(width: 0, height: 2),
+                blur: 3.5,
+                color: UIColor.black.withAlphaComponent(0.35).cgColor
+            )
+
+            let badgeRect = CGRect(x: shadowPadding, y: shadowPadding, width: width, height: height)
+            let badgePath = UIBezierPath(roundedRect: badgeRect, cornerRadius: height / 2.0)
+
+            UIColor.systemPurple.setFill()
+            badgePath.fill()
+            cgContext.restoreGState()
+
+            UIColor.white.setStroke()
+            badgePath.lineWidth = 2.5
+            badgePath.stroke()
+
+            let textRect = CGRect(
+                x: badgeRect.origin.x + (badgeRect.width - textSize.width) / 2.0,
+                y: badgeRect.origin.y + (badgeRect.height - textSize.height) / 2.0,
+                width: textSize.width,
+                height: textSize.height
+            )
+            (countText as NSString).draw(in: textRect, withAttributes: attributes)
+        }
     }
 
     private static func makeGray(image: UIImage) -> UIImage? {

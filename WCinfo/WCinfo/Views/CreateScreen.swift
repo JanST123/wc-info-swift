@@ -9,6 +9,7 @@ enum QuestionStep: Int, CaseIterable, Identifiable {
     case genderSeparated = 5
     case wheelchair = 6
     case euroKey = 7
+    case changingTable = 8
     case publicAccess = 9
     case address = 10
     case website = 11
@@ -58,6 +59,7 @@ struct CreateScreen: View {
     @State private var hasWheelchairAccess: Bool?
     @State private var euroKey: String?
     @State private var showingEuroKeyInfo = false
+    @State private var hasChangingTable: Bool?
 
     @State private var publicAccessible: Bool?
     @State private var addressInput = ""
@@ -263,6 +265,8 @@ struct CreateScreen: View {
             question6WheelchairView
         case .euroKey:
             question7EuroKeyView
+        case .changingTable:
+            question8ChangingTableView
         case .publicAccess:
             question9PublicAccessView
         case .address:
@@ -494,23 +498,46 @@ struct CreateScreen: View {
                     .multilineTextAlignment(.center)
             }
 
+            VStack(spacing: 12) {
+                primaryChoiceButton(title: "Ja") {
+                    euroKey = "yes"
+                    advanceToNextStep()
+                }
+
+                secondaryChoiceButton(title: "Nicht sicher") {
+                    euroKey = "unknown"
+                    advanceToNextStep()
+                }
+
+                secondaryChoiceButton(title: "Nein") {
+                    euroKey = "no"
+                    advanceToNextStep()
+                }
+            }
+        }
+    }
+
+    // MARK: - Question 8: Changing Table
+
+    private var question8ChangingTableView: some View {
+        VStack(spacing: 20) {
+            questionHeader(
+                iconAsset: "baby-solid-full",
+                title: "Ist ein Wickeltisch vorhanden?"
+            )
+
             if isSubmitting {
                 ProgressView("Toilette wird gespeichert...")
                     .padding()
             } else {
                 VStack(spacing: 12) {
                     primaryChoiceButton(title: "Ja") {
-                        euroKey = "yes"
-                        advanceToNextStep()
-                    }
-
-                    secondaryChoiceButton(title: "Nicht sicher") {
-                        euroKey = "unknown"
+                        hasChangingTable = true
                         advanceToNextStep()
                     }
 
                     secondaryChoiceButton(title: "Nein") {
-                        euroKey = "no"
+                        hasChangingTable = false
                         advanceToNextStep()
                     }
                 }
@@ -964,6 +991,9 @@ struct CreateScreen: View {
             steps.append(.euroKey)
         }
 
+        // Q8 Changing Table
+        steps.append(.changingTable)
+
         // Q10 (Skipped if place has formatted_address)
         if selectedPlace == nil || selectedPlaceDetails?.formattedAddress == nil {
             steps.append(.address)
@@ -1006,9 +1036,8 @@ struct CreateScreen: View {
 
         guard let currentIndex = activeSteps.firstIndex(of: currentStep) else { return }
 
-        // Check if we just completed mandatory questions (Q7 or Q6 if Q7 skipped)
-        let isCompletingMandatory = (currentStep == .euroKey) ||
-            (currentStep == .wheelchair && hasWheelchairAccess == false)
+        // Check if we just completed mandatory questions (Q8 Changing Table)
+        let isCompletingMandatory = (currentStep == .changingTable)
 
         if isCompletingMandatory && createdToiletId == nil {
             submitMandatoryToilet()
@@ -1079,7 +1108,7 @@ struct CreateScreen: View {
             isUnisex: isUnisex,
             isGenderSeparated: isGenderSeparated,
             hasWheelchairAccess: hasWheelchairAccess,
-            hasChangingTable: nil,
+            hasChangingTable: hasChangingTable,
             accessibleOutsideOpeningTimes: nil,
             publicAccessible: nil,
             placeOpeningHours: placeOpeningHours ?? selectedPlaceDetails?.openingHours,
@@ -1134,7 +1163,7 @@ struct CreateScreen: View {
             isUnisex: isUnisex,
             isGenderSeparated: isGenderSeparated,
             hasWheelchairAccess: hasWheelchairAccess,
-            hasChangingTable: nil,
+            hasChangingTable: hasChangingTable,
             accessibleOutsideOpeningTimes: accessibleOutsideOpeningTimes,
             publicAccessible: publicAccessible,
             placeOpeningHours: placeOpeningHours ?? selectedPlaceDetails?.openingHours,

@@ -3181,6 +3181,29 @@
         }
       }
     },
+    "Ist ein Wickeltisch vorhanden?" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ist ein Wickeltisch vorhanden?"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Is a changing table available?"
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Is er een verschoontafel aanwezig?"
+          }
+        }
+      }
+    },
     "Ist eine barrierefreie Toilette vorhanden?" : {
       "extractionState" : "manual",
       "localizations" : {
